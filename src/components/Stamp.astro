@@ -1,0 +1,116 @@
+---
+import SunFigure from './SunFigure.astro';
+
+/**
+ * Stamp — the signature mark.
+ * CSS-rendered editorial imprint: text on a path around a circular figure.
+ *
+ * Props:
+ *   size — overall diameter (default 160)
+ *   variant — 'default' (fuchsia) or 'quiet' (muted ink)
+ *   figure — 'sun' (default, Dennis's personal sigil) or 'monogram' (D·B fallback)
+ */
+type Props = {
+  size?: number;
+  variant?: 'default' | 'quiet';
+  figure?: 'sun' | 'monogram';
+};
+
+const { size = 160, variant = 'default', figure = 'sun' } = Astro.props;
+---
+
+<figure class={`stamp stamp--${variant}`} style={`--stamp-size: ${size}px;`} role="img" aria-label="Dennis Berger imprint — Philadelphia, MMXXVI">
+  <svg class="stamp__rings" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+    <defs>
+      {/* Top arc: clockwise from 9 → 12 → 3 o'clock. Ascenders point outward. */}
+      <path id="stamp-top-arc" d="M 20,100 A 80,80 0 0,1 180,100" />
+      {/* Bottom arc: counter-clockwise from 9 → 6 → 3 o'clock at a slightly wider radius
+          so the bottom text's visual midline matches the top's. Keeps bottom text right-side-up. */}
+      <path id="stamp-bottom-arc" d="M 14,100 A 86,86 0 0,0 186,100" />
+    </defs>
+    <circle cx="100" cy="100" r="94" fill="none" stroke="currentColor" stroke-width="1" />
+    <circle cx="100" cy="100" r="72" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.4" />
+
+    <text class="stamp__text stamp__text--top">
+      <textPath href="#stamp-top-arc" startOffset="50%" text-anchor="middle">
+        DENNIS BERGER · OPERATOR · DESIGNER
+      </textPath>
+    </text>
+    <text class="stamp__text stamp__text--bottom">
+      <textPath href="#stamp-bottom-arc" startOffset="50%" text-anchor="middle">
+        PHILA · EST. MCMLXXXVI
+      </textPath>
+    </text>
+  </svg>
+
+  <div class="stamp__center">
+    <slot>
+      {figure === 'sun' ? (
+        <SunFigure />
+      ) : (
+        <span class="stamp__monogram">D<span class="stamp__dot">·</span>B</span>
+      )}
+    </slot>
+  </div>
+</figure>
+
+<style>
+  .stamp {
+    display: inline-grid;
+    place-items: center;
+    width: var(--stamp-size, 160px);
+    height: var(--stamp-size, 160px);
+    position: relative;
+    color: var(--color-fuchsia);
+    margin: 0;
+    /* Artful left-tilt — reads as hand-applied stamp rather than printed. */
+    transform: rotate(-8deg);
+    transform-origin: center;
+  }
+
+  .stamp--quiet {
+    color: var(--color-ink-dim);
+  }
+
+  .stamp__rings {
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
+    height: 100%;
+  }
+
+  .stamp__text {
+    font-family: var(--font-body);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    fill: currentColor;
+    text-transform: uppercase;
+  }
+  .stamp__text--bottom { letter-spacing: 0.22em; }
+
+  .stamp__center {
+    grid-column: 1;
+    grid-row: 1;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+  }
+
+  .stamp__monogram {
+    font-family: var(--font-display);
+    font-size: calc(var(--stamp-size, 160px) * 0.3);
+    font-style: italic;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    color: currentColor;
+    line-height: 1;
+  }
+  .stamp__dot {
+    display: inline-block;
+    vertical-align: middle;
+    margin-inline: 0.05em;
+    font-size: 0.7em;
+    opacity: 0.7;
+  }
+</style>

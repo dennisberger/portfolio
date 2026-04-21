@@ -1,0 +1,206 @@
+---
+/**
+ * StackedBars — editorial stacked-column chart for composition over time.
+ *
+ * Inline SVG, no library. Direct totals above each bar, compact legend below.
+ * Uses tokenized palette by label; accepts a custom color per segment via `color`.
+ */
+interface Segment { label: string; value: number; color?: string }
+interface YearData { year: string | number; segments: Segment[] }
+interface Props {
+  years: YearData[];
+  caption?: string;
+  ariaLabel: string;
+  /** Order of labels in the legend (defaults to first-seen order). */
+  legendOrder?: string[];
+}
+const { years, caption, ariaLabel, legendOrder } = Astro.props;
+
+// Default palette — three shades of cobalt for the staffing composition story.
+// Internal FTE is the protagonist (darkest); contractor is the flex layer (medium);
+// agency is the retiring top segment (palest). Override per-segment via `color`.
+const paletteByLabel: Record<string, string> = {
+  'Internal FTE': 'var(--color-cobalt-deep)',
+  'Contractor':   'var(--color-cobalt)',
+  'Agency':       'oklch(86% 0.06 250)',
+};
+const colorFor = (seg: Segment) => seg.color ?? paletteByLabel[seg.label] ?? 'var(--color-ink)';
+
+const W = 520;
+const H = 280;
+const PAD_X = 36;
+const PAD_Y_TOP = 38;
+const PAD_Y_BOTTOM = 52;
+const plotW = W - 2 * PAD_X;
+const plotH = H - PAD_Y_TOP - PAD_Y_BOTTOM;
+const nYears = years.length;
+const barGroupW = plotW / nYears;
+const barW = Math.min(barGroupW * 0.58, 74);
+const maxTotal = Math.max(
+  1,
+  ...years.map(y => y.segments.reduce((s, seg) => s + seg.value, 0)),
+);
+const perUnit = plotH / (maxTotal * 1.12);
+
+const yearBars = years.map((y, i) => {
+  const groupLeftX = PAD_X + i * barGroupW + (barGroupW - barW) / 2;
+  const segs = y.segments.filter(s => s.value > 0);
+  const total = segs.reduce((s, seg) => s + seg.value, 0);
+  let cumH = 0;
+  const rects = segs.map((seg) => {
+    const segH = seg.value * perUnit;
+    const segY = PAD_Y_TOP + plotH - cumH - segH;
+    cumH += segH;
+    return { x: groupLeftX, y: segY, w: barW, h: segH, color: colorFor(seg), label: seg.label };
+  });
+  return {
+    groupLeftX,
+    barCenter: groupLeftX + barW / 2,
+    total,
+    topY: PAD_Y_TOP + plotH - total * perUnit,
+    rects,
+    year: y.year,
+  };
+});
+
+const allLabels = Array.from(new Set(years.flatMap(y => y.segments.map(s => s.label))));
+const orderedLabels = legendOrder ?? allLabels;
+---
+
+<figure class="stackbars" data-reveal-chart>
+  <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={ariaLabel}>
+    {yearBars.map((yb, i) => (
+      <g class="stackbars__year-group" style={`--i:${i}`}>
+        <g class="stackbars__bars">
+          {yb.rects.map((r) => (
+            <rect x={r.x} y={r.y.toFixed(1)} width={r.w} height={r.h.toFixed(1)} fill={r.color} />
+          ))}
+        </g>
+        <text x={yb.barCenter} y={(yb.topY - 10).toFixed(1)} text-anchor="middle" class="stackbars__total">
+          {yb.total}
+        </text>
+        <text x={yb.barCenter} y={H - 26} text-anchor="middle" class="stackbars__year">
+          {yb.year}
+        </text>
+      </g>
+    ))}
+  </svg>
+  <ul class="stackbars__legend">
+    {orderedLabels.map(label => (
+      <li class="stackbars__legend-item">
+        <span
+          class="stackbars__swatch"
+          style={`background: ${paletteByLabel[label] ?? 'var(--color-ink)'}`}
+          aria-hidden="true"
+        ></span>
+        <span>{label}</span>
+      </li>
+    ))}
+  </ul>
+  {caption && <figcaption class="stackbars__caption">{caption}</figcaption>}
+</figure>
+
+<style>
+  .stackbars {
+    margin: var(--space-2xl) 0;
+    max-width: 520px;
+  }
+  .stackbars svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    overflow: visible;
+  }
+  .stackbars__total {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 14px;
+    fill: var(--color-ink);
+  }
+  .stackbars__year {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    fill: var(--color-ink-muted);
+  }
+  .stackbars__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm) var(--space-md);
+    margin-top: var(--space-md);
+    padding: 0;
+    list-style: none;
+    font-family: var(--font-body);
+    font-size: var(--type-xs);
+    color: var(--color-ink-muted);
+  }
+  .stackbars__legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+  .stackbars__swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    flex: 0 0 auto;
+  }
+  .stackbars__caption {
+    margin-top: var(--space-sm);
+    font-family: var(--font-body);
+    font-size: var(--type-xs);
+    color: var(--color-ink-muted);
+    font-style: italic;
+    max-width: 48ch;
+  }
+
+  /* Scroll-reveal: bars rise from baseline, staggered by year; totals and
+     legend fade in after the bars settle. Transform-box keeps each bar's
+     transform-origin anchored at the baseline of its own bounding box. */
+  :global(.js-motion) .stackbars[data-reveal-chart] .stackbars__bars {
+    transform: scaleY(0);
+    transform-origin: center bottom;
+    transform-box: fill-box;
+    transition: transform 720ms var(--ease-out-quart);
+    transition-delay: calc(var(--i, 0) * 130ms);
+  }
+  :global(.js-motion) .stackbars[data-reveal-chart].is-visible .stackbars__bars {
+    transform: scaleY(1);
+  }
+  :global(.js-motion) .stackbars[data-reveal-chart] .stackbars__total {
+    opacity: 0;
+  }
+  :global(.js-motion) .stackbars[data-reveal-chart].is-visible .stackbars__total {
+    animation: stackbars-label-in 420ms var(--ease-out-quart) forwards;
+    animation-delay: calc(760ms + var(--i, 0) * 130ms);
+  }
+  :global(.js-motion) .stackbars[data-reveal-chart] .stackbars__legend,
+  :global(.js-motion) .stackbars[data-reveal-chart] .stackbars__caption {
+    opacity: 0;
+    transition: opacity 520ms var(--ease-out-quart);
+    transition-delay: 950ms;
+  }
+  :global(.js-motion) .stackbars[data-reveal-chart].is-visible .stackbars__legend,
+  :global(.js-motion) .stackbars[data-reveal-chart].is-visible .stackbars__caption {
+    opacity: 1;
+  }
+
+  @keyframes stackbars-label-in {
+    to { opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.js-motion) .stackbars[data-reveal-chart] .stackbars__bars,
+    :global(.js-motion) .stackbars[data-reveal-chart] .stackbars__total,
+    :global(.js-motion) .stackbars[data-reveal-chart] .stackbars__legend,
+    :global(.js-motion) .stackbars[data-reveal-chart] .stackbars__caption {
+      transform: none !important;
+      opacity: 1 !important;
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+</style>

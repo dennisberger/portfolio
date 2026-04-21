@@ -1,0 +1,273 @@
+/* Fontshare is loaded via <link> in Base.astro for early discovery. */
+@import './tokens.css';
+
+/* ─── Reset ─────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+html:focus-within { scroll-behavior: smooth; }
+
+body {
+  min-height: 100dvh;
+  overflow-x: clip;  /* defensive; never interferes with position: sticky */
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--type-base);
+  line-height: var(--leading-body);
+  font-feature-settings: 'kern', 'liga', 'calt';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-kerning: normal;
+}
+
+img, picture, svg, video { display: block; max-width: 100%; height: auto; }
+button, input, textarea, select { font: inherit; color: inherit; }
+
+/* ─── Typography ─────────────────────────────────────────────── */
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  color: var(--color-ink);
+  text-wrap: balance;
+}
+h1 { font-size: var(--type-4xl); line-height: var(--leading-tight); letter-spacing: var(--tracking-tight); }
+h2 { font-size: var(--type-3xl); line-height: var(--leading-tight); letter-spacing: var(--tracking-snug); }
+h3 { font-size: var(--type-2xl); line-height: var(--leading-snug); letter-spacing: var(--tracking-snug); }
+h4 { font-size: var(--type-xl); line-height: var(--leading-snug); letter-spacing: var(--tracking-snug); }
+
+p { text-wrap: pretty; }
+
+a {
+  color: var(--color-fuchsia-deep);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  text-decoration-color: color-mix(in oklch, var(--color-fuchsia-deep) 40%, transparent);
+  transition: text-decoration-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+}
+a:hover {
+  text-decoration-color: currentColor;
+}
+
+::selection {
+  background: var(--color-fuchsia);
+  color: var(--color-paper);
+}
+
+/* ─── Focus ──────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-cobalt);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ─── Utilities ──────────────────────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: -100px; left: var(--space-md);
+  z-index: 200;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  font-family: var(--font-body);
+  font-size: var(--type-sm);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  transition: top var(--duration-base) var(--ease-out);
+}
+.skip-link:focus { top: var(--space-md); }
+
+/* ─── Page container ─────────────────────────────────────────── */
+.page {
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding-inline: var(--page-padding);
+}
+
+/* ─── Buttons ────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-family: var(--font-body);
+  font-size: var(--type-base);
+  font-weight: 600;
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-xs);
+  text-decoration: none;
+  border: 1px solid var(--color-ink);
+  cursor: pointer;
+  min-height: 44px;
+  letter-spacing: 0.01em;
+  transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
+}
+.btn:hover { text-decoration: none; transform: translateY(-1px); }
+.btn--primary { background: var(--color-ink); color: var(--color-paper); }
+.btn--primary:hover {
+  background: var(--color-fuchsia-deep);
+  border-color: var(--color-fuchsia-deep);
+  color: var(--color-paper);
+}
+.btn--ghost { background: transparent; color: var(--color-ink); }
+.btn--ghost:hover {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+/* ─── Motion ────────────────────────────────────────────────── */
+/*
+ * Progressive-enhancement model: the inline <script> in Base.astro adds
+ * `.js-motion` to <html> unless the user prefers reduced motion. All
+ * reveal/entrance styles are gated on `.js-motion`, so no-JS users and
+ * reduced-motion users get the final state with zero animation.
+ */
+
+/* Scroll-reveal: fade + 8px rise. Applied via [data-reveal]; IntersectionObserver flips .is-visible once. */
+.js-motion [data-reveal] {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 520ms var(--ease-out-quart),
+    transform 520ms var(--ease-out-quart);
+  will-change: opacity, transform;
+}
+.js-motion [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Label tracking-in — letter-spacing expands from tight to normal as it reveals. */
+.js-motion [data-reveal].section-label {
+  letter-spacing: 0.02em;
+  transition:
+    opacity 520ms var(--ease-out-quart),
+    transform 520ms var(--ease-out-quart),
+    letter-spacing 720ms var(--ease-out-quart) 80ms;
+}
+.js-motion [data-reveal].section-label.is-visible {
+  letter-spacing: var(--tracking-wider);
+}
+
+/* Section-label rule draws in with a brief overshoot — editor drawing too far, then correcting. */
+.js-motion [data-reveal] .section-label__rule {
+  width: 0;
+}
+.js-motion [data-reveal].is-visible .section-label__rule {
+  animation: rule-overshoot 760ms var(--ease-out-quart) 140ms forwards;
+}
+.js-motion .hero__primary > .section-label .section-label__rule {
+  width: 0;
+  animation: rule-overshoot 760ms var(--ease-out-quart) 220ms forwards;
+}
+
+@keyframes rule-overshoot {
+  0%   { width: 0; }
+  62%  { width: calc(var(--space-xl) + 0.45rem); }
+  100% { width: var(--space-xl); }
+}
+
+/* Flagship highlighter — a confined fuchsia-soft block that hugs the title,
+   drawn from the left on reveal, then quietly retires. Editorial marker-pen energy. */
+.js-motion .flagship__title[data-reveal-wash] {
+  position: relative;
+  isolation: isolate;
+}
+.js-motion .flagship__title[data-reveal-wash]::before {
+  content: '';
+  position: absolute;
+  inset: 0.1em -0.3em 0.12em -0.3em;
+  background: var(--color-fuchsia-soft);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 700ms var(--ease-out-quart) 160ms, opacity 600ms var(--ease-out-quart) 1200ms;
+  z-index: -1;
+  opacity: 1;
+}
+.js-motion .flagship__title[data-reveal-wash].is-visible::before {
+  transform: scaleX(1);
+  opacity: 0.45;
+}
+
+/* Hero stagger — runs once on load. The title animates word-by-word (see .hero__word below). */
+.js-motion .hero__primary > .section-label,
+.js-motion .hero__primary > .hero__strap,
+.js-motion .hero__primary > .hero__ctas {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: hero-rise 700ms var(--ease-out-quart) forwards;
+}
+.js-motion .hero__primary > .section-label { animation-delay: 60ms; }
+.js-motion .hero__primary > .hero__strap   { animation-delay: 720ms; }
+.js-motion .hero__primary > .hero__ctas    { animation-delay: 840ms; }
+
+/* Meta column slides in from the right — gives it sidebar-arriving energy. */
+.js-motion .hero__meta {
+  opacity: 0;
+  transform: translateX(28px);
+  animation: hero-slide-in 760ms var(--ease-out-quart) 520ms forwards;
+}
+
+/* Hero title — each word rises independently, staggered by --i. */
+.js-motion .hero__word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.5em);
+  animation: hero-word-rise 620ms var(--ease-out-quart) forwards;
+  animation-delay: calc(140ms + var(--i, 0) * 42ms);
+}
+.js-motion .hero__word--bloom {
+  color: var(--color-fuchsia-soft);
+  animation:
+    hero-word-rise 620ms var(--ease-out-quart) forwards,
+    best-bloom 780ms var(--ease-out-quart) forwards;
+  animation-delay:
+    calc(140ms + var(--i, 0) * 42ms),
+    calc(420ms + var(--i, 0) * 42ms);
+}
+
+@keyframes hero-rise      { to { opacity: 1; transform: none; } }
+@keyframes hero-slide-in  { to { opacity: 1; transform: none; } }
+@keyframes hero-word-rise { to { opacity: 1; transform: none; } }
+@keyframes best-bloom     { to { color: var(--color-fuchsia); } }
+
+
+@media (prefers-reduced-motion: reduce) {
+  .js-motion [data-reveal],
+  .js-motion [data-reveal-wash],
+  .js-motion .hero__primary > *,
+  .js-motion .hero__meta,
+  .js-motion .hero__word {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+    letter-spacing: var(--tracking-wider) !important;
+    color: inherit;
+  }
+  .js-motion .hero__word--bloom { color: var(--color-fuchsia) !important; }
+  .js-motion .flagship__title[data-reveal-wash]::before {
+    transform: none !important;
+    opacity: 0 !important;
+    transition: none !important;
+  }
+  .js-motion [data-reveal] .section-label__rule,
+  .js-motion .hero__primary > .section-label .section-label__rule {
+    width: var(--space-xl) !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}

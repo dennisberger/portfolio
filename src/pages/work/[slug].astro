@@ -1,0 +1,367 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '@/layouts/Base.astro';
+import SectionLabel from '@/components/SectionLabel.astro';
+import StatBar from '@/components/StatBar.astro';
+import Stamp from '@/components/Stamp.astro';
+import EditorialNumbers from '@/components/EditorialNumbers.astro';
+
+export async function getStaticPaths() {
+  const studies = await getCollection('caseStudies');
+  return studies.map(s => ({
+    params: { slug: s.data.slug },
+    props: { study: s },
+  }));
+}
+
+const { study } = Astro.props;
+const { Content } = await render(study);
+const { data } = study;
+
+// Flagship-only: editorial coda for Taco Bell.
+// Entries here should *not* duplicate the top StatBar — this is additional proof,
+// not a restatement of the hero numbers.
+const byTheNumbers =
+  data.slug === 'taco-bell-designops'
+    ? [
+        {
+          value: '2 → 8',
+          lead: 'Internal designers, through the agency-to-FTE transition.',
+          body: 'From one director, two internal designers, and me, to eight full-time designers plus four contractors. Structured intake, planning, and research ops tying the growth together.',
+        },
+        {
+          value: 'Two',
+          lead: 'Yum-wide firsts, both led from the Taco Bell design team.',
+          body: 'First brand in Yum to move to Figma Enterprise, unlocking branching, stronger governance, and Dev Mode handoff. First design team anywhere in Yum to pilot ChatGPT + Figma MCP for automated design-system reviews, surfacing outdated components and token drift before they shipped.',
+        },
+        {
+          value: '33%',
+          lead: 'Research capacity expansion, January 2026.',
+          body: 'Demand had grown past the original operating model. Negotiated the expansion to keep pace with product, marketing, and in-restaurant workstreams, without loosening intake or adoption discipline.',
+        },
+      ]
+    : null;
+
+// All other case studies, in canonical order, to surface at the end of each study.
+const all = (await getCollection('caseStudies')).sort((a, b) => a.data.order - b.data.order);
+const others = all.filter(s => s.data.slug !== data.slug);
+---
+
+<Base
+  title={data.title}
+  description={data.excerpt}
+  ogType="article"
+  publishedAt={data.publishedAt}
+  updatedAt={data.updatedAt}
+>
+  <article class="study">
+    <header class="study__header page">
+      <a href="/#work" class="study__back">← All work</a>
+      <SectionLabel>{data.tag}</SectionLabel>
+      <h1 class="study__title">{data.title}</h1>
+      {data.lede && (
+        <p class="study__lede"><em>{data.lede}</em></p>
+      )}
+    </header>
+
+    <div class="study__stats page">
+      <StatBar stats={data.stats} />
+    </div>
+
+    <div class="study__body">
+      <div class="prose">
+        <Content />
+      </div>
+
+      {byTheNumbers && (
+        <div class="prose prose--wide">
+          <SectionLabel>Also worth noting</SectionLabel>
+          <EditorialNumbers entries={byTheNumbers} />
+        </div>
+      )}
+    </div>
+
+    <div class="study__endmark">
+      {data.lede && <p class="study__epigraph">{data.lede}</p>}
+      <Stamp size={140} />
+    </div>
+
+    {others.length > 0 && (
+      <nav class="study__more page" aria-label="Other case studies">
+        <SectionLabel>Other case studies</SectionLabel>
+        <ol class="study__more-list">
+          {others.map(s => (
+            <li class="study__more-item">
+              <a href={`/work/${s.data.slug}/`} class="study__more-link">
+                <span class="study__more-tag">{s.data.tag}</span>
+                <span class="study__more-title">{s.data.title}</span>
+                <span aria-hidden="true" class="study__more-arrow">→</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    )}
+
+    <section class="study__cta page">
+      <div>
+        <h2 class="study__cta-title">Still reading?</h2>
+        <p class="study__cta-text">Get in touch or send a note. I'll write back.</p>
+      </div>
+      <div class="study__cta-actions">
+        <a href="/contact/" class="btn btn--primary">Contact</a>
+        <a href="https://linkedin.com/in/dennisberger" target="_blank" rel="noopener noreferrer" class="btn btn--ghost">LinkedIn</a>
+      </div>
+    </section>
+  </article>
+</Base>
+
+<style>
+  .study { padding-top: var(--space-section); }
+
+  .study__header {
+    padding-block: var(--space-xl) var(--space-2xl);
+    max-width: var(--col-total);
+  }
+  .study__back {
+    display: block;
+    width: fit-content;
+    margin-block-end: var(--space-xl);
+    font-family: var(--font-body);
+    font-size: var(--type-sm);
+    text-decoration: none;
+    color: var(--color-ink-muted);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+  .study__back:hover { color: var(--color-fuchsia-deep); }
+
+  .study__title {
+    font-size: var(--type-4xl);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    margin-block: var(--space-md) var(--space-lg);
+    max-width: 18ch;
+  }
+  .study__lede {
+    font-family: var(--font-display);
+    font-size: var(--type-xl);
+    line-height: var(--leading-snug);
+    color: var(--color-fuchsia-deep);
+    max-width: 40ch;
+    margin-block-end: var(--space-lg);
+  }
+  .study__stats { padding-block-end: var(--space-section-sm); max-width: var(--col-total); }
+
+  .study__body {
+    padding-inline: var(--page-padding);
+    padding-block: var(--space-section);
+    max-width: var(--page-max);
+    margin-inline: auto;
+  }
+
+  .prose {
+    max-width: var(--col-main);
+    margin-inline: 0;
+    font-family: var(--font-body);
+    font-size: var(--type-lg);
+    line-height: var(--leading-relaxed);
+    color: var(--color-ink);
+    position: relative;
+  }
+  .prose--wide { max-width: var(--col-total); margin-block-start: var(--space-section); }
+
+  /* MDX prose styling */
+  .prose :global(h2) {
+    font-family: var(--font-display);
+    font-size: var(--type-2xl);
+    margin-block: var(--space-2xl) var(--space-md);
+    max-width: 24ch;
+  }
+  .prose :global(h3) {
+    font-family: var(--font-display);
+    font-size: var(--type-xl);
+    margin-block: var(--space-xl) var(--space-sm);
+  }
+  .prose :global(p) {
+    margin-block-end: var(--space-lg);
+    max-width: 38rem;
+  }
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin-block-end: var(--space-lg);
+    padding-inline-start: var(--space-lg);
+  }
+  .prose :global(li) { margin-block-end: var(--space-xs); }
+  .prose :global(strong) { font-weight: 600; color: var(--color-ink); }
+  .prose :global(em) { font-style: italic; }
+  .prose :global(blockquote) {
+    margin-block: var(--space-2xl);
+    padding: var(--space-lg) 0 var(--space-lg) var(--space-xl);
+    border: 0;
+    border-inline-start: 1px solid var(--color-fuchsia);
+    background: transparent;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: var(--type-2xl);
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-snug);
+    color: var(--color-ink);
+    max-width: var(--col-main);
+  }
+  .prose :global(blockquote p) { max-width: none; margin-block-end: var(--space-md); }
+  .prose :global(blockquote p:last-child) { margin-block-end: 0; }
+
+  /* Case study figures — product screenshots, device frames, diagrams. */
+  .prose :global(figure.case-figure) {
+    margin-block: var(--space-2xl);
+    padding: 0;
+    max-width: var(--col-main);
+  }
+  .prose :global(figure.case-figure img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+    background: var(--color-paper-sunken);
+  }
+  .prose :global(figure.case-figure--pair) {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+  .prose :global(figure.case-figure--pair > img) {
+    width: 100%;
+    height: auto;
+  }
+  .prose :global(figure.case-figure figcaption) {
+    grid-column: 1 / -1;
+    margin-top: var(--space-sm);
+    font-family: var(--font-body);
+    font-size: var(--type-xs);
+    color: var(--color-ink-muted);
+    font-style: italic;
+    max-width: 48ch;
+  }
+  @media (min-width: 640px) {
+    .prose :global(figure.case-figure--pair) {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-md);
+    }
+  }
+
+  /* Desktop: widen prose container to accommodate floated margin notes in the gutter */
+  @media (min-width: 1080px) {
+    .prose {
+      max-width: var(--col-total);
+      padding-right: calc(var(--col-gutter) + var(--col-gap));
+    }
+    .prose :global(p),
+    .prose :global(h2),
+    .prose :global(h3),
+    .prose :global(ul),
+    .prose :global(ol) {
+      max-width: var(--col-main);
+    }
+  }
+
+  .study__endmark {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xl);
+    padding-block: var(--space-section);
+    text-align: center;
+  }
+  .study__epigraph {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: var(--type-xl);
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-snug);
+    color: var(--color-fuchsia-deep);
+    max-width: 36ch;
+    margin: 0;
+  }
+
+  .study__more {
+    padding-block: var(--space-2xl);
+    border-top: 1px solid var(--color-rule);
+  }
+  .study__more-list {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-lg) 0 0;
+  }
+  .study__more-item {
+    border-top: 1px solid var(--color-rule);
+  }
+  .study__more-item:last-child {
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .study__more-link {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-lg);
+    text-decoration: none;
+    padding-block: var(--space-lg);
+  }
+  .study__more-tag {
+    font-family: var(--font-body);
+    font-size: var(--type-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-cobalt-deep);
+    flex: 0 0 auto;
+    min-width: 10rem;
+  }
+  .study__more-title {
+    font-family: var(--font-display);
+    font-size: var(--type-2xl);
+    color: var(--color-ink);
+    flex: 1;
+  }
+  .study__more-link:hover .study__more-title { color: var(--color-fuchsia-deep); }
+  .study__more-arrow {
+    font-family: var(--font-display);
+    color: var(--color-fuchsia);
+    font-size: var(--type-2xl);
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+  .study__more-link:hover .study__more-arrow { transform: translateX(4px); }
+
+  .study__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-xl);
+    padding-block: var(--space-2xl);
+    border-top: 1px solid var(--color-rule);
+  }
+  .study__cta-title {
+    font-family: var(--font-display);
+    font-size: var(--type-3xl);
+    line-height: var(--leading-tight);
+    margin: 0 0 var(--space-xs);
+  }
+  .study__cta-text {
+    font-family: var(--font-body);
+    font-size: var(--type-base);
+    color: var(--color-ink-muted);
+    max-width: 40ch;
+    margin: 0;
+  }
+  .study__cta-actions {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+  }
+  @media (max-width: 640px) {
+    .study__more-link { flex-direction: column; align-items: flex-start; gap: var(--space-xs); padding-block: var(--space-md); }
+    .study__more-tag { min-width: 0; }
+  }
+</style>

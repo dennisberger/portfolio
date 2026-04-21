@@ -1,0 +1,483 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '@/layouts/Base.astro';
+import SectionLabel from '@/components/SectionLabel.astro';
+import StatBar from '@/components/StatBar.astro';
+
+const studies = (await getCollection('caseStudies')).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+const flagship = studies.find(s => s.data.flagship);
+const others = studies.filter(s => !s.data.flagship);
+
+// Hero title, pre-split into words so each can animate independently.
+// The italic "stand on" is the two-word bloom; everything else is plain.
+const heroWords: { w: string; bloom?: boolean }[] = [
+  { w: 'I' }, { w: 'build' }, { w: 'the' }, { w: 'scaffolding' },
+  { w: 'design' }, { w: 'teams' }, { w: 'stand', bloom: true }, { w: 'on.', bloom: true },
+];
+
+// Spelled ordinals for the TOC hover flip. Index-safe up to ten.
+const ordinals = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'];
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Dennis Berger',
+  url: 'https://dennisberger.me',
+  jobTitle: 'Design Operations Leader',
+  worksFor: { '@type': 'Organization', name: 'Taco Bell' },
+  address: { '@type': 'PostalAddress', addressLocality: 'Philadelphia', addressRegion: 'PA', addressCountry: 'US' },
+  sameAs: ['https://linkedin.com/in/dennisberger'],
+};
+---
+
+<Base
+  title="Dennis Berger — Design Operations"
+  description="DesignOps leader in Philadelphia. Fifteen years building operating models, design systems, and research ops that make design a reliable, strategic function."
+>
+  <script slot="head" type="application/ld+json" is:inline set:html={JSON.stringify(personSchema)} />
+  <section class="hero page">
+    <div class="hero__primary">
+      <SectionLabel reveal={false}>Design Operations Leader</SectionLabel>
+      <h1 class="hero__title">
+        {heroWords.map((word, i) => (
+          word.bloom ? (
+            <><em class="hero__word hero__word--bloom" style={`--i:${i}`}>{word.w}</em>{' '}</>
+          ) : (
+            <><span class="hero__word" style={`--i:${i}`}>{word.w}</span>{' '}</>
+          )
+        ))}
+      </h1>
+      <p class="hero__strap">
+        Fifteen years in design. Currently at Taco Bell, scaling the first in-house DesignOps function: $4.5M budget, governed intake, research built from zero. Previously Comcast, GSK, and seven years running my own shop.
+      </p>
+      <div class="hero__ctas">
+        <a href="#flagship" class="btn btn--primary">See the case studies</a>
+        <a href="/dennis-berger-resume.pdf" download class="btn btn--ghost">
+          Download résumé
+        </a>
+      </div>
+    </div>
+
+    <aside class="hero__meta" aria-label="Currently">
+      <p class="hero__meta-kicker">Currently</p>
+      <dl class="hero__meta-list">
+        <div>
+          <dt>Leading</dt>
+          <dd>Design Operations at Taco Bell, since 2023</dd>
+        </div>
+        <div>
+          <dt>Previously</dt>
+          <dd>Comcast · GSK · TopClick (seven years)</dd>
+        </div>
+        <div>
+          <dt>Based in</dt>
+          <dd>Philadelphia, PA</dd>
+        </div>
+        <div>
+          <dt>Also</dt>
+          <dd><a href="https://ignyte.me" target="_blank" rel="noopener noreferrer">Ignyte</a> &amp; <a href="https://synoptro.com" target="_blank" rel="noopener noreferrer">Synoptro</a></dd>
+        </div>
+      </dl>
+    </aside>
+  </section>
+
+  {flagship && (
+    <section class="flagship page" id="flagship">
+      <a href={`/work/${flagship.data.slug}/`} class="flagship__link">
+        <div class="flagship__meta">
+          <SectionLabel>Flagship · {flagship.data.tag}</SectionLabel>
+        </div>
+        <h2 class="flagship__title" data-reveal-wash><span>{flagship.data.title}</span></h2>
+        {flagship.data.lede && (
+          <p class="flagship__lede"><em>{flagship.data.lede}</em></p>
+        )}
+        <p class="flagship__excerpt">{flagship.data.excerpt}</p>
+        <div class="flagship__stats">
+          <StatBar stats={flagship.data.stats} />
+        </div>
+        <span class="flagship__arrow" aria-hidden="true">→</span>
+      </a>
+    </section>
+  )}
+
+  <section class="toc page" id="work">
+    <SectionLabel>Also in the portfolio</SectionLabel>
+    <ol class="toc__list">
+      {others.map((s, i) => (
+        <li class="toc__item">
+          <a href={`/work/${s.data.slug}/`} class="toc__link">
+            <span class="toc__num" aria-hidden="true">
+              <span class="toc__num-digit">{String(i + 1).padStart(2, '0')}</span>
+              <span class="toc__num-word">{ordinals[i + 1]}</span>
+            </span>
+            <span class="toc__tag">{s.data.tag}</span>
+            <span class="toc__study-title">{s.data.title}</span>
+            <span class="toc__arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="cta-band page">
+    <div class="cta-band__inner">
+      <div>
+        <h2 class="cta-band__title">Still reading?</h2>
+        <p class="cta-band__text">Get in touch or send a note. I'll write back.</p>
+      </div>
+      <div class="cta-band__actions">
+        <a href="/contact/" class="btn btn--primary">Contact</a>
+        <a href="https://linkedin.com/in/dennisberger" target="_blank" rel="noopener noreferrer" class="btn btn--ghost">LinkedIn</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ─── Hero ─── */
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    column-gap: var(--space-3xl);
+    row-gap: var(--space-2xl);
+    align-items: start;
+    padding-block: var(--space-section-hero);
+  }
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+  }
+
+  .hero__primary { min-width: 0; }
+  .hero__title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: var(--type-display);
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
+    margin-block: var(--space-lg) var(--space-xl);
+  }
+  .hero__title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--color-fuchsia);
+  }
+  .hero__strap {
+    font-family: var(--font-body);
+    font-size: var(--type-lg);
+    line-height: var(--leading-relaxed);
+    color: var(--color-ink-muted);
+    max-width: 42rem;
+    margin-block-end: var(--space-xl);
+  }
+  .hero__ctas {
+    display: flex; gap: var(--space-md); flex-wrap: wrap;
+    margin-block-start: var(--space-xl);
+  }
+
+  /* Meta column — quiet, informative, black-framed-window energy on desktop;
+     on mobile, relaxes into a hairline-ruled footnote so it doesn't read as an orphan section */
+  .hero__meta {
+    padding-block-start: var(--space-xl);
+    border-block-start: 2px solid var(--color-ink);
+    font-family: var(--font-body);
+  }
+  .hero__meta-kicker {
+    font-size: var(--type-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    color: var(--color-fuchsia-deep);
+    margin-block-end: var(--space-lg);
+  }
+  .hero__meta-list {
+    display: flex; flex-direction: column;
+    gap: var(--space-md);
+    margin: 0;
+  }
+  .hero__meta-list > div {
+    display: flex; flex-direction: column;
+    gap: var(--space-2xs);
+  }
+  .hero__meta-list dt {
+    font-size: var(--type-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-ink-muted);
+  }
+  .hero__meta-list dd {
+    font-family: var(--font-display);
+    font-size: var(--type-lg);
+    line-height: var(--leading-snug);
+    color: var(--color-ink);
+    margin: 0;
+  }
+  .hero__meta-list a {
+    font-style: italic;
+  }
+
+  /* Mobile: compress the meta into a quieter footnote under the primary content.
+     Drops the 2px rule (which reads as a section break), tightens spacing, uses
+     an inline-esque dt/dd pair so each row feels like a caption, not a sidebar row. */
+  @media (max-width: 900px) {
+    .hero__meta {
+      padding-block-start: var(--space-lg);
+      border-block-start: 1px solid var(--color-rule);
+    }
+    .hero__meta-kicker { margin-block-end: var(--space-md); font-size: 0.6875rem; }
+    .hero__meta-list { gap: var(--space-xs); }
+    .hero__meta-list > div {
+      flex-direction: row;
+      align-items: baseline;
+      gap: var(--space-sm);
+    }
+    .hero__meta-list dt { flex: 0 0 5.5rem; }
+    .hero__meta-list dd { font-size: var(--type-base); }
+  }
+
+  /* ─── Flagship ─── */
+  .flagship {
+    padding-block: var(--space-section);
+    border-top: 2px solid var(--color-ink);
+  }
+  .flagship__link {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    column-gap: var(--space-3xl);
+    row-gap: var(--space-xl);
+    text-decoration: none;
+    color: inherit;
+  }
+  @media (max-width: 900px) {
+    .flagship__link { grid-template-columns: 1fr; }
+  }
+  .flagship__meta { grid-column: 1; }
+  .flagship__link:hover .flagship__title { color: var(--color-fuchsia-deep); }
+  .flagship__title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: var(--type-5xl);
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
+    max-width: 16ch;
+    margin-block: var(--space-md) var(--space-lg);
+    grid-column: 1;
+    transition: color var(--duration-base) var(--ease-out);
+  }
+  .flagship__lede {
+    font-family: var(--font-display);
+    font-size: var(--type-xl);
+    line-height: var(--leading-snug);
+    color: var(--color-fuchsia-deep);
+    max-width: 38ch;
+    margin-block-end: var(--space-lg);
+    grid-column: 1;
+  }
+  .flagship__excerpt {
+    font-family: var(--font-body);
+    font-size: var(--type-lg);
+    color: var(--color-ink-muted);
+    line-height: var(--leading-relaxed);
+    max-width: 54ch;
+    grid-column: 1;
+  }
+  .flagship__stats {
+    grid-column: 2;
+    grid-row: 2 / span 3;
+    align-self: center;
+  }
+  .flagship__stats :global(.stat-bar) {
+    grid-template-columns: 1fr;
+    gap: var(--space-md) 0;
+    padding: var(--space-lg) 0;
+  }
+  .flagship__stats :global(.stat-bar__item) {
+    border-inline-start: none;
+    padding-inline: 0;
+    padding-block: var(--space-sm) 0;
+    border-block-start: 1px solid var(--color-rule);
+  }
+  .flagship__stats :global(.stat-bar__item:first-child) {
+    padding-block-start: 0;
+    border-block-start: none;
+  }
+  @media (max-width: 900px) {
+    .flagship__stats {
+      grid-column: 1;
+      grid-row: auto;
+      align-self: auto;
+    }
+  }
+  .flagship__arrow {
+    grid-column: 2;
+    grid-row: 5;
+    align-self: end;
+    justify-self: end;
+    font-family: var(--font-display);
+    font-size: var(--type-4xl);
+    font-style: italic;
+    font-weight: 300;
+    color: var(--color-fuchsia);
+    line-height: 1;
+    transition: transform var(--duration-base) var(--ease-out), color var(--duration-base) var(--ease-out);
+  }
+  .flagship__link:hover .flagship__arrow {
+    color: var(--color-fuchsia-deep);
+    transform: translateX(6px);
+  }
+  @media (max-width: 900px) {
+    .flagship__arrow { grid-column: 1; grid-row: auto; justify-self: start; }
+  }
+
+  /* ─── Table of contents (home secondary studies) ─── */
+  .toc { padding-block: var(--space-section); }
+  .toc__list {
+    list-style: none;
+    padding: 0;
+    margin-block-start: var(--space-xl);
+    counter-reset: toc;
+  }
+  .toc__item {
+    border-top: 1px solid var(--color-rule);
+    transition: background var(--duration-fast) var(--ease-out);
+  }
+  .toc__item:first-child { border-top: 2px solid var(--color-ink); }
+  .toc__item:last-child { border-bottom: 1px solid var(--color-rule); }
+  .toc__item:hover { background: var(--color-fuchsia-soft); }
+
+  .toc__link {
+    display: grid;
+    grid-template-columns: 4rem 14rem minmax(0, 1fr) auto;
+    align-items: baseline;
+    column-gap: var(--space-xl);
+    padding-block: var(--space-lg);
+    padding-inline: var(--space-xs);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .toc__num,
+  .toc__tag,
+  .toc__study-title {
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+  .toc__link:hover .toc__num,
+  .toc__link:hover .toc__tag,
+  .toc__link:hover .toc__study-title {
+    transform: translateX(var(--space-md));
+  }
+
+  .toc__num {
+    position: relative;
+    display: inline-block;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: var(--type-3xl);
+    line-height: 1;
+    color: var(--color-fuchsia);
+    letter-spacing: var(--tracking-display);
+  }
+  .toc__num-digit,
+  .toc__num-word {
+    display: inline-block;
+    transition: opacity var(--duration-base) var(--ease-out), transform var(--duration-base) var(--ease-out);
+  }
+  .toc__num-word {
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: var(--type-2xl);
+    line-height: 1;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(0.22em);
+    pointer-events: none;
+  }
+  .toc__link:hover .toc__num-digit {
+    opacity: 0;
+    transform: translateY(-0.22em);
+  }
+  .toc__link:hover .toc__num-word {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .toc__num-digit,
+    .toc__num-word {
+      transition: none;
+    }
+  }
+  .toc__tag {
+    font-family: var(--font-body);
+    font-size: var(--type-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    color: var(--color-cobalt-deep);
+  }
+  .toc__study-title {
+    font-family: var(--font-display);
+    font-size: var(--type-xl);
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-snug);
+    color: var(--color-ink);
+    transition: color var(--duration-fast) var(--ease-out), transform var(--duration-base) var(--ease-out);
+  }
+  .toc__link:hover .toc__study-title { color: var(--color-fuchsia-deep); }
+  .toc__arrow {
+    font-family: var(--font-display);
+    font-size: var(--type-xl);
+    color: var(--color-fuchsia);
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity var(--duration-fast) var(--ease-out), transform var(--duration-base) var(--ease-out);
+    line-height: 1;
+  }
+  .toc__link:hover .toc__arrow {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  @media (max-width: 780px) {
+    .toc__link {
+      grid-template-columns: auto 1fr auto;
+      column-gap: var(--space-md);
+      row-gap: var(--space-xs);
+      padding-block: var(--space-md);
+    }
+    .toc__num { grid-row: 1; grid-column: 1; font-size: var(--type-2xl); }
+    .toc__tag { grid-row: 1; grid-column: 2; align-self: center; }
+    .toc__study-title { grid-row: 2; grid-column: 1 / -1; font-size: var(--type-lg); }
+    .toc__arrow { grid-row: 1; grid-column: 3; align-self: center; }
+  }
+
+  /* ─── CTA band ─── */
+  .cta-band {
+    padding-block: var(--space-section);
+    margin-block-start: var(--space-section);
+    border-top: 2px solid var(--color-ink);
+  }
+  .cta-band__inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-xl);
+    flex-wrap: wrap;
+  }
+  .cta-band__title {
+    font-family: var(--font-display);
+    font-size: var(--type-3xl);
+    font-style: italic;
+    letter-spacing: var(--tracking-tight);
+    margin-block-end: var(--space-xs);
+  }
+  .cta-band__text {
+    font-family: var(--font-body);
+    font-size: var(--type-base);
+    color: var(--color-ink-muted);
+  }
+  .cta-band__actions { display: flex; gap: var(--space-md); }
+</style>

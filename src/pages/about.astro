@@ -1,0 +1,162 @@
+---
+import Base from '@/layouts/Base.astro';
+import SectionLabel from '@/components/SectionLabel.astro';
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Dennis Berger',
+  url: 'https://dennisberger.me',
+  jobTitle: 'Design Operations Leader',
+  worksFor: { '@type': 'Organization', name: 'Taco Bell' },
+  image: 'https://dennisberger.me/dennis.jpeg',
+  address: { '@type': 'PostalAddress', addressLocality: 'Philadelphia', addressRegion: 'PA', addressCountry: 'US' },
+  sameAs: ['https://linkedin.com/in/dennisberger'],
+};
+---
+
+<Base
+  title="About — Dennis Berger"
+  description="Fifteen years leading design operations and UX strategy across Taco Bell, Comcast, Effectv, and GSK. How I think about systems, scale, and shipping."
+>
+  <script slot="head" type="application/ld+json" is:inline set:html={JSON.stringify(personSchema)} />
+  <article class="about page">
+    <SectionLabel>About</SectionLabel>
+    <h1 class="about__title">Serious about outcomes.<br /><em>Not precious about process.</em></h1>
+    <p class="about__lede">Design Operations and UX strategy leader based in Philadelphia.</p>
+
+    <div class="about__body">
+      <figure class="about__portrait">
+        <img src="/dennis.jpeg" alt="Dennis Berger" width="600" height="788" loading="eager" />
+      </figure>
+      <p>I'm a Design Operations and UX strategy leader based in Philadelphia, focused on building the systems and environments that help design teams ship work they're proud of.</p>
+      <p>I started my career hands-on, writing my first line of HTML at 12 and spending years designing, building, and shipping digital products. That foundation shaped how I think about UX today: practical, user-centered, and grounded in the realities of delivery.</p>
+
+      <h2>What I believe</h2>
+      <ol class="about__beliefs">
+        <li>
+          <p><strong>DesignOps leadership asked to also set creative vision usually fails at both.</strong> They're different jobs, and the field keeps pretending they're one.</p>
+        </li>
+        <li>
+          <p><strong>A design system only exists to the degree that the people who don't work in design use it.</strong> Adoption is the deliverable. Everything else is Figma housekeeping.</p>
+        </li>
+        <li>
+          <p><strong>Intake exists so the design org can make decisions at scale.</strong> A leader who bypasses it is signaling that decisions don't have to scale. The team reads that signal instantly.</p>
+        </li>
+      </ol>
+
+      <h2>From practitioner to operator</h2>
+      <p>In 2010, I founded a UX consultancy called TopClick, where I spent seven years leading end-to-end client work across strategy, design, development, and operations. Running my own business taught me how to deliver high-quality work consistently, balance competing constraints, and build trust with both clients and collaborators. It also gave me a deep appreciation for the operational side of design long before I had a name for it.</p>
+      <p>I later brought that mindset into larger organizations, including Comcast and GSK, where I led UX initiatives in complex, highly regulated environments. Over time, my focus shifted from individual products to the systems behind them: operating models, research practices, tooling, and ways of working that let teams scale without burning out or losing clarity.</p>
+
+      <h2>What I do now</h2>
+      <p>Today, I lead Design Operations at Taco Bell, supporting a multidisciplinary UX team working across the mobile app, website, and in-store experiences. My work spans design systems, research operations, capacity planning, tooling and governance, and team enablement. The job is making design a reliable strategic partner to the business, and creating conditions where teams can focus on meaningful problems instead of fighting their tools.</p>
+
+      <blockquote>Good operations should feel supportive, not restrictive. Teams do their best when they're trusted, resourced, and given room to experiment.</blockquote>
+
+      <h2>How I work</h2>
+      <p>Most of my work is one of three things: shaping an operating model, rolling out a design system, or helping a team through organizational change. Across all three, I care about being clear, pragmatic, and honest about what a team can actually sustain. Structure and flexibility aren't opposites; they reinforce each other when you get the balance right.</p>
+
+      <h2>Side projects</h2>
+      <p>Outside the day job, I'm quietly building <a href="https://ignyte.me" target="_blank" rel="noopener noreferrer">Ignyte</a> (self-hosted creator tools) and <a href="https://synoptro.com" target="_blank" rel="noopener noreferrer">Synoptro</a> (DesignOps for people going it alone). Both are experiments. Both may fail. Both are why I ship on weekends.</p>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .about { padding-block: var(--space-section-hero) var(--space-section); max-width: 46rem; }
+  .about__title {
+    font-size: var(--type-4xl);
+    margin-block: var(--space-md) var(--space-lg);
+    max-width: 20ch;
+  }
+  .about__title em { color: var(--color-fuchsia-deep); }
+  .about__lede {
+    font-family: var(--font-body);
+    font-size: var(--type-lg);
+    color: var(--color-ink-muted);
+    margin-block-end: var(--space-2xl);
+  }
+  .about__body {
+    font-family: var(--font-body);
+    font-size: var(--type-lg);
+    line-height: var(--leading-relaxed);
+  }
+  .about__body p {
+    margin-block-end: var(--space-lg);
+    max-width: var(--measure);
+  }
+  .about__body h2 {
+    font-family: var(--font-display);
+    font-size: var(--type-2xl);
+    margin-block: var(--space-2xl) var(--space-md);
+  }
+  .about__portrait {
+    float: right;
+    width: 220px;
+    margin: 0 0 var(--space-lg) var(--space-xl);
+    shape-outside: margin-box;
+  }
+  .about__portrait img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+    background: var(--color-paper-sunken);
+  }
+  @media (max-width: 720px) {
+    .about__portrait {
+      float: none;
+      width: 160px;
+      margin: 0 0 var(--space-lg) 0;
+    }
+  }
+  .about__beliefs {
+    list-style: none;
+    counter-reset: belief;
+    padding: 0;
+    margin-block: var(--space-xl) var(--space-2xl);
+    max-width: var(--measure);
+    display: grid;
+    gap: var(--space-lg);
+  }
+  .about__beliefs li {
+    counter-increment: belief;
+    position: relative;
+    padding-inline-start: calc(var(--space-xl) + var(--space-sm));
+    padding-block: var(--space-sm) 0;
+    border-block-start: 1px solid var(--color-rule);
+  }
+  .about__beliefs li::before {
+    content: counter(belief, decimal-leading-zero);
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: var(--space-sm);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: var(--type-xl);
+    color: var(--color-fuchsia-deep);
+    line-height: 1;
+  }
+  .about__beliefs p {
+    margin: 0;
+    max-width: none;
+  }
+  .about__beliefs strong {
+    font-weight: 500;
+    color: var(--color-ink);
+  }
+
+  .about__body blockquote {
+    margin-block: var(--space-2xl);
+    padding: var(--space-lg);
+    border-top: 1px solid var(--color-fuchsia);
+    border-bottom: 1px solid var(--color-fuchsia);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--type-xl);
+    background: var(--color-fuchsia-soft);
+    max-width: var(--measure);
+  }
+</style>

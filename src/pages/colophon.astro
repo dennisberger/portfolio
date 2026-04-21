@@ -1,0 +1,113 @@
+---
+import Base from '@/layouts/Base.astro';
+import SectionLabel from '@/components/SectionLabel.astro';
+import Stamp from '@/components/Stamp.astro';
+---
+
+<Base
+  title="Colophon — Dennis Berger"
+  description="The tools, typefaces, and decisions behind dennisberger.me."
+>
+  <section class="colo page">
+    <SectionLabel>Colophon</SectionLabel>
+    <h1 class="colo__title"><em>How this was made.</em></h1>
+
+    <div class="colo__layout">
+      <div class="colo__stamp">
+        <Stamp size={240} />
+      </div>
+
+      <dl class="colo__spec">
+        <div>
+          <dt>Display</dt>
+          <dd>Zodiak, via <a href="https://www.fontshare.com/fonts/zodiak" target="_blank" rel="noopener noreferrer">Fontshare</a>.</dd>
+        </div>
+        <div>
+          <dt>Body</dt>
+          <dd>Switzer, via <a href="https://www.fontshare.com/fonts/switzer" target="_blank" rel="noopener noreferrer">Fontshare</a>.</dd>
+        </div>
+        <div>
+          <dt>Framework</dt>
+          <dd>Astro 6. No React. Zero client-side JS framework. The site loads like a document, which is correct.</dd>
+        </div>
+        <div>
+          <dt>Hosting</dt>
+          <dd>Cloudflare Pages.</dd>
+        </div>
+        <div>
+          <dt>Contact form</dt>
+          <dd>Formspree.</dd>
+        </div>
+        <div>
+          <dt>Color</dt>
+          <dd>OKLCH. Paper, ink, fuchsia, cobalt. Tested for WCAG AAA on body text.</dd>
+        </div>
+        <div>
+          <dt>Homelab</dt>
+          <dd>Early drafts previewed on a rack in a closet in Philadelphia.</dd>
+        </div>
+        <div>
+          <dt>Fonts</dt>
+          <dd>Loved but not owned.</dd>
+        </div>
+        <div>
+          <dt>Authored</dt>
+          <dd>HTML by Dennis. Copy by Dennis. Claude helped.</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .colo { padding-block: var(--space-section-hero) var(--space-section); }
+  .colo__title {
+    font-size: var(--type-4xl);
+    margin-block: var(--space-md) var(--space-2xl);
+  }
+  .colo__title em { color: var(--color-fuchsia-deep); }
+
+  .colo__layout {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-3xl);
+    align-items: start;
+  }
+
+  .colo__stamp { padding-block-start: var(--space-lg); }
+
+  .colo__spec {
+    display: grid;
+    gap: 0;
+    margin: 0;
+  }
+  .colo__spec > div {
+    display: grid;
+    grid-template-columns: 10rem 1fr;
+    gap: var(--space-lg);
+    padding-block: var(--space-md);
+    border-top: 1px solid var(--color-rule);
+  }
+  .colo__spec > div:last-child { border-bottom: 1px solid var(--color-rule); }
+  .colo__spec dt {
+    font-family: var(--font-body);
+    font-size: var(--type-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    color: var(--color-ink-muted);
+    padding-block-start: 0.2em;
+  }
+  .colo__spec dd {
+    font-family: var(--font-display);
+    font-size: var(--type-lg);
+    color: var(--color-ink);
+    margin: 0;
+    line-height: var(--leading-snug);
+  }
+  @media (max-width: 768px) {
+    .colo__layout { grid-template-columns: 1fr; gap: var(--space-xl); }
+    .colo__stamp { justify-self: start; }
+    .colo__spec > div { grid-template-columns: 1fr; gap: var(--space-2xs); }
+  }
+</style>

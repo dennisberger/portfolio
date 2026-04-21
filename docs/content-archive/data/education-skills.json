@@ -1,0 +1,28 @@
+{
+  "education": [
+    { "school": "Drexel University", "degree": "M.B.A.", "field": "Innovation Management" },
+    { "school": "Temple University", "degree": "B.B.A.", "field": "Business Administration" }
+  ],
+  "skills": [
+    "Agile & Scrum",
+    "People Leadership",
+    "AI & Emerging Tech",
+    "Product Design",
+    "UX Strategy",
+    "UX Metrics (SUS, NPS)",
+    "Stakeholder Alignment",
+    "Design Systems",
+    "Design Leadership",
+    "Digital Operations",
+    "Jira, Confluence, Asana",
+    "Figma"
+  ],
+  "focusAreas": [
+    "Design Systems & Governance",
+    "Research Operations",
+    "Intake & Capacity Planning",
+    "Tooling & Platform Strategy",
+    "Team Enablement & Culture",
+    "Cross-Functional Alignment"
+  ]
+}

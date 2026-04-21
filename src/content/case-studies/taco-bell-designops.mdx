@@ -1,0 +1,126 @@
+---
+slug: taco-bell-designops
+tag: Design Operations
+title: Scaling Design Ops at Taco Bell
+excerpt: "Built Taco Bell's first Design Operations function during the agency-to-FTE transition. Governance, enterprise tooling, and research built from zero. $4.5M budget today; formal studies scaled from 0 to 64 in two years."
+tags:
+  - DesignOps
+  - Research Ops
+  - Design Systems
+stats:
+  - value: "$4.5M"
+    label: Annual UX Budget
+  - value: "0 → 64"
+    label: Annual Research Studies
+  - value: "60+"
+    label: Design System Components
+order: 1
+flagship: true
+lede: "Hired second into the agency-to-FTE transition. I built this."
+---
+
+import MarginNote from '@/components/MarginNote.astro';
+import Footnote from '@/components/Footnote.astro';
+import LineChart from '@/components/LineChart.astro';
+import StackedBars from '@/components/StackedBars.astro';
+
+On my first week at Taco Bell, the design team's intake system was a Slack channel. No backlog, no priorities, no one with a clear view of capacity. Two internal designers, one director, me, and an agency model that had spent years running as an order-taker. Work was happening; governance wasn't. That was the starting line.
+
+My role was to build the systems that would let design function as a credible enterprise partner rather than a reactive service layer. That work spanned intake and planning, tooling and documentation, research operations, design system enablement, and team capability building.
+
+## The challenge
+
+Taco Bell's internal design organization was still small when I joined: one director, two internal designers, and me, supported by an external agency model that had historically operated as an order-taker. The result was a function that could produce work, but struggled to govern it.
+
+<MarginNote>Ok, bigger than advertised. This is gonna be fun.</MarginNote>
+
+There was no consistent intake path, no clear view of capacity, no shared planning model, and no research discipline to help the team move beyond opinion-based design debates. For Taco Bell to truly bring design in-house, it needed more than designers. It needed operational infrastructure.
+
+## What I changed
+
+### Replacing ad hoc requests with governed intake
+
+I moved the team away from Slack-based requests and into Jira, creating a structured intake and planning model with estimation, sprint tracking, and clear delivery visibility. That gave design a single source of truth for requested, active, and completed work, while making it easier to align stakeholders around timelines, capacity, and tradeoffs.
+
+<MarginNote>GOAL: by summer, everyone will remember that Slack is for chat and Jira is for intake.</MarginNote>
+
+### Building enterprise-grade infrastructure
+
+I helped modernize the team's operating environment by centralizing work in Jira, moving documentation into Confluence, and leading Taco Bell's migration from Figma Pro to Figma Enterprise. That work enabled capabilities the team needed to scale, including stronger governance, branching and merging, improved developer handoff through Dev Mode, and the retirement of an outdated Zeplin setup.
+
+Taco Bell became the first brand within Yum to make that move, and I later helped support the broader enterprise transition to a converged Figma environment across brands.
+
+<Footnote n={1}>The operating budget for this infrastructure sits at $4.5M annually. Scoped to tooling, external research, contractors, and accessibility validation; renewed annually against the design org's roadmap.</Footnote>
+
+I own the operating budget for this infrastructure: $4.5M annually across tooling, external research, contractors, and accessibility validation.
+
+### Making research a core product capability
+
+The biggest gap I identified was research. Without it, design decisions were driven by opinion, instinct, and generic best practices rather than direct user evidence.
+
+<MarginNote>How do they know we know what we're talking about here? We need evidence.</MarginNote>
+
+I led the effort to establish research through an external partner, negotiated the statement of work, and built the operational model around intake, triage, capacity, and adoption. Since then, I have remained the internal lead for the relationship and the operational point of continuity for the practice.
+
+That shift changed how product decisions were made. Taco Bell went from doing no formal studies to 22 studies in 2024 and 64 in 2025, with research now serving as a core input into major workstreams, including the current full app redesign through industry analysis, unmoderated concept testing, and moderated validation of near-final designs.
+
+<LineChart
+  points={[
+    { label: '2023', value: 0 },
+    { label: '2024', value: 22 },
+    { label: '2025', value: 64 },
+    { label: '2026*', value: 80 },
+  ]}
+  projected={true}
+  caption="Formal research studies per year. 2026 reflects current-year pace as of Q1."
+  ariaLabel="Research studies grew from 0 in 2023 to 22 in 2024 to 64 in 2025, projected around 80 in 2026."
+/>
+
+### Enabling a scalable design system and content workflow
+
+<MarginNote>Ok, so we need a design system. But also: Figma Enterprise, ZeroHeight, governance, estimation. Surely that's one roadmap.</MarginNote>
+
+I did not build Taco Bell's component library directly. My role was to create the conditions that would allow the design system to function: dedicated workflow infrastructure, triage and governance rituals, documentation support, tooling upgrades, and better visibility into progress and constraints. The system has since grown to more than 60 components.
+
+<MarginNote>First listening session. Top finding: everyone hears the brand differently, and everyone wants to stop writing copy.</MarginNote>
+
+I also identified content strategy as another missing capability. Designers were writing product copy themselves, which diluted focus and created quality issues. I advocated for a dedicated Content Strategy Lead. The role now serves as a translation layer across brand, legal, and product language, and has made the design team more efficient. Alongside this work, I also co-manage Taco Bell's relationship with Applause, an external accessibility validation partner, with the Director of Engineering.
+
+## Results and impact
+
+<StackedBars
+  years={[
+    { year: '2023', segments: [
+      { label: 'Internal FTE', value: 3 },
+      { label: 'Agency', value: 6 },
+    ]},
+    { year: '2024', segments: [
+      { label: 'Internal FTE', value: 6 },
+      { label: 'Contractor', value: 1 },
+      { label: 'Agency', value: 3 },
+    ]},
+    { year: '2025', segments: [
+      { label: 'Internal FTE', value: 8 },
+      { label: 'Contractor', value: 4 },
+    ]},
+    { year: '2026', segments: [
+      { label: 'Internal FTE', value: 10 },
+      { label: 'Contractor', value: 5 },
+    ]},
+  ]}
+  legendOrder={['Internal FTE', 'Contractor', 'Agency']}
+  caption="Design staffing composition, 2023–2026. Agency resourcing retired on plan. Internal FTE tripled. Contractor flex layer grew alongside."
+  ariaLabel="Stacked bars by year showing design team composition. Agency shrinks from 6 to 0; internal FTE grows from 3 to 10; contractors grow from 0 to 5."
+/>
+
+- Built the operating infrastructure behind Taco Bell's in-house design function as its first and only Design Operations Lead
+- Established Jira as the system of record for intake, planning, delivery tracking, and capacity conversations
+- Established two enterprise-wide firsts: Taco Bell's move to Figma Enterprise and an early pilot of AI-assisted design system governance using ChatGPT and Figma MCP
+- Built research from zero into an embedded capability that now supports product, marketing, and in-restaurant work
+- Brought the design system to operational maturity through tooling, governance, documentation, and team rituals
+
+## Reflection
+
+This work reinforced my belief that design maturity is not created by talent alone. It depends on the systems around the team: how work enters, how decisions are made, how evidence is gathered, and how infrastructure supports scale.
+
+At Taco Bell, my contribution was to build those conditions. The result was a design organization with more visibility, more rigor, and a stronger foundation to influence the business with confidence.

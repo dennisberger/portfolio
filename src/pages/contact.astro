@@ -1,0 +1,150 @@
+---
+import Base from '@/layouts/Base.astro';
+import SectionLabel from '@/components/SectionLabel.astro';
+---
+
+<Base
+  title="Contact — Dennis Berger"
+  description="Send a note. Opportunities, questions, or DesignOps conversations welcome."
+  noindex
+>
+  <section class="contact page">
+    <SectionLabel>Contact</SectionLabel>
+    <h1 class="contact__title">Send a note.</h1>
+    <p class="contact__lede">Fastest way to reach me. I write back.</p>
+
+    <form id="contact-form" class="form" action="https://formspree.io/f/xyzepddp" method="POST">
+      <label class="field">
+        <span class="field__label">Your name</span>
+        <input type="text" name="name" required autocomplete="name" />
+      </label>
+
+      <label class="field">
+        <span class="field__label">Email</span>
+        <input type="email" name="email" required autocomplete="email" />
+      </label>
+
+      <label class="field">
+        <span class="field__label">Message</span>
+        <textarea name="message" rows="6" required></textarea>
+      </label>
+
+      <div class="form__actions">
+        <button type="submit" class="btn btn--primary">Send it</button>
+        <p class="form__helper">
+          Or find me on <a href="https://linkedin.com/in/dennisberger" target="_blank" rel="noopener noreferrer">LinkedIn</a>.
+        </p>
+      </div>
+
+      <p class="form__status" role="status" aria-live="polite" hidden id="form-status"></p>
+    </form>
+  </section>
+</Base>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const status = document.getElementById('form-status') as HTMLParagraphElement | null;
+  if (form && status) {
+    const setStatus = (variant: 'sending' | 'success' | 'error', text: string) => {
+      status.hidden = false;
+      status.textContent = text;
+      status.className = `form__status form__status--${variant}`;
+      // Errors interrupt (role=alert); sending/success announce politely.
+      status.setAttribute('role', variant === 'error' ? 'alert' : 'status');
+      status.setAttribute('aria-live', variant === 'error' ? 'assertive' : 'polite');
+    };
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      setStatus('sending', 'Sending…');
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(Object.fromEntries(new FormData(form))),
+        });
+        if (res.ok) {
+          form.reset();
+          setStatus('success', "Got it. I'll write back soon.");
+        } else {
+          throw new Error('non-2xx');
+        }
+      } catch {
+        setStatus('error', 'Something broke. Try LinkedIn, or refresh and retry.');
+      }
+    });
+  }
+</script>
+
+<style>
+  .contact { padding-block: var(--space-section-hero) var(--space-section); max-width: 36rem; }
+  .contact__title {
+    font-size: var(--type-4xl);
+    margin-block: var(--space-md) var(--space-md);
+  }
+  .contact__lede {
+    font-family: var(--font-body);
+    font-size: var(--type-lg);
+    color: var(--color-ink-muted);
+    margin-block-end: var(--space-2xl);
+  }
+
+  .form { display: flex; flex-direction: column; gap: var(--space-lg); }
+  .field { display: flex; flex-direction: column; gap: var(--space-xs); }
+  .field__label {
+    font-family: var(--font-body);
+    font-size: var(--type-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-ink-muted);
+  }
+  .field input,
+  .field textarea {
+    font-family: var(--font-body);
+    font-size: var(--type-base);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--color-paper-raised);
+    color: var(--color-ink);
+    border: 1px solid var(--color-ink-dim);
+    border-radius: var(--radius-xs);
+    resize: vertical;
+  }
+  .field input:focus,
+  .field textarea:focus {
+    outline: 2px solid var(--color-fuchsia);
+    outline-offset: 2px;
+    border-color: var(--color-fuchsia);
+  }
+
+  .form__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    margin-block-start: var(--space-sm);
+  }
+  .form__helper {
+    font-family: var(--font-body);
+    font-size: var(--type-sm);
+    color: var(--color-ink-muted);
+    font-style: italic;
+  }
+
+  .form__status {
+    font-family: var(--font-body);
+    font-size: var(--type-sm);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-xs);
+  }
+  .form__status--sending { color: var(--color-ink-muted); }
+  .form__status--success {
+    color: var(--color-cobalt-deep);
+    background: var(--color-cobalt-soft);
+  }
+  .form__status--error {
+    color: var(--color-fuchsia-deep);
+    background: var(--color-fuchsia-soft);
+  }
+
+</style>

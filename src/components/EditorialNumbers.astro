@@ -1,0 +1,100 @@
+---
+/**
+ * EditorialNumbers — magazine-style "by the numbers" spread.
+ * Large Zodiak numerals paired with running prose.
+ * Used as the visual spine of the Taco Bell case study (no screenshots available).
+ */
+interface Entry {
+  value: string;
+  lead: string;
+  body?: string;
+}
+interface Props {
+  entries: Entry[];
+  heading?: string;
+}
+const { entries, heading } = Astro.props;
+---
+
+<section class="editorial-numbers">
+  {heading && <h3 class="editorial-numbers__heading">{heading}</h3>}
+  <div class="editorial-numbers__grid">
+    {entries.map((e, i) => (
+      <article class="editorial-numbers__entry">
+        <div class="editorial-numbers__value" aria-hidden="true">{e.value}</div>
+        <div class="editorial-numbers__text">
+          <p class="editorial-numbers__lead"><span class="sr-only">{e.value}. </span>{e.lead}</p>
+          {e.body && <p class="editorial-numbers__body">{e.body}</p>}
+        </div>
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .editorial-numbers {
+    margin-block: var(--space-3xl);
+  }
+  .editorial-numbers__heading {
+    font-family: var(--font-display);
+    font-size: var(--type-2xl);
+    margin-block-end: var(--space-xl);
+  }
+  .editorial-numbers__grid {
+    display: grid;
+    gap: var(--space-3xl) var(--space-xl);
+  }
+  .editorial-numbers__entry {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    gap: var(--space-xl);
+    align-items: start;
+    padding-block-end: var(--space-2xl);
+    border-block-end: 1px solid var(--color-rule);
+  }
+  .editorial-numbers__entry:last-child {
+    border-block-end: none;
+    padding-block-end: 0;
+  }
+  .editorial-numbers__value {
+    font-family: var(--font-display);
+    font-size: var(--type-4xl);
+    line-height: 1;
+    color: var(--color-fuchsia-deep);
+    letter-spacing: var(--tracking-tight);
+    font-style: italic;
+    font-weight: 300;
+    /* Optical nudge — drop cap-height of the numeral onto the cap of the first line
+       of the adjacent lead, which otherwise sits ~0.1em below its box top. */
+    margin-block-start: -0.08em;
+  }
+  .editorial-numbers__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+  .editorial-numbers__lead {
+    font-family: var(--font-display);
+    font-size: var(--type-xl);
+    line-height: var(--leading-snug);
+    color: var(--color-ink);
+    font-weight: 400;
+    max-width: var(--measure);
+  }
+  .editorial-numbers__body {
+    font-family: var(--font-body);
+    font-size: var(--type-base);
+    line-height: var(--leading-relaxed);
+    color: var(--color-ink-muted);
+    max-width: var(--measure);
+  }
+  @media (max-width: 720px) {
+    .editorial-numbers__entry {
+      grid-template-columns: 1fr;
+      gap: var(--space-md);
+    }
+    .editorial-numbers__value {
+      font-size: var(--type-4xl);
+    }
+  }
+</style>

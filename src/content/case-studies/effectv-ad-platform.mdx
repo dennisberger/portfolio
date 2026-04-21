@@ -1,0 +1,105 @@
+---
+slug: effectv-ad-platform
+tag: UX Engineering
+title: Designing a Self-Service TV Ad Buying Platform
+excerpt: "Led design for the first self-service linear TV ad buying platform in the U.S., built for small and 'super-small' businesses. Treated industry jargon as a UX problem and shipped iteratively. SUS moved from 41 to 72, 40%+ fewer clicks, task times cut roughly in half."
+tags:
+  - UX Design
+  - Front-End Engineering
+  - UX Writing
+stats:
+  - value: "SUS 41 → 72"
+    label: Usability Gain
+  - value: "40%+"
+    label: Fewer Clicks per Task
+  - value: "~50%"
+    label: Faster Task Completion
+order: 4
+flagship: false
+susChart:
+  points:
+    - { label: "Initial", score: 41 }
+    - { label: "Iteration 1", score: 51 }
+    - { label: "Iteration 2", score: 57 }
+    - { label: "Iteration 3", score: 61 }
+    - { label: "Final", score: 72 }
+---
+
+import LineChart from '@/components/LineChart.astro';
+import MarginNote from '@/components/MarginNote.astro';
+
+In the first round of usability testing, a participant paused on the word "spots," then asked, "Do you mean commercials?" The participant wasn't wrong. Comcast Advertising had spent decades selling linear TV ads through account executives who spoke media-buying fluently. Now it was trying to let small and "super-small" businesses buy the same inventory themselves. I was lead designer on the U.S.'s first self-service linear TV platform, and the first round of testing made clear the interface wasn't the hardest problem. The language was.
+
+## The challenge
+
+Comcast Advertising had long relied on account executives to manage TV campaigns for larger clients. That high-touch model worked for enterprise accounts, but it did not scale to smaller businesses with limited budgets, little time, and no familiarity with industry language.
+
+For self-service to work, the product had to do two things at once:
+
+- simplify campaign planning and purchase into a guided digital workflow
+- make the language of media buying understandable to people who knew their businesses, not the ad industry
+
+Early concepts made the core problem clear. The experience was too click-heavy, too jargon-filled, and too intimidating for the audience it was intended to serve.
+
+## My role
+
+I was the lead designer on the product and worked in a hybrid design and implementation role. I designed the experience end to end, built prototypes, ran usability testing, and translated validated decisions into production UI. I also served as the de facto internal point of contact for a Cognizant engineering team supporting the 0-to-1 effort, giving me an early opportunity to lead across design and delivery at a larger corporate scale.
+
+## What I changed
+
+### Designing for self-service, not expert workflows
+
+The platform was built as a progressive web app to support business owners managing campaigns on the go. I helped shape core flows including onboarding, campaign setup, ad planning, performance dashboards, and browser-based commercial creation. The goal was not simply to digitize existing internal processes, but to rebuild them around the needs and confidence level of a first-time advertiser.
+
+<figure class="case-figure">
+  <img src="/effectv-mobile.png" alt="Effectv ad planner on mobile — guided campaign setup for a small business." width="1500" height="967" loading="lazy" />
+  <figcaption>Ad planner on mobile. Campaign setup flow designed for first-time advertisers managing on the go.</figcaption>
+</figure>
+
+### Treating language as a core UX problem
+
+<MarginNote>Of course they don't know what 'spots' are. Why should they? On the plus side, this might be the easiest lift ever.</MarginNote>
+
+Usability testing showed that layout and navigation were not the only barriers, and often not even the biggest ones. Language was a major source of friction. Terms like "spots," "inventory," and "linear opportunities" made users hesitate because the product was speaking in the language of the media business rather than the language of a small business owner.
+
+I rewrote the experience in plainer, more confidence-building language, added contextual explanations for unfamiliar concepts, and shifted the overall tone from transactional to supportive. That change helped turn TV advertising from something intimidating into something users could actually understand.
+
+<figure class="case-figure case-figure--pair">
+  <img src="/effectv-desktop-1.png" alt="Effectv ad management interface — desktop view with guided campaign controls." width="1600" height="919" loading="lazy" />
+  <img src="/effectv-desktop-2.png" alt="Effectv ad management interface — desktop view showing campaign performance." width="1600" height="919" loading="lazy" />
+  <figcaption>Desktop ad management. Industry terms like "spots" and "linear opportunities" replaced with plain, confidence-building language.</figcaption>
+</figure>
+
+### Using testing to prove the simplification worked
+
+<MarginNote>Avoid the obvious joke about the user clicking less and the content clicking more.</MarginNote>
+
+We held ourselves to a clear UX goal: reduce unnecessary clicks and make core tasks meaningfully faster. Through iterative usability testing, I measured both click reduction and time to completion on near-final prototypes. The results showed the workflow was measurably faster to complete and required fewer clicks to get there.
+
+## Results and impact
+
+<LineChart
+  points={[
+    { label: 'Initial', value: 41 },
+    { label: 'Iter 1', value: 51 },
+    { label: 'Iter 2', value: 57 },
+    { label: 'Iter 3', value: 61 },
+    { label: 'Final', value: 72 },
+  ]}
+  caption="System Usability Scale across iterative rounds of usability testing on near-final prototypes."
+  ariaLabel="SUS scores across five testing rounds: 41, 51, 57, 61, 72."
+/>
+
+- Improved SUS from 41 to 72 across iterative rounds of usability testing
+- Reduced clicks per task by more than 40%
+- Cut task completion time by roughly 50% in usability testing
+- Shifted user feedback from confusion and hesitation to clarity and confidence
+- Helped make a historically high-touch, expert-driven process accessible to small businesses in a self-service format
+
+## Reflection
+
+This project reinforced one of the most important lessons of my design career: clarity is a product feature.
+
+Self-service experiences do not fail only because the interface is clumsy. They fail when the structure, language, and mental model all assume more expertise than the user actually has. In this case, the breakthrough was not just making the workflow cleaner. It was translating a complicated industry into language and interactions that real business owners could trust.
+
+As a former small business owner myself, that made the work especially meaningful. The most rewarding moment came when early participants returned later in the pilot and finally got it, when TV advertising stopped feeling intimidating and started feeling possible.

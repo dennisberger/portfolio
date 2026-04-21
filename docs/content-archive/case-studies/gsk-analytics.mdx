@@ -1,0 +1,62 @@
+---
+slug: gsk-analytics
+tag: Product Design
+title: Improving Decision-Making in Medical Analytics
+excerpt: Redesigned GSK's global analytics platform to dramatically improve usability, adoption, and decision-making for medical and compliance teams working with complex clinical data.
+tags:
+  - Healthcare UX
+  - Data Viz
+  - Platform Redesign
+stats:
+  - value: "3x"
+    label: Faster Insights
+  - value: "85%"
+    label: Adoption Rate
+  - value: "SUS 34→81"
+    label: Usability Gain
+order: 3
+flagship: false
+susChart:
+  points:
+    - { label: "Initial", score: 34 }
+    - { label: "Power BI iteration", score: 51 }
+    - { label: "Plotly rebuild", score: 81 }
+---
+
+## Intro
+
+At GSK, I led the redesign of the AIM (Analytics and Insights for Medical) dashboard, a critical analytics platform used by Medical Insights Analysts to surface trends from large-scale field data. The goal was to transform a failing tool into a reliable, high-performance system that could support real analysis and decision-making.
+
+The work ultimately delivered dramatic gains in usability, performance, and adoption, but it also revealed how deeply organizational context affects the success of even the best-designed products.
+
+## Context
+
+For more than a decade, GSK had collected extensive field data from physicians, nurses, and patients covering side effects, prescribing patterns, and competitive insights. Despite the richness of this data, there was no effective way to analyze or synthesize it. The AIM dashboard was created to address this gap. However, the initial implementation built on Power BI struggled almost immediately: the platform could not handle the scale or complexity of the data, load times routinely exceeded 30 minutes, and visualizations lacked the flexibility required for medical analysis. After six months in production, the dashboard was largely unused.
+
+## Diagnosing the Problem
+
+Initial usability testing produced a SUS score of 34, confirming that the dashboard was failing its users. Iterative improvements within Power BI raised the score only to 51, at which point progress stalled. The data made the conclusion unavoidable: the platform itself was the constraint. Power BI could not support the performance demands of GSK's datasets, the types of medical visualizations analysts needed, or the flexibility required for exploratory analysis.
+
+## Rebuilding the Platform
+
+Working with the Product Owner, I spent 8 to 9 months advocating for a full rebuild using a custom technology stack centered on Plotly. This approach offered dramatically improved performance, design flexibility, and control over complex visualizations. At the same time, analyst morale was deteriorating. To rebuild trust and maintain engagement during the transition, we introduced a weekly "You Said, We Listened" email series highlighting incremental improvements driven by user feedback, along with live demos during every focus group to show progress and reinforce accountability.
+
+## Solution
+
+The redesigned AIM dashboard delivered near-instant load times (reduced from 30+ minutes to seconds), navigation and workflows grounded in real analyst behavior, flexible medically relevant visualizations tailored to insight discovery, and a visual language aligned with the GSK design system. For many analysts, this was the first time the platform enabled meaningful exploration of years of previously underutilized data.
+
+*Images*: /aim-plotly.png, /aim-trend.png — Redesigned AIM dashboard with Plotly-based visualizations
+
+## Results & Impact
+
+- SUS score improved from 34 to 81, well above industry benchmarks
+- Analyst engagement increased by triple digits
+- New insights generated from long-dormant datasets
+- Analyst trust rebuilt through consistent, transparent feedback loops
+- Awarded the GSK Gold Award (May 2021), the company's highest internal recognition
+
+> Thank you for your relentless advocacy for a better analyst experience. Your leadership aligns with GSK's mission and empowers our company to keep driving its products forward.
+
+## Reflection
+
+This project reinforced a lesson that has shaped the rest of my career: product outcomes are inseparable from organizational context. Despite strong results and formal recognition, the effort required to achieve success was unsustainable. Design was expected to deliver impact without the structural support, processes, or shared understanding needed to do so effectively. That experience became a catalyst for my transition into Design Operations.

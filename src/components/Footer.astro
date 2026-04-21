@@ -1,0 +1,78 @@
+---
+import Stamp from './Stamp.astro';
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="footer__inner page">
+    <div class="footer__stamp">
+      <Stamp size={120} variant="quiet" />
+    </div>
+    <div class="footer__meta">
+      <p class="footer__line">
+        &copy; {year} Dennis Berger · <span class="footer__place">Philadelphia</span>
+      </p>
+      <nav class="footer__nav" aria-label="Footer">
+        <a href="/colophon/">Colophon</a>
+        <span aria-hidden="true">·</span>
+        <a href="https://linkedin.com/in/dennisberger" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <span aria-hidden="true">·</span>
+        <a href="/contact/">Contact</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    margin-top: var(--space-section);
+    padding-block: var(--space-section);
+    border-top: 1px solid var(--color-rule);
+    background: var(--color-paper-sunken);
+  }
+  .footer__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-xl);
+    flex-wrap: wrap;
+  }
+  .footer__meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    align-items: flex-end;
+    text-align: right;
+  }
+  .footer__line {
+    font-family: var(--font-body);
+    font-size: var(--type-sm);
+    color: var(--color-ink-muted);
+  }
+  .footer__place {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--color-ink);
+  }
+  .footer__nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: var(--type-xs);
+    color: var(--color-ink-dim);
+  }
+  .footer__nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-block: var(--space-xs);
+    color: var(--color-ink-muted);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+  .footer__nav a:hover { color: var(--color-fuchsia-deep); border-bottom-color: currentColor; }
+
+  @media (max-width: 640px) {
+    .footer__meta { align-items: flex-start; text-align: left; }
+  }
+</style>

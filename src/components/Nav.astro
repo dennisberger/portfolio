@@ -1,0 +1,88 @@
+---
+const items = [
+  { label: 'About', href: '/about/' },
+  { label: 'Contact', href: '/contact/' },
+];
+const current = Astro.url.pathname;
+---
+
+<nav class="nav" aria-label="Primary">
+  <div class="nav__inner page">
+    <a href="/" class="nav__brand" aria-label="Dennis Berger — home">
+      <img src="/signature.svg" alt="" width="153" height="36" />
+    </a>
+    <ul class="nav__list">
+      {items.map(i => (
+        <li>
+          <a
+            href={i.href}
+            class="nav__link"
+            aria-current={current.startsWith(i.href) ? 'page' : undefined}
+          >{i.label}</a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</nav>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--color-paper);
+    border-block-end: 1px solid var(--color-rule);
+  }
+  .nav__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 4.5rem;
+  }
+  .nav__brand {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+  .nav__brand img {
+    height: 2rem;
+    width: auto;
+    display: block;
+    transition: opacity var(--duration-fast) var(--ease-out);
+  }
+  .nav__brand:hover img { opacity: 0.7; }
+  .nav__brand:hover { color: var(--color-fuchsia-deep); }
+
+  .nav__list {
+    list-style: none;
+    margin: 0; padding: 0;
+    display: flex;
+    gap: var(--space-xl);
+  }
+  .nav__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-family: var(--font-body);
+    font-size: var(--type-sm);
+    font-weight: 500;
+    color: var(--color-ink-muted);
+    text-decoration: none;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    padding-block: var(--space-sm);
+    border-block-end: 1px solid transparent;
+    transition: color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out);
+  }
+  .nav__link:hover,
+  .nav__link[aria-current='page'] {
+    color: var(--color-ink);
+    border-block-end-color: var(--color-fuchsia);
+  }
+  @media (max-width: 540px) {
+    .nav__list { gap: var(--space-md); }
+    .nav__link { font-size: var(--type-xs); }
+  }
+</style>

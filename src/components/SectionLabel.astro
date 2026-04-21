@@ -1,0 +1,38 @@
+---
+/**
+ * SectionLabel — kicker text that sits above a headline.
+ * Small caps, wide tracking, fuchsia rule.
+ */
+interface Props {
+  as?: string;
+  reveal?: boolean;
+}
+const { as: Tag = 'p', reveal = true } = Astro.props;
+---
+
+<Tag class="section-label" {...(reveal ? { 'data-reveal': '' } : {})}>
+  <span class="section-label__rule" aria-hidden="true"></span>
+  <slot />
+</Tag>
+
+<style>
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-family: var(--font-body);
+    font-size: var(--type-xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--color-cobalt-deep);
+    margin-block-end: var(--space-md);
+  }
+
+  .section-label__rule {
+    display: inline-block;
+    width: var(--space-xl);
+    height: 1px;
+    background: var(--color-fuchsia);
+  }
+</style>
