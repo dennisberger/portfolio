@@ -1,6 +1,7 @@
 ---
 import Base from '@/layouts/Base.astro';
 import SectionLabel from '@/components/SectionLabel.astro';
+import MarginNote from '@/components/MarginNote.astro';
 
 const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
 ---
@@ -13,6 +14,7 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
     <SectionLabel>Contact</SectionLabel>
     <h1 class="contact__title">Send a note.</h1>
     <p class="contact__lede">Fastest way to reach me. I write back.</p>
+    <MarginNote>DesignOps questions, side-project trades, Philly food recs (actually, any food recs) are all welcome.</MarginNote>
 
     <div class="contact__card">
       <p class="form__required-note">All fields required.</p>
@@ -218,7 +220,11 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
 <style>
   .contact {
     padding-block: var(--space-section-hero) var(--space-section);
-    max-width: 38rem;
+    max-width: var(--col-total);
+  }
+  /* Reserve a right gutter at desktop so MarginNote floats into it. */
+  @media (min-width: 1080px) {
+    .contact { padding-right: calc(var(--col-gutter) + var(--col-gap)); }
   }
 
   .contact__title {
@@ -230,8 +236,9 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
     font-family: var(--font-body);
     font-size: var(--type-lg);
     color: var(--color-ink-muted);
-    margin-block-end: var(--space-2xl);
+    margin-block-end: var(--space-xl);
   }
+
 
   /* Contact card: editorial rule-delimited band, matching the site's paper +
      hairline chassis. No gradient, no shadow, no rounded border. */

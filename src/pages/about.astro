@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import Base from '@/layouts/Base.astro';
 import SectionLabel from '@/components/SectionLabel.astro';
+import MarginNote from '@/components/MarginNote.astro';
 import portrait from '@/assets/dennis.jpeg';
 
 const personSchema = {
@@ -41,6 +42,7 @@ const personSchema = {
       </figure>
       <p>I'm a Design Operations and UX strategy leader based in Philadelphia, focused on building the systems and environments that help design teams ship work they're proud of.</p>
       <p>I started my career hands-on, writing my first line of HTML at 12 and spending years designing, building, and shipping digital products. That foundation shaped how I think about UX today: practical, user-centered, and grounded in the realities of delivery.</p>
+      <MarginNote>The cool kids went to Geocities. I went to FrontPage and peeked at the code.</MarginNote>
 
       <h2>Career</h2>
       <ol class="about__career">
@@ -87,6 +89,7 @@ const personSchema = {
       <h2>Always building</h2>
       <p>I started as a founder. In 2010, I opened TopClick, a one-person UX consultancy that grew into seven years of end-to-end client work across strategy, design, development, and operations. I learned to ship consistently, balance competing constraints, and build trust on both sides of a contract. I also learned that the operational side of design was the part I kept getting pulled back to, long before anyone was calling it that.</p>
       <p>Eventually I took that wiring into larger organizations: Comcast Advertising, GSK, back to Comcast proper, now Taco Bell. The scope changed (regulated enterprise, multi-brand portfolios, audiences in the tens of millions) but the work was the same work. Operating models, research practices, tooling, ways of working that let teams scale without burning out or losing clarity.</p>
+      <MarginNote>The scope scales. The playbook mostly doesn't.</MarginNote>
       <p>The agency was the first thing I built, but certainly not the last. <a href="https://ignyte.me" target="_blank" rel="noopener noreferrer">Ignyte</a> (self-hosted creator tools) and <a href="https://synoptro.com" target="_blank" rel="noopener noreferrer">Synoptro</a> (DesignOps for people going it alone) are weekend experiments, with all that entails. They keep my text editor open, my skills fresh, and twelve-year-old me happy. Turns out he was right about the computer.</p>
 
       <h2>What I do now</h2>
@@ -101,7 +104,16 @@ const personSchema = {
 </Base>
 
 <style>
-  .about { padding-block: var(--space-section-hero) var(--space-section); max-width: 46rem; }
+  .about { padding-block: var(--space-section-hero) var(--space-section); max-width: var(--col-total); }
+  /* Reserve a right gutter at desktop so MarginNote floats into it rather than
+     sitting in the reading flow. Body content stays constrained to --col-main. */
+  @media (min-width: 1080px) {
+    .about__body { padding-right: calc(var(--col-gutter) + var(--col-gap)); }
+    .about__body > p,
+    .about__body > h2,
+    .about__body > ol,
+    .about__body > blockquote { max-width: var(--col-main); }
+  }
   .about__title {
     font-size: var(--type-4xl);
     margin-block: var(--space-md) var(--space-lg);
