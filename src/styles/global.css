@@ -174,7 +174,8 @@ a:hover {
     transform 520ms var(--ease-out-quart);
   will-change: opacity, transform;
 }
-.js-motion [data-reveal].is-visible {
+.js-motion [data-reveal].is-visible,
+.js-motion [data-reveal]:focus-within {
   opacity: 1;
   transform: none;
 }

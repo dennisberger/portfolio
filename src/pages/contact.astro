@@ -346,15 +346,9 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
 
   .field__error[hidden] { display: none; }
 
-  /* Turnstile in interaction-only mode: no wrapper chrome. The widget stays
-     invisible for the ~95% of humans who pass silently, and when it does
-     render (suspected bot, Tor, unusual signals), Cloudflare's own UI
-     provides affordance. No box-around-a-box.
-     Collapse the wrapper entirely when no iframe exists — otherwise the
-     form flex-gap leaves a phantom blank line for a widget nobody sees. */
-  .form__turnstile:not(:has(iframe)) {
-    display: none;
-  }
+  /* Turnstile in interaction-only mode: no wrapper chrome. The widget needs
+     a laid-out container to render its iframe into, even when it stays
+     visually silent — so no display:none tricks here.  */
   .form__turnstile .cf-turnstile iframe {
     max-width: 100%;
   }
