@@ -1,6 +1,8 @@
 ---
 import Base from '@/layouts/Base.astro';
 import SectionLabel from '@/components/SectionLabel.astro';
+
+const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
 ---
 
 <Base
@@ -13,37 +15,61 @@ import SectionLabel from '@/components/SectionLabel.astro';
     <h1 class="contact__title">Send a note.</h1>
     <p class="contact__lede">Fastest way to reach me. I write back.</p>
 
-    <form id="contact-form" class="form" action="https://formspree.io/f/xyzepddp" method="POST">
-      <label class="field">
-        <span class="field__label">Your name</span>
-        <input type="text" name="name" required autocomplete="name" />
-      </label>
+    <div class="contact__card">
+      <form id="contact-form" class="form" action="/api/contact" method="POST">
+        <label class="field">
+          <span class="field__label">Your name</span>
+          <input type="text" name="name" required maxlength="200" autocomplete="name" />
+        </label>
 
-      <label class="field">
-        <span class="field__label">Email</span>
-        <input type="email" name="email" required autocomplete="email" />
-      </label>
+        <label class="field">
+          <span class="field__label">Email</span>
+          <input type="email" name="email" required maxlength="254" autocomplete="email" />
+        </label>
 
-      <label class="field">
-        <span class="field__label">Message</span>
-        <textarea name="message" rows="6" required></textarea>
-      </label>
+        <label class="field">
+          <span class="field__label">Message</span>
+          <textarea name="message" rows="6" required minlength="10" maxlength="5000"></textarea>
+        </label>
 
-      <div class="form__actions">
-        <button type="submit" class="btn btn--primary">Send it</button>
-        <p class="form__helper">
-          Or find me on <a href="https://linkedin.com/in/dennisberger" target="_blank" rel="noopener noreferrer">LinkedIn</a>.
-        </p>
-      </div>
+        <div class="field field--honeypot" aria-hidden="true">
+          <span class="field__label">Website</span>
+          <input type="text" name="website" tabindex="-1" autocomplete="off" />
+        </div>
 
-      <p class="form__status" role="status" aria-live="polite" hidden id="form-status"></p>
-    </form>
+        {TURNSTILE_SITE_KEY && (
+          <div class="form__turnstile">
+            <div class="cf-turnstile" data-sitekey={TURNSTILE_SITE_KEY} data-size="flexible"></div>
+          </div>
+        )}
+
+        <div class="form__actions">
+          <button type="submit" class="btn btn--primary" id="form-submit">Send it</button>
+          <p class="form__helper">
+            Or find me on <a href="https://linkedin.com/in/dennisberger" target="_blank" rel="noopener noreferrer">LinkedIn</a>.
+          </p>
+        </div>
+
+        <p class="form__status" role="status" aria-live="polite" hidden id="form-status"></p>
+      </form>
+    </div>
   </section>
 </Base>
+
+{TURNSTILE_SITE_KEY && (
+  <script
+    is:inline
+    src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+    async
+    defer
+  ></script>
+)}
 
 <script>
   const form = document.getElementById('contact-form') as HTMLFormElement | null;
   const status = document.getElementById('form-status') as HTMLParagraphElement | null;
+  const submit = document.getElementById('form-submit') as HTMLButtonElement | null;
+
   if (form && status) {
     const setStatus = (variant: 'sending' | 'success' | 'error', text: string) => {
       status.hidden = false;
@@ -53,34 +79,48 @@ import SectionLabel from '@/components/SectionLabel.astro';
       status.setAttribute('role', variant === 'error' ? 'alert' : 'status');
       status.setAttribute('aria-live', variant === 'error' ? 'assertive' : 'polite');
     };
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (submit) {
+        submit.disabled = true;
+        submit.textContent = 'Sending…';
+      }
       setStatus('sending', 'Sending…');
+
       try {
-        const res = await fetch(form.action, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify(Object.fromEntries(new FormData(form))),
-        });
-        if (res.ok) {
+        const res = await fetch(form.action, { method: 'POST', body: new FormData(form) });
+        const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+
+        if (res.ok && data.ok) {
           form.reset();
-          setStatus('success', "Got it. I'll write back soon.");
+          setStatus('success', "Got it. Your message is in, and you'll get a confirmation email shortly.");
         } else {
-          throw new Error('non-2xx');
+          setStatus('error', data.error ?? 'Something broke. Try LinkedIn, or refresh and retry.');
         }
       } catch {
         setStatus('error', 'Something broke. Try LinkedIn, or refresh and retry.');
+      } finally {
+        if (submit) {
+          submit.disabled = false;
+          submit.textContent = 'Send it';
+        }
       }
     });
   }
 </script>
 
 <style>
-  .contact { padding-block: var(--space-section-hero) var(--space-section); max-width: 36rem; }
+  .contact {
+    padding-block: var(--space-section-hero) var(--space-section);
+    max-width: 38rem;
+  }
+
   .contact__title {
     font-size: var(--type-4xl);
     margin-block: var(--space-md) var(--space-md);
   }
+
   .contact__lede {
     font-family: var(--font-body);
     font-size: var(--type-lg);
@@ -88,8 +128,34 @@ import SectionLabel from '@/components/SectionLabel.astro';
     margin-block-end: var(--space-2xl);
   }
 
-  .form { display: flex; flex-direction: column; gap: var(--space-lg); }
+  .contact__card {
+    padding: clamp(1.25rem, 2vw, 1.75rem);
+    background:
+      linear-gradient(180deg, color-mix(in oklch, var(--color-paper-raised) 88%, white) 0%, var(--color-paper-raised) 100%);
+    border: 1px solid color-mix(in oklch, var(--color-ink-dim) 30%, transparent);
+    box-shadow: 0 16px 30px color-mix(in oklch, var(--color-cobalt-soft) 30%, transparent);
+  }
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .form[hidden] {
+    display: none;
+  }
+
   .field { display: flex; flex-direction: column; gap: var(--space-xs); }
+
+  .field--honeypot {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
   .field__label {
     font-family: var(--font-body);
     font-size: var(--type-sm);
@@ -108,12 +174,32 @@ import SectionLabel from '@/components/SectionLabel.astro';
     border: 1px solid var(--color-ink-dim);
     border-radius: var(--radius-xs);
     resize: vertical;
+    transition: border-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out);
   }
+
+  .field textarea { min-height: 11rem; }
+
+  .field input:hover,
+  .field textarea:hover {
+    border-color: color-mix(in oklch, var(--color-cobalt-deep) 55%, var(--color-ink-dim));
+  }
+
   .field input:focus,
   .field textarea:focus {
     outline: 2px solid var(--color-fuchsia);
     outline-offset: 2px;
     border-color: var(--color-fuchsia);
+    box-shadow: 0 0 0 4px color-mix(in oklch, var(--color-fuchsia-soft) 65%, transparent);
+  }
+
+  .form__turnstile {
+    padding: var(--space-sm);
+    background: var(--color-paper);
+    border: 1px dashed color-mix(in oklch, var(--color-cobalt) 35%, var(--color-rule));
+  }
+
+  .form__turnstile :global(iframe) {
+    max-width: 100%;
   }
 
   .form__actions {
@@ -132,11 +218,17 @@ import SectionLabel from '@/components/SectionLabel.astro';
   }
 
   .form__status {
+    display: block;
     font-family: var(--font-body);
     font-size: var(--type-sm);
     padding: var(--space-sm) var(--space-md);
     border-radius: var(--radius-xs);
   }
+
+  .form__status[hidden] {
+    display: none;
+  }
+
   .form__status--sending { color: var(--color-ink-muted); }
   .form__status--success {
     color: var(--color-cobalt-deep);
@@ -147,4 +239,9 @@ import SectionLabel from '@/components/SectionLabel.astro';
     background: var(--color-fuchsia-soft);
   }
 
+  @media (max-width: 640px) {
+    .contact__card {
+      padding: var(--space-md);
+    }
+  }
 </style>
