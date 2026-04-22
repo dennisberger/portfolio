@@ -142,6 +142,13 @@ const dashPath =
     transform-origin: center;
     animation: projected-pulse 2.2s var(--ease-out-quart) infinite;
   }
+  /* Pause the pulse until the chart reveals — no CPU when off-screen. */
+  :global(.js-motion) .linechart[data-reveal-chart] .linechart__dot-pulse {
+    animation-play-state: paused;
+  }
+  :global(.js-motion) .linechart[data-reveal-chart].is-visible .linechart__dot-pulse {
+    animation-play-state: running;
+  }
   @keyframes projected-pulse {
     0%   { transform: scale(1);   opacity: 0.6; }
     70%  { transform: scale(3.6); opacity: 0;   }

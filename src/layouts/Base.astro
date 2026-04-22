@@ -92,6 +92,17 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://dennisberge
         } catch (_) { /* no-op */ }
       })();
     </script>
+    <script is:inline>
+      // Quiet note for the developer who hit Cmd+Opt+I.
+      // The overlap between "inspects portfolio source" and "eventually hires
+      // a DesignOps lead" is small but high-signal. Reward the rarity.
+      console.log(
+        `Hi. Astro + MDX, no React. Zodiak + Switzer.
+If building scaffolding for design teams sounds better
+than building JavaScript frameworks:
+→ https://dennisberger.me/contact/`
+      );
+    </script>
     <slot name="head" />
   </head>
   <body>

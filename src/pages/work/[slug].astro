@@ -1,5 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
+import fs from 'node:fs';
+import path from 'node:path';
 import Base from '@/layouts/Base.astro';
 import SectionLabel from '@/components/SectionLabel.astro';
 import StatBar from '@/components/StatBar.astro';
@@ -17,6 +19,18 @@ export async function getStaticPaths() {
 const { study } = Astro.props;
 const { Content } = await render(study);
 const { data } = study;
+
+// Reading-time kicker: count words in the raw MDX body (minus frontmatter,
+// imports, and JSX tags), then apply ~225 wpm. Magazine contents-page vibe.
+const mdxPath = path.join(process.cwd(), 'src/content/case-studies', `${data.slug}.mdx`);
+const raw = fs.readFileSync(mdxPath, 'utf8');
+const body = raw
+  .replace(/^---[\s\S]*?---\s*/m, '')        // strip frontmatter
+  .replace(/^import\s+.+from\s+.+;$/gm, '')  // strip MDX imports
+  .replace(/<[^>]+>/g, ' ')                  // strip HTML/JSX tags
+  .replace(/[#*_`>]/g, ' ');                 // strip markdown syntax
+const wordCount = body.trim().split(/\s+/).filter(w => w.length > 0).length;
+const readMinutes = Math.max(1, Math.round(wordCount / 225));
 
 // Flagship-only: editorial coda for Taco Bell.
 // Entries here should *not* duplicate the top StatBar — this is additional proof,
@@ -54,10 +68,11 @@ const others = all.filter(s => s.data.slug !== data.slug);
   publishedAt={data.publishedAt}
   updatedAt={data.updatedAt}
 >
+  <div class="read-progress" aria-hidden="true"></div>
   <article class="study">
     <header class="study__header page">
       <a href="/#work" class="study__back">← All work</a>
-      <SectionLabel>{data.tag}</SectionLabel>
+      <SectionLabel>{data.tag} · {readMinutes} min read · {wordCount.toLocaleString()} words</SectionLabel>
       <h1 class="study__title">{data.title}</h1>
       {data.lede && (
         <p class="study__lede"><em>{data.lede}</em></p>
@@ -92,7 +107,7 @@ const others = all.filter(s => s.data.slug !== data.slug);
         <ol class="study__more-list">
           {others.map(s => (
             <li class="study__more-item">
-              <a href={`/work/${s.data.slug}/`} class="study__more-link">
+              <a href={`/work/${s.data.slug}/`} class="study__more-link" aria-label={`Read case study: ${s.data.title}`}>
                 <span class="study__more-tag">{s.data.tag}</span>
                 <span class="study__more-title">{s.data.title}</span>
                 <span aria-hidden="true" class="study__more-arrow">→</span>
@@ -106,7 +121,7 @@ const others = all.filter(s => s.data.slug !== data.slug);
     <section class="study__cta page">
       <div>
         <h2 class="study__cta-title">Still reading?</h2>
-        <p class="study__cta-text">Get in touch or send a note. I'll write back.</p>
+        <p class="study__cta-text">Send a note. I'll write back.</p>
       </div>
       <div class="study__cta-actions">
         <a href="/contact/" class="btn btn--primary">Contact</a>
@@ -116,8 +131,56 @@ const others = all.filter(s => s.data.slug !== data.slug);
   </article>
 </Base>
 
+<script is:inline>
+  // Reading-progress hairline. Fills a 2px fuchsia line at the top of the
+  // viewport as the reader scrolls through the <article>. Passive listeners;
+  // no animation frame dependency — CSS handles the smoothing.
+  (function () {
+    var bar = document.querySelector('.read-progress');
+    var article = document.querySelector('.study');
+    if (!bar || !article) return;
+    var update = function () {
+      var rect = article.getBoundingClientRect();
+      var total = rect.height - window.innerHeight;
+      var scrolled = Math.max(0, -rect.top);
+      var pct = total > 0 ? Math.min(1, scrolled / total) : 0;
+      bar.style.setProperty('--p', pct);
+    };
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+  })();
+</script>
+
 <style>
   .study { padding-top: var(--space-section); }
+
+  /* Reading-progress hairline — fixed at the very top of the viewport, above
+     the nav. Grows a fuchsia line from left to right as the reader scrolls
+     through the article. Invisible at 0% (no background rule on purpose). */
+  .read-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    z-index: 100;
+    pointer-events: none;
+    --p: 0;
+  }
+  .read-progress::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: calc(var(--p) * 100%);
+    background: var(--color-fuchsia);
+    transition: width 80ms linear;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .read-progress::after { transition: none; }
+  }
 
   .study__header {
     padding-block: var(--space-xl) var(--space-2xl);

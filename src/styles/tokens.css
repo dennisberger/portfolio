@@ -25,6 +25,7 @@
   /* Cobalt — substance. Sea-in-sun blue. Evidence, charts, structural emphasis. */
   --color-cobalt: oklch(58% 0.25 250);           /* bright sea-in-sun cobalt — decorative / large */
   --color-cobalt-deep: oklch(42% 0.22 255);      /* text-legible cobalt, AAA on bright paper */
+  --color-cobalt-pale: oklch(86% 0.06 250);      /* palest tint, for chart retiring-segment / decorative stacks */
   --color-cobalt-soft: oklch(94% 0.05 250);      /* tints */
 
   /* ─── Type ────────────────────────────────────────────────── */

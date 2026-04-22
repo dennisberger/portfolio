@@ -31,12 +31,12 @@ const { size = 160, variant = 'default', figure = 'sun' } = Astro.props;
     <circle cx="100" cy="100" r="94" fill="none" stroke="currentColor" stroke-width="1" />
     <circle cx="100" cy="100" r="72" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.4" />
 
-    <text class="stamp__text stamp__text--top">
+    <text class="stamp__text stamp__text--top" aria-hidden="true">
       <textPath href="#stamp-top-arc" startOffset="50%" text-anchor="middle">
         DENNIS BERGER · OPERATOR · DESIGNER
       </textPath>
     </text>
-    <text class="stamp__text stamp__text--bottom">
+    <text class="stamp__text stamp__text--bottom" aria-hidden="true">
       <textPath href="#stamp-bottom-arc" startOffset="50%" text-anchor="middle">
         PHILA · EST. MCMLXXXVI
       </textPath>
@@ -66,6 +66,14 @@ const { size = 160, variant = 'default', figure = 'sun' } = Astro.props;
     /* Artful left-tilt — reads as hand-applied stamp rather than printed. */
     transform: rotate(-8deg);
     transform-origin: center;
+    transition: transform 280ms var(--ease-out-quart);
+  }
+  /* Subtle press-harder tilt on hover — rewards the rare person who hovers
+     a non-interactive mark. Gated on reduced-motion preference. */
+  @media (prefers-reduced-motion: no-preference) {
+    .stamp:hover {
+      transform: rotate(-11deg);
+    }
   }
 
   .stamp--quiet {

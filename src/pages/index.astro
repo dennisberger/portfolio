@@ -53,7 +53,7 @@ const personSchema = {
         Fifteen years in design. Currently at Taco Bell, scaling the first in-house DesignOps function: $4.5M budget, governed intake, research built from zero. Previously Comcast, GSK, and seven years running my own shop.
       </p>
       <div class="hero__ctas">
-        <a href="#flagship" class="btn btn--primary">See the case studies</a>
+        <a href="#flagship" class="btn btn--primary">Read the case studies</a>
         <a href="/dennis-berger-resume.pdf" download class="btn btn--ghost">
           Download résumé
         </a>
@@ -85,7 +85,7 @@ const personSchema = {
 
   {flagship && (
     <section class="flagship page" id="flagship">
-      <a href={`/work/${flagship.data.slug}/`} class="flagship__link">
+      <a href={`/work/${flagship.data.slug}/`} class="flagship__link" aria-label={`Read the flagship case study: ${flagship.data.title}`}>
         <div class="flagship__meta">
           <SectionLabel>Flagship · {flagship.data.tag}</SectionLabel>
         </div>
@@ -107,7 +107,7 @@ const personSchema = {
     <ol class="toc__list">
       {others.map((s, i) => (
         <li class="toc__item">
-          <a href={`/work/${s.data.slug}/`} class="toc__link">
+          <a href={`/work/${s.data.slug}/`} class="toc__link" aria-label={`Read case study: ${s.data.title}`}>
             <span class="toc__num" aria-hidden="true">
               <span class="toc__num-digit">{String(i + 1).padStart(2, '0')}</span>
               <span class="toc__num-word">{ordinals[i + 1]}</span>
@@ -125,7 +125,7 @@ const personSchema = {
     <div class="cta-band__inner">
       <div>
         <h2 class="cta-band__title">Still reading?</h2>
-        <p class="cta-band__text">Get in touch or send a note. I'll write back.</p>
+        <p class="cta-band__text">Send a note. I'll write back.</p>
       </div>
       <div class="cta-band__actions">
         <a href="/contact/" class="btn btn--primary">Contact</a>

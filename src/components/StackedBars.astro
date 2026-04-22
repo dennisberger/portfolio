@@ -22,7 +22,7 @@ const { years, caption, ariaLabel, legendOrder } = Astro.props;
 const paletteByLabel: Record<string, string> = {
   'Internal FTE': 'var(--color-cobalt-deep)',
   'Contractor':   'var(--color-cobalt)',
-  'Agency':       'oklch(86% 0.06 250)',
+  'Agency':       'var(--color-cobalt-pale)',
 };
 const colorFor = (seg: Segment) => seg.color ?? paletteByLabel[seg.label] ?? 'var(--color-ink)';
 

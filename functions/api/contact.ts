@@ -160,7 +160,13 @@ export const onRequestPost: PagesFunction<Env> = async ({ env, request }) => {
     !env.CONTACT_FROM_EMAIL ||
     !env.TURNSTILE_SECRET_KEY
   ) {
-    return json({ ok: false, error: 'Server configuration is incomplete.' }, 500);
+    return json(
+      {
+        ok: false,
+        error: "Something's wrong on my end. Reach me on LinkedIn while I fix it: linkedin.com/in/dennisberger",
+      },
+      500,
+    );
   }
 
   let payload: ContactPayload;
@@ -174,7 +180,10 @@ export const onRequestPost: PagesFunction<Env> = async ({ env, request }) => {
       payload = Object.fromEntries(formData.entries()) as ContactPayload;
     }
   } catch {
-    return json({ ok: false, error: 'Invalid request body.' }, 400);
+    return json(
+      { ok: false, error: "That didn't come through right. Try again, or reach me on LinkedIn." },
+      400,
+    );
   }
 
   if ((payload.website ?? '').trim().length > 0) {
@@ -186,15 +195,18 @@ export const onRequestPost: PagesFunction<Env> = async ({ env, request }) => {
   const message = (payload.message ?? '').trim();
 
   if (!name || name.length > 200) {
-    return json({ ok: false, error: 'Please enter your name.' }, 400);
+    return json({ ok: false, error: 'Please enter your name.', field: 'name' }, 400);
   }
 
   if (!email || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return json({ ok: false, error: 'Please enter a valid email address.' }, 400);
+    return json({ ok: false, error: 'Please enter a valid email address.', field: 'email' }, 400);
   }
 
   if (!message || message.length < 10 || message.length > 5000) {
-    return json({ ok: false, error: 'Please write a message between 10 and 5000 characters.' }, 400);
+    return json(
+      { ok: false, error: 'A sentence or two, please. At least 10 characters.', field: 'message' },
+      400,
+    );
   }
 
   const ip = request.headers.get('cf-connecting-ip');
@@ -205,13 +217,23 @@ export const onRequestPost: PagesFunction<Env> = async ({ env, request }) => {
   );
 
   if (!turnstileOk) {
-    return json({ ok: false, error: 'Bot check failed. Reload the page and try again.' }, 400);
+    return json(
+      {
+        ok: false,
+        error: "The bot check isn't letting you through. Reload and try again, or find me on LinkedIn: linkedin.com/in/dennisberger",
+      },
+      400,
+    );
   }
+
+  // Strip any CRLF from the name before interpolating into the Subject header,
+  // as a belt-and-braces guard against header injection.
+  const safeName = name.replace(/[\r\n]+/g, ' ');
 
   const notification = await sendResendEmail(env.RESEND_API_KEY, {
     from: env.CONTACT_FROM_EMAIL,
     to: env.CONTACT_TO_EMAIL,
-    subject: `New contact form message from ${name}`,
+    subject: `New contact form message from ${safeName}`,
     html: notificationEmailHtml(name, email, message),
     text: notificationEmailText(name, email, message),
     replyTo: email,
@@ -221,7 +243,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ env, request }) => {
     return json(
       {
         ok: false,
-        error: 'Your message could not be sent right now. Please try again in a moment.',
+        error: "Couldn't send your message right now. Try again in a minute, or reach me on LinkedIn.",
       },
       502,
     );
