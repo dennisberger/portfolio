@@ -8,7 +8,6 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
 <Base
   title="Contact — Dennis Berger"
   description="Send a note. Opportunities, questions, or DesignOps conversations welcome."
-  noindex
 >
   <section class="contact page">
     <SectionLabel>Contact</SectionLabel>
@@ -16,7 +15,7 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
     <p class="contact__lede">Fastest way to reach me. I write back.</p>
 
     <div class="contact__card">
-      <p class="form__required-note" id="form-required-note">All fields required.</p>
+      <p class="form__required-note">All fields required.</p>
 
       <noscript>
         <p class="form__noscript">
@@ -72,7 +71,13 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
 
         <div class="field field--honeypot" aria-hidden="true">
           <span class="field__label">Website</span>
-          <input type="text" name="website" tabindex="-1" autocomplete="off" />
+          <input
+            type="text"
+            name="website"
+            tabindex="-1"
+            autocomplete="off"
+            aria-hidden="true"
+          />
         </div>
 
         {TURNSTILE_SITE_KEY && (
@@ -81,7 +86,7 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
               class="cf-turnstile"
               data-sitekey={TURNSTILE_SITE_KEY}
               data-appearance="interaction-only"
-              data-theme="light"
+              data-theme="auto"
               data-size="flexible"
             ></div>
           </div>
@@ -95,6 +100,7 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
         </div>
 
         <p class="form__status" role="status" aria-live="polite" hidden id="form-status"></p>
+        <p class="form__status form__status--error" role="alert" aria-live="assertive" hidden id="form-alert"></p>
       </form>
     </div>
   </section>
@@ -114,6 +120,7 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
 
   const form = document.getElementById('contact-form') as HTMLFormElement | null;
   const status = document.getElementById('form-status') as HTMLParagraphElement | null;
+  const alertRegion = document.getElementById('form-alert') as HTMLParagraphElement | null;
   const submit = document.getElementById('form-submit') as HTMLButtonElement | null;
 
   const fieldInputIds: Record<FieldName, string> = {
@@ -149,14 +156,24 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
     }
   };
 
-  if (form && status) {
+  if (form && status && alertRegion) {
+    // Two always-present regions: polite status + assertive alert.
+    // Announcing via the right channel beats toggling one element's role
+    // mid-lifecycle (historically flaky in NVDA/JAWS).
     const setStatus = (variant: 'sending' | 'success' | 'error', text: string) => {
-      status.hidden = false;
-      status.textContent = text;
-      status.className = `form__status form__status--${variant}`;
-      // Errors interrupt (role=alert); sending/success announce politely.
-      status.setAttribute('role', variant === 'error' ? 'alert' : 'status');
-      status.setAttribute('aria-live', variant === 'error' ? 'assertive' : 'polite');
+      if (variant === 'error') {
+        alertRegion.hidden = false;
+        alertRegion.textContent = text;
+        alertRegion.className = 'form__status form__status--error';
+        status.hidden = true;
+        status.textContent = '';
+      } else {
+        status.hidden = false;
+        status.textContent = text;
+        status.className = `form__status form__status--${variant}`;
+        alertRegion.hidden = true;
+        alertRegion.textContent = '';
+      }
     };
 
     form.addEventListener('submit', async (e) => {
@@ -216,12 +233,12 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
     margin-block-end: var(--space-2xl);
   }
 
+  /* Contact card: editorial rule-delimited band, matching the site's paper +
+     hairline chassis. No gradient, no shadow, no rounded border. */
   .contact__card {
-    padding: clamp(1.25rem, 2vw, 1.75rem);
-    background:
-      linear-gradient(180deg, color-mix(in oklch, var(--color-paper-raised) 88%, white) 0%, var(--color-paper-raised) 100%);
-    border: 1px solid color-mix(in oklch, var(--color-ink-dim) 30%, transparent);
-    box-shadow: 0 16px 30px color-mix(in oklch, var(--color-cobalt-soft) 30%, transparent);
+    padding-block: var(--space-xl);
+    border-top: 1px solid var(--color-rule);
+    border-bottom: 1px solid var(--color-rule);
   }
 
   .form__required-note {
@@ -373,9 +390,6 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
   }
 
   @media (max-width: 640px) {
-    .contact__card {
-      padding: var(--space-md);
-    }
     .form__actions {
       flex-direction: column;
       align-items: flex-start;

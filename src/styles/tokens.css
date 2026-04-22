@@ -13,7 +13,7 @@
 
   /* Ink: near-black, faint warm undertone. Never #000. */
   --color-ink: oklch(18% 0.01 70);
-  --color-ink-muted: oklch(40% 0.012 70);
+  --color-ink-muted: oklch(36% 0.012 70);  /* AAA on paper (≥7:1); used for ledes, metadata, form labels, footer */
   --color-ink-dim: oklch(58% 0.008 70);
   --color-rule: oklch(90% 0.004 70);
 
@@ -59,6 +59,14 @@
   --type-4xl: clamp(2.5rem, 2rem + 2.5vw, 4rem);
   --type-5xl: clamp(3.5rem, 2.5rem + 4vw, 5.5rem);
   --type-display: clamp(4rem, 3rem + 5vw, 7rem);
+  /* Oversize display — used for the 404 kicker only. Deliberately larger than
+     --type-display (which tops out at 112px) for dramatic scale. */
+  --type-outsize: clamp(6rem, 18vw, 14rem);
+
+  /* Chart-specific typography — SVG `font-size` must stay in px so text doesn't
+     overflow the fixed-viewBox plot area when the root font-size scales. */
+  --type-chart-value: 14px;
+  --type-chart-label: 11px;
 
   /* Leading by context */
   --leading-display: 0.95;   /* very tight, for big Zodiak */
@@ -69,11 +77,13 @@
 
   /* Tracking */
   --tracking-display: -0.035em;  /* very large Zodiak: optical compression */
+  --tracking-outsize: -0.06em;   /* --type-outsize scale needs tighter optical compression */
   --tracking-tight: -0.02em;     /* headlines */
   --tracking-snug: -0.01em;      /* sub-headings */
   --tracking-normal: 0;          /* body */
   --tracking-wide: 0.08em;       /* small labels */
   --tracking-wider: 0.14em;      /* kickers, stamps */
+  --tracking-chart-label: 0.14em; /* same as --tracking-wider; named for chart-component clarity */
 
   /* ─── Space (4pt) ─────────────────────────────────────────── */
   --space-2xs: 0.25rem;
@@ -106,7 +116,18 @@
   --col-gutter: 16rem;    /* right gutter for margin notes */
   --col-gap: 3rem;        /* between main and gutter */
   --col-total: calc(var(--col-main) + var(--col-gutter) + var(--col-gap));
-  /* Breakpoint at which the gutter becomes its own column */
+
+  /* Breakpoint system — reference-only; CSS @media can't consume custom
+     properties yet. Keep media queries aligned to these four tiers.
+     --bp-sm 640px : single mobile cutoff (nav, footer, form actions, case studies)
+     --bp-md 720px : small-tablet collapse (about, work index, colophon layout, TOC)
+     --bp-lg 900px : large-tablet / small-desktop (hero, flagship)
+     --bp-xl 1080px: desktop + gutter reflow (prose, margin notes) */
+  --bp-sm: 640px;
+  --bp-md: 720px;
+  --bp-lg: 900px;
+  --bp-xl: 1080px;
+  /* Gutter-reflow breakpoint — historically named, same value as --bp-xl */
   --col-bp: 1080px;
 
   /* Section rhythm — three-tier variance, not flat */
@@ -122,7 +143,70 @@
   --duration-slow: 420ms;
 
   /* ─── Misc ────────────────────────────────────────────────── */
+  color-scheme: light dark;
+}
+
+/* ─── Dark mode ─────────────────────────────────────────────────
+ * Activated by either:
+ *   a) system preference (prefers-color-scheme: dark) when no explicit override
+ *   b) explicit user toggle setting html[data-theme="dark"]
+ *
+ * Dark palette inverts the paper/ink relationship while preserving warm
+ * undertones and AAA contrast on all principal text combinations. Fuchsia
+ * and cobalt deep variants are lightened so they stay ≥7:1 on dark paper.
+ *
+ * Light is explicit too (html[data-theme="light"]) so a user on a dark-system
+ * can force light for this session and we still win the cascade.
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+
+    --color-paper: oklch(16% 0.008 70);
+    --color-paper-sunken: oklch(12% 0.008 70);
+    --color-paper-raised: oklch(20% 0.008 70);
+
+    --color-ink: oklch(96% 0.003 85);
+    --color-ink-muted: oklch(75% 0.005 70);
+    --color-ink-dim: oklch(50% 0.008 70);
+    --color-rule: oklch(28% 0.005 70);
+
+    --color-fuchsia: oklch(72% 0.24 0);
+    --color-fuchsia-deep: oklch(86% 0.14 0);       /* AAA on paper AND on fuchsia-soft */
+    --color-fuchsia-soft: oklch(22% 0.08 0);       /* darker tint for AAA contrast with -deep */
+
+    --color-cobalt: oklch(68% 0.2 250);
+    --color-cobalt-deep: oklch(84% 0.13 255);      /* AAA on paper AND on cobalt-soft */
+    --color-cobalt-pale: oklch(35% 0.08 250);
+    --color-cobalt-soft: oklch(22% 0.06 250);      /* darker tint for AAA contrast with -deep */
+  }
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-paper: oklch(16% 0.008 70);
+  --color-paper-sunken: oklch(12% 0.008 70);
+  --color-paper-raised: oklch(20% 0.008 70);
+
+  --color-ink: oklch(96% 0.003 85);
+  --color-ink-muted: oklch(75% 0.005 70);
+  --color-ink-dim: oklch(50% 0.008 70);
+  --color-rule: oklch(28% 0.005 70);
+
+  --color-fuchsia: oklch(72% 0.24 0);
+  --color-fuchsia-deep: oklch(86% 0.14 0);
+  --color-fuchsia-soft: oklch(22% 0.08 0);
+
+  --color-cobalt: oklch(68% 0.2 250);
+  --color-cobalt-deep: oklch(84% 0.13 255);
+  --color-cobalt-pale: oklch(35% 0.08 250);
+  --color-cobalt-soft: oklch(22% 0.06 250);
+}
+
+html[data-theme='light'] {
   color-scheme: light;
+  /* Light values already live at :root — nothing to override. */
 }
 
 @media (prefers-reduced-motion: reduce) {

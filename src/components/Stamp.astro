@@ -8,15 +8,13 @@ import SunFigure from './SunFigure.astro';
  * Props:
  *   size — overall diameter (default 160)
  *   variant — 'default' (fuchsia) or 'quiet' (muted ink)
- *   figure — 'sun' (default, Dennis's personal sigil) or 'monogram' (D·B fallback)
  */
-type Props = {
+interface Props {
   size?: number;
   variant?: 'default' | 'quiet';
-  figure?: 'sun' | 'monogram';
-};
+}
 
-const { size = 160, variant = 'default', figure = 'sun' } = Astro.props;
+const { size = 160, variant = 'default' } = Astro.props;
 ---
 
 <figure class={`stamp stamp--${variant}`} style={`--stamp-size: ${size}px;`} role="img" aria-label="Dennis Berger imprint — Philadelphia, MMXXVI">
@@ -44,13 +42,7 @@ const { size = 160, variant = 'default', figure = 'sun' } = Astro.props;
   </svg>
 
   <div class="stamp__center">
-    <slot>
-      {figure === 'sun' ? (
-        <SunFigure />
-      ) : (
-        <span class="stamp__monogram">D<span class="stamp__dot">·</span>B</span>
-      )}
-    </slot>
+    <slot><SunFigure /></slot>
   </div>
 </figure>
 
@@ -87,6 +79,9 @@ const { size = 160, variant = 'default', figure = 'sun' } = Astro.props;
     height: 100%;
   }
 
+  /* Text-on-path metrics calibrated at the reference 160px stamp size —
+     9px / 0.2em top / 0.22em bottom fit the arc lengths of the two textPaths
+     without clipping. These are part of the artwork, not the design system. */
   .stamp__text {
     font-family: var(--font-body);
     font-size: 9px;
@@ -103,22 +98,5 @@ const { size = 160, variant = 'default', figure = 'sun' } = Astro.props;
     display: grid;
     place-items: center;
     pointer-events: none;
-  }
-
-  .stamp__monogram {
-    font-family: var(--font-display);
-    font-size: calc(var(--stamp-size, 160px) * 0.3);
-    font-style: italic;
-    font-weight: 500;
-    letter-spacing: -0.03em;
-    color: currentColor;
-    line-height: 1;
-  }
-  .stamp__dot {
-    display: inline-block;
-    vertical-align: middle;
-    margin-inline: 0.05em;
-    font-size: 0.7em;
-    opacity: 0.7;
   }
 </style>

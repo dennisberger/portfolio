@@ -72,8 +72,13 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://dennisberge
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <meta name="color-scheme" content="light" />
-    <meta name="theme-color" content="#FDFCF9" />
+    {/* Signals native dark-mode support to browsers and extensions
+        (Dark Reader, Noir, etc.) so they don't apply their own layer. */}
+    <meta name="color-scheme" content="light dark" />
+    <meta name="darkreader-lock" />
+    {/* theme-color is sRGB-only — hex fallbacks for --color-paper in each mode. */}
+    <meta name="theme-color" content="#FDFCF9" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1B1714" media="(prefers-color-scheme: dark)" />
 
     <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
     <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
@@ -81,6 +86,20 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://dennisberge
       rel="stylesheet"
       href="https://api.fontshare.com/v2/css?f[]=zodiak@300,400,500,300i,400i,500i&f[]=switzer@400,500,600,400i&display=swap"
     />
+    <script is:inline>
+      // Pre-paint theme override. Reads sessionStorage (NOT localStorage — the
+      // site follows system preference on every fresh visit; within-session
+      // overrides are ephemeral by design). Applies data-theme before first
+      // paint to avoid theme flash.
+      (function () {
+        try {
+          var t = sessionStorage.getItem('theme');
+          if (t === 'light' || t === 'dark') {
+            document.documentElement.setAttribute('data-theme', t);
+          }
+        } catch (_) { /* no-op */ }
+      })();
+    </script>
     <script is:inline>
       // Gate all motion on progressive-enhancement class.
       // Flips before paint to avoid a flash of pre-animated content.
@@ -107,6 +126,8 @@ than building JavaScript frameworks:
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to content</a>
+    {/* Shared live region for theme changes — ThemeToggle updates this. */}
+    <div id="theme-announcer" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
     <Nav />
     <main id="main">
       <slot />

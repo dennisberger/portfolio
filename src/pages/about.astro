@@ -1,6 +1,8 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '@/layouts/Base.astro';
 import SectionLabel from '@/components/SectionLabel.astro';
+import portrait from '@/assets/dennis.jpeg';
 
 const personSchema = {
   '@context': 'https://schema.org',
@@ -27,10 +29,47 @@ const personSchema = {
 
     <div class="about__body">
       <figure class="about__portrait">
-        <img src="/dennis.jpeg" alt="Dennis Berger" width="600" height="788" loading="eager" />
+        <Image
+          src={portrait}
+          alt="Dennis Berger"
+          widths={[160, 220, 440]}
+          sizes="(max-width: 720px) 160px, 220px"
+          loading="eager"
+          fetchpriority="high"
+          quality={82}
+        />
       </figure>
       <p>I'm a Design Operations and UX strategy leader based in Philadelphia, focused on building the systems and environments that help design teams ship work they're proud of.</p>
       <p>I started my career hands-on, writing my first line of HTML at 12 and spending years designing, building, and shipping digital products. That foundation shaped how I think about UX today: practical, user-centered, and grounded in the realities of delivery.</p>
+
+      <h2>Career</h2>
+      <ol class="about__career">
+        <li>
+          <time class="about__career-dates" datetime="2023">2023 —</time>
+          <span class="about__career-role">Design Operations Lead</span>
+          <span class="about__career-org">Taco Bell</span>
+        </li>
+        <li>
+          <time class="about__career-dates" datetime="2021/2023">2021 – 2023</time>
+          <span class="about__career-role">Senior Program Manager</span>
+          <span class="about__career-org">Comcast</span>
+        </li>
+        <li>
+          <time class="about__career-dates" datetime="2020/2021">2020 – 2021</time>
+          <span class="about__career-role">Senior Product Designer</span>
+          <span class="about__career-org">GSK</span>
+        </li>
+        <li>
+          <time class="about__career-dates" datetime="2017/2020">2017 – 2020</time>
+          <span class="about__career-role">UX Engineer</span>
+          <span class="about__career-org">Comcast Advertising (Effectv)</span>
+        </li>
+        <li>
+          <time class="about__career-dates" datetime="2010/2017">2010 – 2017</time>
+          <span class="about__career-role">Founder &amp; UX Lead</span>
+          <span class="about__career-org">TopClick</span>
+        </li>
+      </ol>
 
       <h2>What I believe</h2>
       <ol class="about__beliefs">
@@ -45,9 +84,10 @@ const personSchema = {
         </li>
       </ol>
 
-      <h2>From practitioner to operator</h2>
-      <p>In 2010, I founded a UX consultancy called TopClick, where I spent seven years leading end-to-end client work across strategy, design, development, and operations. Running my own business taught me how to deliver high-quality work consistently, balance competing constraints, and build trust with both clients and collaborators. It also gave me a deep appreciation for the operational side of design long before I had a name for it.</p>
-      <p>I later brought that mindset into larger organizations, including Comcast and GSK, where I led UX initiatives in complex, highly regulated environments. Over time, my focus shifted from individual products to the systems behind them: operating models, research practices, tooling, and ways of working that let teams scale without burning out or losing clarity.</p>
+      <h2>Always building</h2>
+      <p>I started as a founder. In 2010, I opened TopClick, a one-person UX consultancy that grew into seven years of end-to-end client work across strategy, design, development, and operations. I learned to ship consistently, balance competing constraints, and build trust on both sides of a contract. I also learned that the operational side of design was the part I kept getting pulled back to, long before anyone was calling it that.</p>
+      <p>Eventually I took that wiring into larger organizations: Comcast Advertising, GSK, back to Comcast proper, now Taco Bell. The scope changed (regulated enterprise, multi-brand portfolios, audiences in the tens of millions) but the work was the same work. Operating models, research practices, tooling, ways of working that let teams scale without burning out or losing clarity.</p>
+      <p>The agency was the first thing I built, but certainly not the last. <a href="https://ignyte.me" target="_blank" rel="noopener noreferrer">Ignyte</a> (self-hosted creator tools) and <a href="https://synoptro.com" target="_blank" rel="noopener noreferrer">Synoptro</a> (DesignOps for people going it alone) are weekend experiments, with all that entails. They keep my text editor open, my skills fresh, and twelve-year-old me happy. Turns out he was right about the computer.</p>
 
       <h2>What I do now</h2>
       <p>Today, I lead Design Operations at Taco Bell, supporting a multidisciplinary UX team working across the mobile app, website, and in-store experiences. My work spans design systems, research operations, capacity planning, tooling and governance, and team enablement. The job is making design a reliable strategic partner to the business, and creating conditions where teams can focus on meaningful problems instead of fighting their tools.</p>
@@ -56,9 +96,6 @@ const personSchema = {
 
       <h2>How I work</h2>
       <p>Most of my work is one of three things: shaping an operating model, rolling out a design system, or helping a team through organizational change. Across all three, I care about being clear, pragmatic, and honest about what a team can actually sustain. Structure and flexibility aren't opposites; they reinforce each other when you get the balance right.</p>
-
-      <h2>Side projects</h2>
-      <p>Outside the day job, I'm quietly building <a href="https://ignyte.me" target="_blank" rel="noopener noreferrer">Ignyte</a> (self-hosted creator tools) and <a href="https://synoptro.com" target="_blank" rel="noopener noreferrer">Synoptro</a> (DesignOps for people going it alone). Both are experiments. Both may fail. Both are why I ship on weekends.</p>
     </div>
   </article>
 </Base>
@@ -111,6 +148,67 @@ const personSchema = {
       margin: 0 0 var(--space-lg) 0;
     }
   }
+  /* Career list shares its rhythm with `.about__beliefs` below:
+     italic fuchsia display column left, stacked content column right,
+     hairline rule between rows. */
+  .about__career {
+    list-style: none;
+    padding: 0;
+    margin-block: var(--space-lg) var(--space-2xl);
+    max-width: var(--measure);
+    display: grid;
+    gap: 0;
+  }
+  .about__career li {
+    display: grid;
+    grid-template-columns: 9.5rem 1fr;
+    column-gap: var(--space-md);
+    align-items: baseline;
+    padding-block: var(--space-md);
+    border-top: 1px solid var(--color-rule);
+  }
+  .about__career li:last-child {
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .about__career-dates {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: var(--type-xl);
+    color: var(--color-fuchsia-deep);
+    line-height: 1;
+    padding-block-start: 0.1em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .about__career-role {
+    grid-column: 2;
+    grid-row: 1;
+    font-family: var(--font-body);
+    font-size: var(--type-base);
+    font-weight: 500;
+    color: var(--color-ink);
+  }
+  .about__career-org {
+    grid-column: 2;
+    grid-row: 2;
+    font-family: var(--font-body);
+    font-size: var(--type-xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+    margin-block-start: var(--space-2xs);
+  }
+  @media (max-width: 640px) {
+    .about__career li {
+      grid-template-columns: 5rem 1fr;
+    }
+    .about__career-dates { font-size: var(--type-base); }
+  }
+
   .about__beliefs {
     list-style: none;
     counter-reset: belief;

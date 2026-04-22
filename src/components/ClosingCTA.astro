@@ -1,0 +1,75 @@
+---
+/**
+ * ClosingCTA — the "Still reading?" send-a-note block at the end of the home
+ * page and every case study. Extracted from `.cta-band` / `.study__cta` into
+ * one place so the two instances can't drift in copy or treatment.
+ *
+ * Optional props let a page override the default heading + text if needed.
+ */
+interface Props {
+  heading?: string;
+  text?: string;
+  variant?: 'default' | 'continuation';
+}
+const {
+  heading = 'Still reading?',
+  text = "Send a note. I'll write back.",
+  variant = 'default',
+} = Astro.props;
+---
+
+<section class:list={["closing-cta page", variant === 'continuation' && 'closing-cta--continuation']}>
+  <div class="closing-cta__inner">
+    <div>
+      <h2 class="closing-cta__title">{heading}</h2>
+      <p class="closing-cta__text">{text}</p>
+    </div>
+    <div class="closing-cta__actions">
+      <a href="/contact/" class="btn btn--primary">Contact</a>
+      <a
+        href="https://linkedin.com/in/dennisberger"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn btn--ghost"
+      >LinkedIn</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .closing-cta {
+    padding-block: var(--space-section);
+    margin-block-start: var(--space-section);
+    border-top: 2px solid var(--color-ink);
+  }
+  /* Case-study variant: reads as continuation of the article, not a new section. */
+  .closing-cta--continuation {
+    border-top: 1px solid var(--color-rule);
+    margin-block-start: 0;
+  }
+  .closing-cta__inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-xl);
+    flex-wrap: wrap;
+  }
+  .closing-cta__title {
+    font-family: var(--font-display);
+    font-size: var(--type-3xl);
+    font-style: italic;
+    letter-spacing: var(--tracking-tight);
+    margin-block-end: var(--space-xs);
+  }
+  .closing-cta__text {
+    font-family: var(--font-body);
+    font-size: var(--type-base);
+    color: var(--color-ink-muted);
+    max-width: 40ch;
+  }
+  .closing-cta__actions {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+  }
+</style>

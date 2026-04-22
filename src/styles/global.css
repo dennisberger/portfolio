@@ -4,9 +4,23 @@
 /* ─── Reset ─────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 * { margin: 0; padding: 0; }
-html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* iOS Safari respects overflow-x: hidden on <html> more reliably than
+     `overflow-x: clip` on <body> when a descendant uses position: sticky
+     (our nav). Double-layered to prevent horizontal rubber-band scroll. */
+  overflow-x: hidden;
+}
 @media (prefers-reduced-motion: no-preference) {
   html:focus-within { scroll-behavior: smooth; }
+}
+
+/* When the mobile nav overlay is open, lock the body so the page behind
+   doesn't scroll under the dialog. Applied by Nav.astro's inline script. */
+html.nav-overlay-open,
+html.nav-overlay-open body {
+  overflow: hidden;
 }
 
 body {
@@ -118,6 +132,14 @@ a:hover {
   transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
 }
 .btn:hover { text-decoration: none; transform: translateY(-1px); }
+.btn__meta {
+  font-weight: 400;
+  font-size: var(--type-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin-inline-start: var(--space-2xs);
+}
 .btn--primary { background: var(--color-ink); color: var(--color-paper); }
 .btn--primary:hover {
   background: var(--color-fuchsia-deep);
@@ -276,5 +298,48 @@ a:hover {
     width: var(--space-xl) !important;
     animation: none !important;
     transition: none !important;
+  }
+}
+
+/* ─── Gutter asides (MarginNote + Footnote share positioning) ───────
+ * Both components are editorial asides that float into the right gutter
+ * on desktop and collapse inline on mobile. They differ on marker glyph,
+ * accent color, and body type register (voice vs substance). This base
+ * class owns layout; each component owns its identity via the accent
+ * and rule-top custom properties.
+ */
+.gutter-aside {
+  display: block;
+  position: relative;
+  margin-block: var(--space-md) var(--space-lg);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-paper-sunken);
+  border-top: 1px solid var(--gutter-aside-accent, var(--color-cobalt));
+  font-family: var(--font-body);
+  font-size: var(--type-sm);
+  line-height: var(--leading-snug);
+}
+
+@media (min-width: 1080px) {
+  .gutter-aside {
+    float: right;
+    clear: right;
+    width: var(--col-gutter);
+    margin-right: calc(-1 * (var(--col-gutter) + var(--col-gap)));
+    margin-top: 0.25em;
+    margin-bottom: var(--space-md);
+    background: transparent;
+    border-top: none;
+    padding-left: var(--space-lg);
+    padding-right: 0;
+  }
+  .gutter-aside::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: var(--gutter-aside-rule-top, 1em);
+    width: var(--space-md);
+    height: 1px;
+    background: var(--gutter-aside-accent, var(--color-cobalt));
   }
 }

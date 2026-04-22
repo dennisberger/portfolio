@@ -7,6 +7,27 @@ import SectionLabel from '@/components/SectionLabel.astro';
 import StatBar from '@/components/StatBar.astro';
 import Stamp from '@/components/Stamp.astro';
 import EditorialNumbers from '@/components/EditorialNumbers.astro';
+import ClosingCTA from '@/components/ClosingCTA.astro';
+
+// Per-study closing CTA copy. Default (home) stays generic-but-good.
+const closingBySlug: Record<string, { heading: string; text: string }> = {
+  'taco-bell-designops': {
+    heading: 'Scaling design ops from zero?',
+    text: "I've done the 0→8 and the agency-to-FTE fight. Compare notes.",
+  },
+  'gsk-analytics': {
+    heading: 'Moving a SUS score is hard work.',
+    text: "If you're fighting for UX evidence inside an enterprise, I'd like to hear how it's going.",
+  },
+  'effectv-ad-platform': {
+    heading: 'Language is a UX lever.',
+    text: "Most teams don't treat it that way. If yours does, let's talk.",
+  },
+  'comcast-ux-coe': {
+    heading: "Consulting hours don't scale. Service tiers do.",
+    text: "If you're spread too thin across too many teams, compare notes.",
+  },
+};
 
 export async function getStaticPaths() {
   const studies = await getCollection('caseStudies');
@@ -39,9 +60,9 @@ const byTheNumbers =
   data.slug === 'taco-bell-designops'
     ? [
         {
-          value: '2 → 8',
-          lead: 'Internal designers, through the agency-to-FTE transition.',
-          body: 'From one director, two internal designers, and me, to eight full-time designers plus four contractors. Structured intake, planning, and research ops tying the growth together.',
+          value: '60+',
+          lead: 'Components shipped and governed in the design system.',
+          body: 'Not my hands on the components themselves. The system around them: dedicated workflow, triage and governance rituals, documentation support, tooling upgrades, and visibility into progress and constraints. The kind of infrastructure that lets a system keep growing past its first release.',
         },
         {
           value: 'Two',
@@ -71,7 +92,7 @@ const others = all.filter(s => s.data.slug !== data.slug);
   <div class="read-progress" aria-hidden="true"></div>
   <article class="study">
     <header class="study__header page">
-      <a href="/#work" class="study__back">← All work</a>
+      <a href="/work/" class="study__back">← All work</a>
       <SectionLabel>{data.tag} · {readMinutes} min read · {wordCount.toLocaleString()} words</SectionLabel>
       <h1 class="study__title">{data.title}</h1>
       {data.lede && (
@@ -118,16 +139,11 @@ const others = all.filter(s => s.data.slug !== data.slug);
       </nav>
     )}
 
-    <section class="study__cta page">
-      <div>
-        <h2 class="study__cta-title">Still reading?</h2>
-        <p class="study__cta-text">Send a note. I'll write back.</p>
-      </div>
-      <div class="study__cta-actions">
-        <a href="/contact/" class="btn btn--primary">Contact</a>
-        <a href="https://linkedin.com/in/dennisberger" target="_blank" rel="noopener noreferrer" class="btn btn--ghost">LinkedIn</a>
-      </div>
-    </section>
+    <ClosingCTA
+      variant="continuation"
+      heading={closingBySlug[data.slug]?.heading}
+      text={closingBySlug[data.slug]?.text}
+    />
   </article>
 </Base>
 
@@ -174,9 +190,11 @@ const others = all.filter(s => s.data.slug !== data.slug);
     top: 0;
     left: 0;
     height: 100%;
-    width: calc(var(--p) * 100%);
+    width: 100%;
+    transform: scaleX(var(--p));
+    transform-origin: left;
     background: var(--color-fuchsia);
-    transition: width 80ms linear;
+    transition: transform 80ms linear;
   }
   @media (prefers-reduced-motion: reduce) {
     .read-progress::after { transition: none; }
@@ -288,6 +306,9 @@ const others = all.filter(s => s.data.slug !== data.slug);
     height: auto;
     border-radius: var(--radius-md);
     background: var(--color-paper-sunken);
+    /* 1px hairline — almost invisible on paper, separates bright
+       screenshots from dark paper in dark mode. */
+    border: 1px solid var(--color-rule);
   }
   .prose :global(figure.case-figure--pair) {
     display: grid;
@@ -396,33 +417,6 @@ const others = all.filter(s => s.data.slug !== data.slug);
   }
   .study__more-link:hover .study__more-arrow { transform: translateX(4px); }
 
-  .study__cta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-xl);
-    padding-block: var(--space-2xl);
-    border-top: 1px solid var(--color-rule);
-  }
-  .study__cta-title {
-    font-family: var(--font-display);
-    font-size: var(--type-3xl);
-    line-height: var(--leading-tight);
-    margin: 0 0 var(--space-xs);
-  }
-  .study__cta-text {
-    font-family: var(--font-body);
-    font-size: var(--type-base);
-    color: var(--color-ink-muted);
-    max-width: 40ch;
-    margin: 0;
-  }
-  .study__cta-actions {
-    display: flex;
-    gap: var(--space-md);
-    flex-wrap: wrap;
-  }
   @media (max-width: 640px) {
     .study__more-link { flex-direction: column; align-items: flex-start; gap: var(--space-xs); padding-block: var(--space-md); }
     .study__more-tag { min-width: 0; }

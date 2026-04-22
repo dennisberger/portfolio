@@ -19,16 +19,6 @@ const caseStudies = defineCollection({
     flagship: z.boolean().default(false),
     publishedAt: z.coerce.date().optional(),
     updatedAt: z.coerce.date().optional(),
-    susChart: z
-      .object({
-        points: z.array(
-          z.object({
-            label: z.string(),
-            score: z.number(),
-          })
-        ),
-      })
-      .optional(),
     lede: z.string().optional(),
   }),
 });

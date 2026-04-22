@@ -4,16 +4,15 @@
  * Small caps, wide tracking, fuchsia rule.
  */
 interface Props {
-  as?: string;
   reveal?: boolean;
 }
-const { as: Tag = 'p', reveal = true } = Astro.props;
+const { reveal = true } = Astro.props;
 ---
 
-<Tag class="section-label" {...(reveal ? { 'data-reveal': '' } : {})}>
+<p class="section-label" {...(reveal ? { 'data-reveal': '' } : {})}>
   <span class="section-label__rule" aria-hidden="true"></span>
   <slot />
-</Tag>
+</p>
 
 <style>
   .section-label {

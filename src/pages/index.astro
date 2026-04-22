@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Base from '@/layouts/Base.astro';
 import SectionLabel from '@/components/SectionLabel.astro';
 import StatBar from '@/components/StatBar.astro';
+import ClosingCTA from '@/components/ClosingCTA.astro';
 
 const studies = (await getCollection('caseStudies')).sort(
   (a, b) => a.data.order - b.data.order,
@@ -53,9 +54,14 @@ const personSchema = {
         Fifteen years in design. Currently at Taco Bell, scaling the first in-house DesignOps function: $4.5M budget, governed intake, research built from zero. Previously Comcast, GSK, and seven years running my own shop.
       </p>
       <div class="hero__ctas">
-        <a href="#flagship" class="btn btn--primary">Read the case studies</a>
-        <a href="/dennis-berger-resume.pdf" download class="btn btn--ghost">
-          Download résumé
+        <a href="/work/" class="btn btn--primary">Read the case studies</a>
+        <a
+          href="/dennis-berger-resume.pdf"
+          download="Dennis-Berger-DesignOps-Resume.pdf"
+          class="btn btn--ghost"
+          aria-describedby="resume-meta"
+        >
+          Download résumé <span class="btn__meta" id="resume-meta">PDF · 92 kb</span>
         </a>
       </div>
     </div>
@@ -68,8 +74,12 @@ const personSchema = {
           <dd>Design Operations at Taco Bell, since 2023</dd>
         </div>
         <div>
+          <dt>Open to</dt>
+          <dd>Principal / Director-level roles, full-time or advisory</dd>
+        </div>
+        <div>
           <dt>Previously</dt>
-          <dd>Comcast · GSK · TopClick (seven years)</dd>
+          <dd>Comcast · GSK · TopClick</dd>
         </div>
         <div>
           <dt>Based in</dt>
@@ -86,18 +96,22 @@ const personSchema = {
   {flagship && (
     <section class="flagship page" id="flagship">
       <a href={`/work/${flagship.data.slug}/`} class="flagship__link" aria-label={`Read the flagship case study: ${flagship.data.title}`}>
-        <div class="flagship__meta">
-          <SectionLabel>Flagship · {flagship.data.tag}</SectionLabel>
+        <div class="flagship__primary">
+          <div class="flagship__meta">
+            <SectionLabel>Flagship · {flagship.data.tag}</SectionLabel>
+          </div>
+          <h2 class="flagship__title" data-reveal-wash><span>{flagship.data.title}</span></h2>
+          {flagship.data.lede && (
+            <p class="flagship__lede"><em>{flagship.data.lede}</em></p>
+          )}
+          <p class="flagship__excerpt">{flagship.data.excerpt}</p>
         </div>
-        <h2 class="flagship__title" data-reveal-wash><span>{flagship.data.title}</span></h2>
-        {flagship.data.lede && (
-          <p class="flagship__lede"><em>{flagship.data.lede}</em></p>
-        )}
-        <p class="flagship__excerpt">{flagship.data.excerpt}</p>
-        <div class="flagship__stats">
-          <StatBar stats={flagship.data.stats} />
+        <div class="flagship__aside">
+          <div class="flagship__stats">
+            <StatBar stats={flagship.data.stats} />
+          </div>
+          <span class="flagship__arrow" aria-hidden="true">→</span>
         </div>
-        <span class="flagship__arrow" aria-hidden="true">→</span>
       </a>
     </section>
   )}
@@ -121,18 +135,7 @@ const personSchema = {
     </ol>
   </section>
 
-  <section class="cta-band page">
-    <div class="cta-band__inner">
-      <div>
-        <h2 class="cta-band__title">Still reading?</h2>
-        <p class="cta-band__text">Send a note. I'll write back.</p>
-      </div>
-      <div class="cta-band__actions">
-        <a href="/contact/" class="btn btn--primary">Contact</a>
-        <a href="https://linkedin.com/in/dennisberger" target="_blank" rel="noopener noreferrer" class="btn btn--ghost">LinkedIn</a>
-      </div>
-    </div>
-  </section>
+  <ClosingCTA />
 </Base>
 
 <style>
@@ -242,18 +245,24 @@ const personSchema = {
     padding-block: var(--space-section);
     border-top: 2px solid var(--color-ink);
   }
+  /* Flexbox two-column: primary content stack (meta → title → lede → excerpt)
+     alongside an aside with stats + arrow. Resilient to an optional lede. */
   .flagship__link {
-    display: grid;
-    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-    column-gap: var(--space-3xl);
-    row-gap: var(--space-xl);
+    display: flex;
+    gap: var(--space-3xl);
+    align-items: stretch;
     text-decoration: none;
     color: inherit;
   }
-  @media (max-width: 900px) {
-    .flagship__link { grid-template-columns: 1fr; }
+  .flagship__primary {
+    flex: 3;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
   }
-  .flagship__meta { grid-column: 1; }
+  @media (max-width: 900px) {
+    .flagship__link { flex-direction: column; }
+  }
   .flagship__link:hover .flagship__title { color: var(--color-fuchsia-deep); }
   .flagship__title {
     font-family: var(--font-display);
@@ -263,7 +272,6 @@ const personSchema = {
     letter-spacing: var(--tracking-display);
     max-width: 16ch;
     margin-block: var(--space-md) var(--space-lg);
-    grid-column: 1;
     transition: color var(--duration-base) var(--ease-out);
   }
   .flagship__lede {
@@ -273,7 +281,6 @@ const personSchema = {
     color: var(--color-fuchsia-deep);
     max-width: 38ch;
     margin-block-end: var(--space-lg);
-    grid-column: 1;
   }
   .flagship__excerpt {
     font-family: var(--font-body);
@@ -281,12 +288,21 @@ const personSchema = {
     color: var(--color-ink-muted);
     line-height: var(--leading-relaxed);
     max-width: 54ch;
-    grid-column: 1;
+  }
+  .flagship__aside {
+    flex: 2;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: var(--space-xl);
   }
   .flagship__stats {
-    grid-column: 2;
-    grid-row: 2 / span 3;
-    align-self: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
   .flagship__stats :global(.stat-bar) {
     grid-template-columns: 1fr;
@@ -303,18 +319,8 @@ const personSchema = {
     padding-block-start: 0;
     border-block-start: none;
   }
-  @media (max-width: 900px) {
-    .flagship__stats {
-      grid-column: 1;
-      grid-row: auto;
-      align-self: auto;
-    }
-  }
   .flagship__arrow {
-    grid-column: 2;
-    grid-row: 5;
-    align-self: end;
-    justify-self: end;
+    align-self: flex-end;
     font-family: var(--font-display);
     font-size: var(--type-4xl);
     font-style: italic;
@@ -328,7 +334,8 @@ const personSchema = {
     transform: translateX(6px);
   }
   @media (max-width: 900px) {
-    .flagship__arrow { grid-column: 1; grid-row: auto; justify-self: start; }
+    .flagship__aside { align-items: flex-start; }
+    .flagship__arrow { align-self: flex-start; }
   }
 
   /* ─── Table of contents (home secondary studies) ─── */
@@ -396,13 +403,18 @@ const personSchema = {
     transform: translateY(0.22em);
     pointer-events: none;
   }
-  .toc__link:hover .toc__num-digit {
-    opacity: 0;
-    transform: translateY(-0.22em);
-  }
-  .toc__link:hover .toc__num-word {
-    opacity: 1;
-    transform: translateY(0);
+  /* Digit → spelled-ordinal flip is a desktop-only delight. On touch
+     devices, :hover fires on tap and the spelled ordinal sticks around
+     overlapping row content. Scope to devices with true hover capability. */
+  @media (hover: hover) {
+    .toc__link:hover .toc__num-digit {
+      opacity: 0;
+      transform: translateY(-0.22em);
+    }
+    .toc__link:hover .toc__num-word {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
   @media (prefers-reduced-motion: reduce) {
     .toc__num-digit,
@@ -441,7 +453,7 @@ const personSchema = {
     transform: translateX(0);
   }
 
-  @media (max-width: 780px) {
+  @media (max-width: 720px) {
     .toc__link {
       grid-template-columns: auto 1fr auto;
       column-gap: var(--space-md);
@@ -454,30 +466,4 @@ const personSchema = {
     .toc__arrow { grid-row: 1; grid-column: 3; align-self: center; }
   }
 
-  /* ─── CTA band ─── */
-  .cta-band {
-    padding-block: var(--space-section);
-    margin-block-start: var(--space-section);
-    border-top: 2px solid var(--color-ink);
-  }
-  .cta-band__inner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: var(--space-xl);
-    flex-wrap: wrap;
-  }
-  .cta-band__title {
-    font-family: var(--font-display);
-    font-size: var(--type-3xl);
-    font-style: italic;
-    letter-spacing: var(--tracking-tight);
-    margin-block-end: var(--space-xs);
-  }
-  .cta-band__text {
-    font-family: var(--font-body);
-    font-size: var(--type-base);
-    color: var(--color-ink-muted);
-  }
-  .cta-band__actions { display: flex; gap: var(--space-md); }
 </style>

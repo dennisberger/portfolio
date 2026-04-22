@@ -1,10 +1,12 @@
 ---
 /**
- * MarginNote — the signature mechanic.
+ * MarginNote — voice aside in the right gutter.
  *
- * Desktop (≥1100px): floats into the right gutter, aligned with the paragraph
- * that precedes it in flow.
- * Mobile (<1100px): renders inline as a numbered aside beneath the paragraph.
+ * Layout inherited from `.gutter-aside` in global.css. This component owns
+ * its identity: ※ marker, fuchsia accent, cobalt italic body.
+ *
+ * Desktop (≥1080px): floats into the right gutter.
+ * Mobile: renders inline beneath the preceding paragraph.
  *
  * Usage in MDX:
  *   import MarginNote from '@/components/MarginNote.astro';
@@ -12,24 +14,15 @@
  */
 ---
 
-<aside class="margin-note">
+<aside class="gutter-aside margin-note">
   <span class="margin-note__marker" aria-hidden="true">※</span>
   <span class="margin-note__body"><slot /></span>
 </aside>
 
 <style>
   .margin-note {
-    --note-width: 15rem;
-
-    display: block;
-    position: relative;
-    margin-block: var(--space-md) var(--space-lg);
-    padding: var(--space-sm) var(--space-md);
-    background: var(--color-paper-sunken);
-    border-top: 1px solid var(--color-cobalt);
-    font-family: var(--font-body);
-    font-size: var(--type-sm);
-    line-height: var(--leading-snug);
+    --gutter-aside-accent: var(--color-fuchsia);
+    --gutter-aside-rule-top: calc(var(--type-base) * 1.2 + var(--space-2xs) + 0.15em);
     color: var(--color-cobalt-deep);
     font-style: italic;
   }
@@ -42,33 +35,5 @@
     line-height: 1;
     color: var(--color-fuchsia);
     margin-bottom: var(--space-2xs);
-  }
-
-  /* Desktop: float into gutter */
-  @media (min-width: 1080px) {
-    .margin-note {
-      float: right;
-      clear: right;
-      width: var(--col-gutter);
-      margin-right: calc(-1 * (var(--col-gutter) + var(--col-gap)));
-      margin-top: 0.25em;
-      margin-bottom: var(--space-md);
-      background: transparent;
-      border-top: none;
-      border-left: none;
-      padding-left: var(--space-lg);
-      position: relative;
-    }
-
-    /* A single hairline tying it visually to the main column */
-    .margin-note::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: calc(var(--type-base) * 1.2 + var(--space-2xs) + 0.15em);
-      width: var(--space-md);
-      height: 1px;
-      background: var(--color-fuchsia);
-    }
   }
 </style>

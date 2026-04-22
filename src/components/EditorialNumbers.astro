@@ -11,13 +11,11 @@ interface Entry {
 }
 interface Props {
   entries: Entry[];
-  heading?: string;
 }
-const { entries, heading } = Astro.props;
+const { entries } = Astro.props;
 ---
 
 <section class="editorial-numbers">
-  {heading && <h3 class="editorial-numbers__heading">{heading}</h3>}
   <div class="editorial-numbers__grid">
     {entries.map((e, i) => (
       <article class="editorial-numbers__entry">
@@ -34,11 +32,6 @@ const { entries, heading } = Astro.props;
 <style>
   .editorial-numbers {
     margin-block: var(--space-3xl);
-  }
-  .editorial-numbers__heading {
-    font-family: var(--font-display);
-    font-size: var(--type-2xl);
-    margin-block-end: var(--space-xl);
   }
   .editorial-numbers__grid {
     display: grid;

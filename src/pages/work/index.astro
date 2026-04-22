@@ -1,0 +1,202 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '@/layouts/Base.astro';
+import SectionLabel from '@/components/SectionLabel.astro';
+
+const studies = (await getCollection('caseStudies')).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<Base
+  title="Case Studies — Dennis Berger"
+  description="A closer look at how I've built, scaled, and operationalized design across enterprise organizations."
+>
+  <section class="work page">
+    <header class="work__header">
+      <SectionLabel>All work</SectionLabel>
+      <h1>Case studies</h1>
+      <p class="work__lede">Four engagements across fifteen years. Flagship first, then in reverse-chronological order.</p>
+    </header>
+
+    <ul class="work__list">
+      {studies.map(s => (
+        <li class={`work__item ${s.data.flagship ? 'work__item--flagship' : ''}`}>
+          <a
+            href={`/work/${s.data.slug}/`}
+            class="work__link"
+            aria-label={`Read case study: ${s.data.title}`}
+          >
+            <div class="work__meta">
+              <span class="work__tag">{s.data.tag}</span>
+              {s.data.flagship && <span class="work__flag">Flagship</span>}
+            </div>
+            <h2 class="work__title">{s.data.title}</h2>
+            <p class="work__excerpt">{s.data.excerpt}</p>
+            {s.data.flagship && (
+              <dl class="work__stats">
+                {s.data.stats.map(stat => (
+                  <div>
+                    <dt>{stat.label}</dt>
+                    <dd>{stat.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+            <span class="work__arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Base>
+
+<style>
+  .work { padding-block: var(--space-section-hero) var(--space-section); }
+  .work__header { max-width: 40rem; margin-block-end: var(--space-section); }
+  .work h1 { margin-block: var(--space-md) var(--space-lg); }
+  .work__lede {
+    font-family: var(--font-body);
+    font-size: var(--type-lg);
+    color: var(--color-ink-muted);
+    max-width: 48ch;
+  }
+
+  .work__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .work__item { border-top: 1px solid var(--color-rule); }
+  .work__item:first-child { border-top: 2px solid var(--color-ink); }
+  .work__item:last-child { border-bottom: 1px solid var(--color-rule); }
+  .work__item--flagship { border-top: 2px solid var(--color-ink); }
+
+  .work__link {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    column-gap: var(--space-3xl);
+    row-gap: var(--space-md);
+    padding-block: var(--space-xl);
+    text-decoration: none;
+    color: inherit;
+    align-items: start;
+    position: relative;
+  }
+  @media (max-width: 720px) {
+    .work__link { grid-template-columns: 1fr; }
+  }
+  .work__item--flagship .work__link {
+    padding-block: var(--space-2xl);
+    row-gap: var(--space-lg);
+  }
+
+  .work__meta {
+    display: flex;
+    gap: var(--space-md);
+    align-items: center;
+    grid-column: 1;
+  }
+  .work__tag {
+    font-family: var(--font-body);
+    font-size: var(--type-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    color: var(--color-cobalt-deep);
+  }
+  .work__flag {
+    font-family: var(--font-body);
+    font-size: var(--type-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    color: var(--color-fuchsia-deep);
+    padding-inline-start: var(--space-md);
+    border-inline-start: 1px solid var(--color-rule);
+  }
+
+  .work__title {
+    font-family: var(--font-display);
+    font-size: var(--type-2xl);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    max-width: 22ch;
+    grid-column: 1;
+    margin: 0;
+    transition: color var(--duration-base) var(--ease-out);
+  }
+  .work__item--flagship .work__title {
+    font-size: var(--type-4xl);
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
+    max-width: 18ch;
+  }
+  .work__link:hover .work__title { color: var(--color-fuchsia-deep); }
+
+  .work__excerpt {
+    font-family: var(--font-body);
+    font-size: var(--type-base);
+    line-height: var(--leading-relaxed);
+    color: var(--color-ink-muted);
+    max-width: 48ch;
+    grid-column: 2;
+    grid-row: 2 / span 2;
+    align-self: start;
+  }
+  @media (max-width: 720px) {
+    .work__excerpt { grid-column: 1; grid-row: auto; }
+  }
+  .work__item--flagship .work__excerpt { font-size: var(--type-lg); }
+
+  .work__stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md) var(--space-lg);
+    margin: 0;
+    grid-column: 1;
+    padding-block-start: var(--space-sm);
+  }
+  .work__stats div {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: var(--space-2xs);
+  }
+  .work__stats dt {
+    font-family: var(--font-body);
+    font-size: var(--type-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-ink-muted);
+  }
+  .work__stats dd {
+    font-family: var(--font-display);
+    font-size: var(--type-2xl);
+    font-style: italic;
+    color: var(--color-fuchsia-deep);
+    margin: 0;
+  }
+
+  .work__arrow {
+    grid-column: 2;
+    align-self: end;
+    justify-self: end;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: var(--type-3xl);
+    color: var(--color-fuchsia);
+    line-height: 1;
+    transition: transform var(--duration-base) var(--ease-out), color var(--duration-base) var(--ease-out);
+  }
+  @media (max-width: 720px) {
+    .work__arrow { grid-column: 1; justify-self: start; }
+  }
+  .work__link:hover .work__arrow {
+    color: var(--color-fuchsia-deep);
+    transform: translateX(6px);
+  }
+</style>

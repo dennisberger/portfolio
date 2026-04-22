@@ -1,0 +1,195 @@
+---
+/**
+ * ThemeToggle — three-way radio group (Light / System / Dark).
+ *
+ * Storage: sessionStorage only. No localStorage. The site follows system
+ * preference on every fresh visit; explicit overrides are session-scoped
+ * and reset when the tab closes. This is a conscious choice — prevents
+ * the "I clicked Dark six months ago, forgot, and now this site doesn't
+ * match my OS preference" trap.
+ *
+ * The pre-paint script in Base.astro reads sessionStorage before first
+ * paint and applies data-theme on <html>. This component wires the UI
+ * and the storage.
+ */
+---
+
+<div class="theme-toggle" role="radiogroup" aria-label="Theme preference">
+  <button
+    type="button"
+    role="radio"
+    aria-checked="false"
+    data-theme-choice="light"
+    class="theme-toggle__btn"
+    aria-label="Light theme"
+    title="Light theme"
+  >
+    <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false" width="16" height="16">
+      <circle cx="10" cy="10" r="3.5" fill="currentColor" />
+      <g stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+        <line x1="10" y1="1.5" x2="10" y2="3.8" />
+        <line x1="10" y1="16.2" x2="10" y2="18.5" />
+        <line x1="1.5" y1="10" x2="3.8" y2="10" />
+        <line x1="16.2" y1="10" x2="18.5" y2="10" />
+        <line x1="4" y1="4" x2="5.6" y2="5.6" />
+        <line x1="14.4" y1="14.4" x2="16" y2="16" />
+        <line x1="4" y1="16" x2="5.6" y2="14.4" />
+        <line x1="14.4" y1="5.6" x2="16" y2="4" />
+      </g>
+    </svg>
+  </button>
+  <button
+    type="button"
+    role="radio"
+    aria-checked="false"
+    data-theme-choice="system"
+    class="theme-toggle__btn"
+    aria-label="Match system theme"
+    title="Match system"
+  >
+    <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false" width="16" height="16">
+      <circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="1.4" />
+      <path d="M10,3 A7,7 0 0,1 10,17 Z" fill="currentColor" />
+    </svg>
+  </button>
+  <button
+    type="button"
+    role="radio"
+    aria-checked="false"
+    data-theme-choice="dark"
+    class="theme-toggle__btn"
+    aria-label="Dark theme"
+    title="Dark theme"
+  >
+    <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false" width="16" height="16">
+      <path
+        d="M16.5 12.5a6.5 6.5 0 1 1-9-9 7 7 0 0 0 9 9Z"
+        fill="currentColor"
+      />
+    </svg>
+  </button>
+</div>
+
+<script>
+  // Support multiple instances of ThemeToggle (e.g. desktop nav + mobile overlay).
+  const groups = Array.from(document.querySelectorAll<HTMLElement>('.theme-toggle'));
+  if (groups.length) {
+    const getCurrent = (): 'light' | 'dark' | 'system' => {
+      try {
+        const t = sessionStorage.getItem('theme');
+        if (t === 'light' || t === 'dark') return t;
+      } catch (_) { /* storage denied */ }
+      return 'system';
+    };
+
+    const syncAll = () => {
+      const active = getCurrent();
+      groups.forEach((group) => {
+        group.querySelectorAll<HTMLButtonElement>('[data-theme-choice]').forEach((b) => {
+          const checked = b.dataset.themeChoice === active;
+          b.setAttribute('aria-checked', String(checked));
+          b.tabIndex = checked ? 0 : -1;
+        });
+      });
+    };
+
+    const announcer = document.getElementById('theme-announcer');
+    const announce = (choice: string) => {
+      if (!announcer) return;
+      const phrase =
+        choice === 'light' ? 'Light theme selected.'
+        : choice === 'dark' ? 'Dark theme selected.'
+        : 'Matching system theme.';
+      // Clear-then-set to reliably re-announce when the same value is re-selected
+      // or when the live region hasn't changed enough for AT to notice.
+      announcer.textContent = '';
+      window.requestAnimationFrame(() => {
+        announcer.textContent = phrase;
+      });
+    };
+
+    const apply = (choice: string, opts: { announce?: boolean } = {}) => {
+      try {
+        if (choice === 'light' || choice === 'dark') {
+          sessionStorage.setItem('theme', choice);
+          document.documentElement.setAttribute('data-theme', choice);
+        } else {
+          sessionStorage.removeItem('theme');
+          document.documentElement.removeAttribute('data-theme');
+        }
+      } catch (_) {
+        if (choice === 'light' || choice === 'dark') {
+          document.documentElement.setAttribute('data-theme', choice);
+        } else {
+          document.documentElement.removeAttribute('data-theme');
+        }
+      }
+      syncAll();
+      if (opts.announce) announce(choice);
+    };
+
+    groups.forEach((group) => {
+      const buttons = Array.from(
+        group.querySelectorAll<HTMLButtonElement>('[data-theme-choice]'),
+      );
+      buttons.forEach((b) => {
+        b.addEventListener('click', () =>
+          apply(b.dataset.themeChoice || 'system', { announce: true }),
+        );
+        b.addEventListener('keydown', (e) => {
+          const idx = buttons.indexOf(b);
+          let next = idx;
+          if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = (idx + 1) % buttons.length;
+          else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = (idx - 1 + buttons.length) % buttons.length;
+          else if (e.key === 'Home') next = 0;
+          else if (e.key === 'End') next = buttons.length - 1;
+          else return;
+          e.preventDefault();
+          const target = buttons[next];
+          target.focus();
+          apply(target.dataset.themeChoice || 'system', { announce: true });
+        });
+      });
+    });
+
+    // Initial sync on parse — seeds aria-checked from actual state, not the
+    // conservative `aria-checked="false"` we ship in the HTML.
+    syncAll();
+  }
+</script>
+
+<style>
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px;
+    border: 1px solid var(--color-rule);
+    border-radius: var(--radius-full);
+    background: transparent;
+  }
+  .theme-toggle__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    border-radius: var(--radius-full);
+    background: transparent;
+    color: var(--color-ink-muted);
+    cursor: pointer;
+    transition: color var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out);
+  }
+  .theme-toggle__btn:hover { color: var(--color-ink); }
+  .theme-toggle__btn:focus-visible {
+    outline: 2px solid var(--color-fuchsia);
+    outline-offset: 2px;
+  }
+  .theme-toggle__btn[aria-checked='true'] {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+  .theme-toggle__btn svg { display: block; }
+</style>
