@@ -178,9 +178,34 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
       }
     };
 
+    const validateClient = (): { field: FieldName; message: string } | null => {
+      const nameInput = document.getElementById(fieldInputIds.name) as HTMLInputElement | null;
+      const emailInput = document.getElementById(fieldInputIds.email) as HTMLInputElement | null;
+      const messageInput = document.getElementById(fieldInputIds.message) as HTMLTextAreaElement | null;
+      const name = (nameInput?.value ?? '').trim();
+      const email = (emailInput?.value ?? '').trim();
+      const message = (messageInput?.value ?? '').trim();
+
+      if (!name) return { field: 'name', message: 'Please enter your name.' };
+      if (name.length > 200) return { field: 'name', message: 'Name is too long — keep it under 200 characters.' };
+      if (!email) return { field: 'email', message: 'Please enter your email address.' };
+      if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { field: 'email', message: 'Please enter a valid email address.' };
+      if (!message) return { field: 'message', message: 'A message, please.' };
+      if (message.length < 10) return { field: 'message', message: 'A sentence or two, please. At least 10 characters.' };
+      if (message.length > 5000) return { field: 'message', message: 'That is a lot to read. Keep it under 5,000 characters.' };
+      return null;
+    };
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       clearFieldErrors();
+
+      const invalid = validateClient();
+      if (invalid) {
+        markFieldError(invalid.field, invalid.message);
+        return;
+      }
+
       if (submit) {
         submit.disabled = true;
         submit.textContent = 'Sending…';
