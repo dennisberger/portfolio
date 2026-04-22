@@ -35,6 +35,27 @@ const { stats } = Astro.props;
     gap: var(--space-2xs);
   }
   .stat-bar__item:first-child { border-inline-start: none; padding-inline-start: 0; }
+
+  /* Mobile: stack vertically. Vertical rules between columns don't survive
+     wrapping cleanly; swap to horizontal hairlines between rows. */
+  @media (max-width: 640px) {
+    .stat-bar {
+      grid-template-columns: 1fr;
+      padding: 0;
+    }
+    .stat-bar__item {
+      padding: var(--space-md) 0;
+      border-inline-start: none;
+      border-top: 1px solid var(--color-rule);
+    }
+    .stat-bar__item:first-child {
+      border-top: none;
+      padding-top: var(--space-lg);
+    }
+    .stat-bar__item:last-child {
+      padding-bottom: var(--space-lg);
+    }
+  }
   .stat-bar__value {
     font-family: var(--font-display);
     font-size: var(--type-2xl);
