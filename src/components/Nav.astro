@@ -261,7 +261,13 @@ const current = Astro.url.pathname;
     width: auto;
     display: block;
     fill: currentColor;
-    transition: opacity var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+    /* Opacity-only transition — interpolating `color` makes Safari re-rasterize
+       the handwriting curves every frame, producing a visible shimmer on the
+       outlines. Color snaps; opacity carries the hover feel. `translateZ(0)`
+       promotes the SVG to its own compositor layer so the rasterization is
+       cached, not recomputed. */
+    transition: opacity var(--duration-fast) var(--ease-out);
+    transform: translateZ(0);
   }
   /* "Paper break" highlights within the signature use the paper color token
      directly, so they blend into the page in either theme without any filter. */
