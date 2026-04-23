@@ -1,0 +1,112 @@
+---
+// Cross-browser transparent video with play-once-on-scroll + reduced-motion
+// fallback. Recipe: docs/alpha-video-for-web.md in ignyte.me.
+//
+// Expects four sibling assets in /public:
+//   - ${src}.mp4         HEVC + alpha (Safari)
+//   - ${src}.webm        VP9 + alpha  (Chrome / Firefox / Edge)
+//   - ${src}-poster.png  FIRST frame w/ alpha — used for `poster` so the
+//                        pre-play paint matches frame 0 of the video
+//                        (mismatched posters cause a visible flash on load)
+//   - ${src}.png         LAST frame w/ alpha — reduce-motion / <img> fallback
+//                        (the "settled" post-animation state)
+//
+// Source order is load-bearing: MP4 first with codecs="hvc1" keeps Safari
+// off the WebM (Safari's VP9 alpha renders black).
+
+interface Props {
+  /** File stem under /public, e.g. "effectv-mobile" */
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  /** IntersectionObserver threshold (0–1). Default 0.5. */
+  threshold?: number;
+}
+
+const { src, alt, width, height, threshold = 0.5 } = Astro.props;
+---
+
+<video
+  class="alpha-video"
+  data-threshold={threshold}
+  muted
+  playsinline
+  preload="metadata"
+  width={width}
+  height={height}
+  poster={`/${src}-poster.png`}
+  aria-label={alt}
+>
+  <source src={`/${src}.mp4`} type='video/mp4; codecs="hvc1"' />
+  <source src={`/${src}.webm`} type="video/webm" />
+  <img src={`/${src}.png`} alt={alt} width={width} height={height} />
+</video>
+
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll<HTMLVideoElement>('video.alpha-video').forEach((video) => {
+    const threshold = Number(video.dataset.threshold) || 0.5;
+
+    // Keyboard-operable per WCAG 2.2.2 — user can pause/replay at will.
+    video.tabIndex = 0;
+    video.setAttribute('role', 'button');
+    const toggle = () => {
+      if (video.ended || video.paused) {
+        video.currentTime = 0;
+        video.play().catch(() => {});
+      } else {
+        video.pause();
+      }
+    };
+    video.addEventListener('click', toggle);
+    video.addEventListener('keydown', (e) => {
+      if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        toggle();
+      }
+    });
+
+    if (reduceMotion) return;
+
+    const playFromStart = () => {
+      try { video.currentTime = 0; } catch {}
+      video.play().catch(() => {});
+    };
+
+    let hasPlayed = false;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !hasPlayed) {
+            hasPlayed = true;
+            video.play().catch(() => {});
+          }
+        });
+      },
+      { threshold }
+    );
+    io.observe(video);
+
+    // Hover replays from start ONLY after the animation has already finished —
+    // otherwise a cursor passing over the video mid-scroll resets currentTime
+    // and produces a stutter. Touch devices skip hover and get clean play-once.
+    video.addEventListener('mouseenter', () => {
+      if (video.ended) playFromStart();
+    });
+  });
+</script>
+
+<style>
+  .alpha-video {
+    display: block;
+    width: 100%;
+    height: auto;
+    cursor: pointer;
+  }
+  .alpha-video:focus-visible {
+    outline: 2px solid var(--color-accent, currentColor);
+    outline-offset: 4px;
+  }
+</style>

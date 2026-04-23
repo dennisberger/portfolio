@@ -28,3 +28,6 @@ pnpm-debug.log*
 
 # claude
 .claude/
+
+# large intermediate video/design assets — not deployed, not committed
+source-assets/
