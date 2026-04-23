@@ -32,7 +32,7 @@ const { src, alt, width, height, threshold = 0.5 } = Astro.props;
   data-threshold={threshold}
   muted
   playsinline
-  preload="metadata"
+  preload="auto"
   width={width}
   height={height}
   poster={`/${src}-poster.png`}
@@ -48,6 +48,15 @@ const { src, alt, width, height, threshold = 0.5 } = Astro.props;
 
   document.querySelectorAll<HTMLVideoElement>('video.alpha-video').forEach((video) => {
     const threshold = Number(video.dataset.threshold) || 0.5;
+
+    // Mobile Safari fix: seek to 0 on loadedmetadata so the browser renders
+    // the first frame into the video surface *before* play() is ever called.
+    // Without this, the poster→first-frame handoff creates a visible flash
+    // on iOS, because mobile Safari tears down the poster surface before the
+    // decoder has a frame to paint. Paired with preload="auto" this is clean.
+    video.addEventListener('loadedmetadata', () => {
+      try { video.currentTime = 0; } catch {}
+    }, { once: true });
 
     // Keyboard-operable per WCAG 2.2.2 — user can pause/replay at will.
     video.tabIndex = 0;
