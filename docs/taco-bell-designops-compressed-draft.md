@@ -6,7 +6,7 @@
 
 ## Optional stat / visualization candidates
 
-- **$4.5M** — Annual UX operating budget owned
+- **$2.3M** — Annual UX operating budget owned
 - **2 -> 8** — Internal design FTE growth during in-house scale-up
 - **0 -> 22 -> 64** — Formal studies run from pre-launch through 2025
 - **0 -> 4** — Research capability built and expanded
@@ -66,7 +66,7 @@ I also identified content strategy as another missing capability. Designers were
 - Expanded research capacity by 33% in January 2026 to meet growing demand
 - Enabled the operational maturity of the design system through tooling, governance, documentation, and team rituals, with 60+ components now in the system
 - Helped scale the internal design organization from 2 internal designers to 8 full-time designers plus 4 contractors
-- Own a $4.5M annual operating budget spanning tooling, vendors, contractors, and research infrastructure
+- Own a $2.3M annual operating budget spanning tooling, vendors, contractors, and research infrastructure
 
 ## Reflection
 
