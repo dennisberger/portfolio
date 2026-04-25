@@ -8,6 +8,14 @@ import StatBar from '@/components/StatBar.astro';
 import Stamp from '@/components/Stamp.astro';
 import EditorialNumbers from '@/components/EditorialNumbers.astro';
 import ClosingCTA from '@/components/ClosingCTA.astro';
+import {
+  SITE_URL,
+  personEntity,
+  websiteEntity,
+  articleEntity,
+  breadcrumbEntity,
+  schemaGraph,
+} from '@/lib/schema';
 
 // Per-study closing CTA copy. Default (home) stays generic-but-good.
 const closingBySlug: Record<string, { heading: string; text: string }> = {
@@ -80,6 +88,25 @@ const byTheNumbers =
 // All other case studies, in canonical order, to surface at the end of each study.
 const all = (await getCollection('caseStudies')).sort((a, b) => a.data.order - b.data.order);
 const others = all.filter(s => s.data.slug !== data.slug);
+
+const studyUrl = `${SITE_URL}/work/${data.slug}/`;
+const jsonLd = schemaGraph([
+  personEntity(),
+  websiteEntity(),
+  articleEntity({
+    url: studyUrl,
+    headline: data.title,
+    description: data.excerpt,
+    datePublished: data.publishedAt,
+    dateModified: data.updatedAt,
+    image: `${SITE_URL}/og-image.png`,
+  }),
+  breadcrumbEntity([
+    { name: 'Home', url: `${SITE_URL}/` },
+    { name: 'Work', url: `${SITE_URL}/work/` },
+    { name: data.title, url: studyUrl },
+  ]),
+]);
 ---
 
 <Base
@@ -88,6 +115,7 @@ const others = all.filter(s => s.data.slug !== data.slug);
   ogType="article"
   publishedAt={data.publishedAt}
   updatedAt={data.updatedAt}
+  jsonLd={jsonLd}
 >
   <div class="read-progress" aria-hidden="true"></div>
   <article class="study">
@@ -128,7 +156,7 @@ const others = all.filter(s => s.data.slug !== data.slug);
         <ol class="study__more-list">
           {others.map(s => (
             <li class="study__more-item">
-              <a href={`/work/${s.data.slug}/`} class="study__more-link" aria-label={`Read case study: ${s.data.title}`}>
+              <a href={`/work/${s.data.slug}/`} class="study__more-link">
                 <span class="study__more-tag">{s.data.tag}</span>
                 <span class="study__more-title">{s.data.title}</span>
                 <span aria-hidden="true" class="study__more-arrow">→</span>

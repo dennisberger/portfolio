@@ -4,12 +4,38 @@ import Base from '@/layouts/Base.astro';
 import SectionLabel from '@/components/SectionLabel.astro';
 import StatBar from '@/components/StatBar.astro';
 import ClosingCTA from '@/components/ClosingCTA.astro';
+import {
+  SITE_URL,
+  personEntity,
+  websiteEntity,
+  profilePageEntity,
+  itemListEntity,
+  schemaGraph,
+} from '@/lib/schema';
 
 const studies = (await getCollection('caseStudies')).sort(
   (a, b) => a.data.order - b.data.order,
 );
 const flagship = studies.find(s => s.data.flagship);
 const others = studies.filter(s => !s.data.flagship);
+
+const homeUrl = `${SITE_URL}/`;
+const jsonLd = schemaGraph([
+  personEntity(),
+  websiteEntity(),
+  profilePageEntity({
+    url: homeUrl,
+    name: 'Dennis Berger — Design Operations',
+    description:
+      'DesignOps leader in Philadelphia. Fifteen years building operating models, design systems, and research ops.',
+  }),
+  itemListEntity(
+    studies.map(s => ({
+      url: `${SITE_URL}/work/${s.data.slug}/`,
+      name: s.data.title,
+    })),
+  ),
+]);
 
 // Hero title, pre-split into words so each can animate independently.
 // The italic "stand on" is the two-word bloom; everything else is plain.
@@ -21,23 +47,13 @@ const heroWords: { w: string; bloom?: boolean }[] = [
 // Spelled ordinals for the TOC hover flip. Index-safe up to ten.
 const ordinals = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'];
 
-const personSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Person',
-  name: 'Dennis Berger',
-  url: 'https://dennisberger.me',
-  jobTitle: 'Design Operations Leader',
-  worksFor: { '@type': 'Organization', name: 'Taco Bell' },
-  address: { '@type': 'PostalAddress', addressLocality: 'Philadelphia', addressRegion: 'PA', addressCountry: 'US' },
-  sameAs: ['https://linkedin.com/in/dennisberger'],
-};
 ---
 
 <Base
   title="Dennis Berger — Design Operations"
   description="DesignOps leader in Philadelphia. Fifteen years building operating models, design systems, and research ops that make design a reliable, strategic function."
+  jsonLd={jsonLd}
 >
-  <script slot="head" type="application/ld+json" is:inline set:html={JSON.stringify(personSchema)} />
   <section class="hero page">
     <div class="hero__primary">
       <SectionLabel reveal={false}>Design Operations Leader</SectionLabel>
@@ -95,7 +111,7 @@ const personSchema = {
 
   {flagship && (
     <section class="flagship page" id="flagship">
-      <a href={`/work/${flagship.data.slug}/`} class="flagship__link" aria-label={`Read the flagship case study: ${flagship.data.title}`}>
+      <a href={`/work/${flagship.data.slug}/`} class="flagship__link">
         <div class="flagship__primary">
           <div class="flagship__meta">
             <SectionLabel>Flagship · {flagship.data.tag}</SectionLabel>
@@ -121,7 +137,7 @@ const personSchema = {
     <ol class="toc__list">
       {others.map((s, i) => (
         <li class="toc__item">
-          <a href={`/work/${s.data.slug}/`} class="toc__link" aria-label={`Read case study: ${s.data.title}`}>
+          <a href={`/work/${s.data.slug}/`} class="toc__link">
             <span class="toc__num" aria-hidden="true">
               <span class="toc__num-digit">{String(i + 1).padStart(2, '0')}</span>
               <span class="toc__num-word">{ordinals[i + 1]}</span>

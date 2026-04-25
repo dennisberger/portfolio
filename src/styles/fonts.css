@@ -1,0 +1,81 @@
+/*
+ * Self-hosted Zodiak + Switzer.
+ *
+ * Was: render-blocking external stylesheet from api.fontshare.com.
+ * Now: inlined @font-face declarations + woff2 files served from /fonts/
+ * on the same origin as the rest of the bundle. Eliminates the third-party
+ * RTT (was ~730ms render-blocking on mobile) and removes Fontshare from the
+ * site's runtime dependency surface.
+ *
+ * Weights match what's actually used in the codebase:
+ *   - Zodiak (display): 300 + 300i, 400 + 400i
+ *   - Switzer (body):   400 + 400i, 500, 600
+ *
+ * The original Fontshare URL also requested zodiak@500/500i — those were
+ * dead requests. Zodiak's family has no Medium weight, and no rule in the
+ * codebase sets font-weight: 500 on display type. (All five `font-weight: 500`
+ * usages are body copy → Switzer Medium.)
+ *
+ * font-display: swap matches the Fontshare default. Fallbacks in tokens.css
+ * (Gambarino/Georgia for display, system sans for body) handle the swap window.
+ */
+
+/* ─── Zodiak ─────────────────────────────────────────────────── */
+@font-face {
+  font-family: 'Zodiak';
+  src: url('/fonts/Zodiak-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Zodiak';
+  src: url('/fonts/Zodiak-LightItalic.woff2') format('woff2');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Zodiak';
+  src: url('/fonts/Zodiak-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Zodiak';
+  src: url('/fonts/Zodiak-Italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ─── Switzer ────────────────────────────────────────────────── */
+@font-face {
+  font-family: 'Switzer';
+  src: url('/fonts/Switzer-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Switzer';
+  src: url('/fonts/Switzer-Italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Switzer';
+  src: url('/fonts/Switzer-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Switzer';
+  src: url('/fonts/Switzer-Semibold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}

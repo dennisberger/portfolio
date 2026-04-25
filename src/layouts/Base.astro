@@ -12,6 +12,8 @@ interface Props {
   publishedAt?: Date;
   updatedAt?: Date;
   author?: string;
+  /** Schema.org JSON-LD payload. Pass the result of schemaGraph([...]). */
+  jsonLd?: object;
 }
 
 const {
@@ -23,6 +25,7 @@ const {
   publishedAt,
   updatedAt,
   author = 'Dennis Berger',
+  jsonLd,
 } = Astro.props;
 
 const ogImageUrl = new URL(ogImage, Astro.site ?? 'https://dennisberger.me').href;
@@ -80,11 +83,24 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://dennisberge
     <meta name="theme-color" content="#FDFCF9" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#1B1714" media="(prefers-color-scheme: dark)" />
 
-    <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
-    <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
+    {/* Self-hosted fonts. @font-face declarations live in src/styles/fonts.css
+        (bundled into the global CSS). Preload the two weights used above the
+        fold — Zodiak Regular (hero, h1s) and Switzer Regular (body copy) —
+        so the browser fetches them in parallel with HTML parsing instead of
+        waiting until the CSS resolves them. */}
     <link
-      rel="stylesheet"
-      href="https://api.fontshare.com/v2/css?f[]=zodiak@300,400,500,300i,400i,500i&f[]=switzer@400,500,600,400i&display=swap"
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/fonts/Zodiak-Regular.woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/fonts/Switzer-Regular.woff2"
+      crossorigin
     />
     <script is:inline>
       // Pre-paint theme override. Reads sessionStorage (NOT localStorage — the
@@ -122,6 +138,13 @@ than building JavaScript frameworks:
 → https://dennisberger.me/contact/`
       );
     </script>
+    {jsonLd && (
+      <script
+        type="application/ld+json"
+        is:inline
+        set:html={JSON.stringify(jsonLd)}
+      />
+    )}
     <slot name="head" />
   </head>
   <body>

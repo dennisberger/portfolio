@@ -4,25 +4,37 @@ import Base from '@/layouts/Base.astro';
 import SectionLabel from '@/components/SectionLabel.astro';
 import MarginNote from '@/components/MarginNote.astro';
 import portrait from '@/assets/dennis.jpeg';
+import {
+  SITE_URL,
+  personEntity,
+  websiteEntity,
+  profilePageEntity,
+  breadcrumbEntity,
+  schemaGraph,
+} from '@/lib/schema';
 
-const personSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Person',
-  name: 'Dennis Berger',
-  url: 'https://dennisberger.me',
-  jobTitle: 'Design Operations Leader',
-  worksFor: { '@type': 'Organization', name: 'Taco Bell' },
-  image: 'https://dennisberger.me/dennis.jpeg',
-  address: { '@type': 'PostalAddress', addressLocality: 'Philadelphia', addressRegion: 'PA', addressCountry: 'US' },
-  sameAs: ['https://linkedin.com/in/dennisberger'],
-};
+const aboutUrl = `${SITE_URL}/about/`;
+const jsonLd = schemaGraph([
+  personEntity(),
+  websiteEntity(),
+  profilePageEntity({
+    url: aboutUrl,
+    name: 'About — Dennis Berger',
+    description:
+      'Fifteen years leading design operations and UX strategy across Taco Bell, Comcast, Effectv, and GSK.',
+  }),
+  breadcrumbEntity([
+    { name: 'Home', url: `${SITE_URL}/` },
+    { name: 'About', url: aboutUrl },
+  ]),
+]);
 ---
 
 <Base
   title="About — Dennis Berger"
   description="Fifteen years leading design operations and UX strategy across Taco Bell, Comcast, Effectv, and GSK. How I think about systems, scale, and shipping."
+  jsonLd={jsonLd}
 >
-  <script slot="head" type="application/ld+json" is:inline set:html={JSON.stringify(personSchema)} />
   <article class="about page">
     <SectionLabel>About</SectionLabel>
     <h1 class="about__title">Serious about outcomes.<br /><em>Not precious about process.</em></h1>
