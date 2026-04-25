@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { Picture } from 'astro:assets';
 import Base from '@/layouts/Base.astro';
 import SectionLabel from '@/components/SectionLabel.astro';
 import MarginNote from '@/components/MarginNote.astro';
@@ -42,8 +42,9 @@ const jsonLd = schemaGraph([
 
     <div class="about__body">
       <figure class="about__portrait">
-        <Image
+        <Picture
           src={portrait}
+          formats={['avif', 'webp']}
           alt="Dennis Berger"
           widths={[160, 220, 440]}
           sizes="(max-width: 720px) 160px, 220px"
@@ -199,7 +200,10 @@ const jsonLd = schemaGraph([
     grid-row: 1 / span 2;
     font-family: var(--font-display);
     font-style: italic;
-    font-weight: 300;
+    /* 400 italic, not 300: at xl/22px Zodiak Light Italic reads anemic.
+       Same calibration as EditorialNumbers — Light italic is graceful at
+       28px+, thin below. */
+    font-weight: 400;
     font-size: var(--type-xl);
     color: var(--color-fuchsia-deep);
     line-height: 1;
@@ -257,7 +261,8 @@ const jsonLd = schemaGraph([
     inset-block-start: var(--space-sm);
     font-family: var(--font-display);
     font-style: italic;
-    font-weight: 300;
+    /* 400 italic, not 300: matches .about__career-dates above. */
+    font-weight: 400;
     font-size: var(--type-xl);
     color: var(--color-fuchsia-deep);
     line-height: 1;

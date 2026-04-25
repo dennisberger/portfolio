@@ -27,7 +27,10 @@ import Base from '@/layouts/Base.astro';
     font-size: var(--type-outsize);
     font-style: italic;
     font-weight: 300;
-    color: var(--color-fuchsia);
+    /* fuchsia-deep, not fuchsia: 5.85:1 vs 2.38:1.
+       The "404" is page-visible content (not aria-hidden), so contrast
+       must clear AA. Bright fuchsia is a decorative-only token. */
+    color: var(--color-fuchsia-deep);
     line-height: 0.9;
     letter-spacing: var(--tracking-outsize);
     margin-block-end: var(--space-sm);

@@ -180,6 +180,11 @@ const ordinals = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight'
   .hero__title em {
     font-style: italic;
     font-weight: 300;
+    /* Bright fuchsia is non-negotiable here: it's the brand-voice moment
+       on the hero. Contrast is ~2.38:1 — fails WCAG AA — and that's an
+       accepted trade-off. The bloom animation lands on this same color
+       (see .hero__word--bloom + best-bloom keyframe in global.css).
+       Don't "fix" this without conversation. */
     color: var(--color-fuchsia);
   }
   .hero__strap {

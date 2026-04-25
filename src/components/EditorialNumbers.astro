@@ -56,7 +56,10 @@ const { entries } = Astro.props;
     color: var(--color-fuchsia-deep);
     letter-spacing: var(--tracking-tight);
     font-style: italic;
-    font-weight: 300;
+    /* 400 (Regular Italic) at this scale + saturated fuchsia. The smaller
+       italic accents elsewhere stay at 300 — Light Italic reads graceful
+       at TOC/numeral size; at --type-4xl it reads anemic. */
+    font-weight: 400;
     /* Optical nudge — drop cap-height of the numeral onto the cap of the first line
        of the adjacent lead, which otherwise sits ~0.1em below its box top. */
     margin-block-start: -0.08em;

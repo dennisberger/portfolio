@@ -22,6 +22,8 @@ publishedAt: 2026-04-19
 import LineChart from '@/components/LineChart.astro';
 import MarginNote from '@/components/MarginNote.astro';
 import AlphaVideo from '@/components/AlphaVideo.astro';
+import aimPoster from '@/assets/case-studies/aim-animated-poster.png';
+import aimFallback from '@/assets/case-studies/aim-animated.png';
 
 Medical Insights Analysts were opening AIM, clicking a filter, and going to make coffee while the dashboard loaded. Thirty-plus minutes, on a good day. Most of them had stopped opening it at all. AIM was GSK's global platform for surfacing trends across trial and field data; in practice, the Power BI implementation was so slow and rigid that the tool was being bypassed. I was the lead and only UX voice on the project. The redesign got demoted to the second priority. The platform itself was the UX problem, and the fight to prove it would take eight months before a rebuild could begin.
 
@@ -38,7 +40,14 @@ Initial testing produced a SUS score of 34. Iterations within Power BI improved 
 Working with the Product Owner, I spent eight to nine months pushing for a rebuild using a custom stack centered on Plotly. The redesign focused on faster performance, workflows grounded in actual analyst behavior, and medical visualizations tailored to insight discovery.
 
 <figure class="case-figure">
-  <AlphaVideo src="aim-animated" alt="AIM dashboard on two laptops — Plotly-based medical analytics visualizations, main view alongside trend exploration." width={1440} height={568} />
+  <AlphaVideo
+    poster={aimPoster}
+    fallbackImg={aimFallback}
+    videoSrc="aim-animated"
+    alt="AIM dashboard on two laptops — Plotly-based medical analytics visualizations, main view alongside trend exploration."
+    width={1440}
+    height={568}
+  />
   <figcaption>The rebuilt AIM dashboard. Plotly-based visualizations replaced Power BI; load times dropped from 30+ minutes to seconds; exploratory analysis became possible across years of previously underused field data.</figcaption>
 </figure>
 

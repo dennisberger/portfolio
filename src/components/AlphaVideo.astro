@@ -2,21 +2,31 @@
 // Cross-browser transparent video with play-once-on-scroll + reduced-motion
 // fallback. Recipe: docs/alpha-video-for-web.md in ignyte.me.
 //
-// Expects four sibling assets in /public:
-//   - ${src}.mp4         HEVC + alpha (Safari)
-//   - ${src}.webm        VP9 + alpha  (Chrome / Firefox / Edge)
-//   - ${src}-poster.png  FIRST frame w/ alpha — used for `poster` so the
-//                        pre-play paint matches frame 0 of the video
-//                        (mismatched posters cause a visible flash on load)
-//   - ${src}.png         LAST frame w/ alpha — reduce-motion / <img> fallback
-//                        (the "settled" post-animation state)
+// Asset pipeline:
+//   - poster (PNG with alpha, imported from src/assets) → optimized to WebP
+//     via getImage(). Single URL because HTML's `<video poster=>` attribute
+//     can't point at a <picture>. WebP preserves alpha and is ~70% smaller
+//     than the source PNG; universal modern-browser support.
+//   - fallbackImg (PNG with alpha, imported from src/assets) → <Picture>
+//     with AVIF/WebP/PNG sources. Shown only if <video> isn't supported at
+//     all, but cheap to do right.
+//   - videoSrc (string, file stem) → MP4 + WebM still served from /public:
+//     - /${videoSrc}.mp4    HEVC + alpha (Safari)
+//     - /${videoSrc}.webm   VP9 + alpha  (Chrome / Firefox / Edge)
 //
-// Source order is load-bearing: MP4 first with codecs="hvc1" keeps Safari
-// off the WebM (Safari's VP9 alpha renders black).
+// Source order for <video> children is load-bearing: MP4 first with
+// codecs="hvc1" keeps Safari off the WebM (Safari's VP9 alpha renders black).
+
+import { Picture, getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 
 interface Props {
-  /** File stem under /public, e.g. "effectv-mobile" */
-  src: string;
+  /** Imported PNG (alpha preserved) — first frame, used for `poster=`. */
+  poster: ImageMetadata;
+  /** Imported PNG (alpha preserved) — last frame, used for the <video> child <img> fallback. */
+  fallbackImg: ImageMetadata;
+  /** File stem under /public for the .mp4 + .webm pair, e.g. "effectv-mobile". */
+  videoSrc: string;
   alt: string;
   width: number;
   height: number;
@@ -24,7 +34,17 @@ interface Props {
   threshold?: number;
 }
 
-const { src, alt, width, height, threshold = 0.5 } = Astro.props;
+const { poster, fallbackImg, videoSrc, alt, width, height, threshold = 0.5 } = Astro.props;
+
+// Optimized WebP poster — preserves alpha, ~70% smaller than source PNG.
+// Single URL (poster attr can't take <picture>). Pin to intrinsic width
+// to match the video surface dimensions exactly (mismatched sizes flash).
+const posterWebp = await getImage({
+  src: poster,
+  format: 'webp',
+  width,
+  quality: 90,
+});
 ---
 
 <video
@@ -35,12 +55,19 @@ const { src, alt, width, height, threshold = 0.5 } = Astro.props;
   preload="auto"
   width={width}
   height={height}
-  poster={`/${src}-poster.png`}
+  poster={posterWebp.src}
   aria-label={alt}
 >
-  <source src={`/${src}.mp4`} type='video/mp4; codecs="hvc1"' />
-  <source src={`/${src}.webm`} type="video/webm" />
-  <img src={`/${src}.png`} alt={alt} width={width} height={height} />
+  <source src={`/${videoSrc}.mp4`} type='video/mp4; codecs="hvc1"' />
+  <source src={`/${videoSrc}.webm`} type="video/webm" />
+  <Picture
+    src={fallbackImg}
+    formats={['avif', 'webp']}
+    alt={alt}
+    width={width}
+    height={height}
+    loading="lazy"
+  />
 </video>
 
 <script>

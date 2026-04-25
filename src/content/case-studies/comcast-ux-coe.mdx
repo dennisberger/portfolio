@@ -19,8 +19,11 @@ flagship: false
 publishedAt: 2026-04-20
 ---
 
+import { Picture } from 'astro:assets';
 import LineChart from '@/components/LineChart.astro';
 import MarginNote from '@/components/MarginNote.astro';
+import uxCoeDefine from '@/assets/case-studies/ux-coe-define.png';
+import uxCoeSkills from '@/assets/case-studies/ux-coe-skills.png';
 
 The content was technically fine: instructional designers had built it carefully, compliance had approved it. But fewer than one in five employees who started a course finished it, and nobody could say why, because nobody was measuring the experience. ULearn was Comcast's bet on replacing a legacy SAP system during the Great Resignation. The new UX function had to prove, quickly, that it was worth keeping.
 
@@ -37,7 +40,14 @@ Completion on started content was below 20%, but completion alone was not enough
 The UX team had mixed seniority and limited maturity, with six designers total: two senior and four much more junior practitioners. I helped define the function as a Center of Excellence and introduced a tiered engagement model so teams could get the right level of UX support without every request becoming a full redesign effort.
 
 <figure class="case-figure">
-  <img src="/ux-coe-define.png" alt="UX Center of Excellence framework — four core focus areas defining how the function partnered with the business." width="2014" height="1134" loading="lazy" />
+  <Picture
+    src={uxCoeDefine}
+    formats={['avif', 'webp']}
+    alt="UX Center of Excellence framework — four core focus areas defining how the function partnered with the business."
+    widths={[640, 960, 1280, 2014]}
+    sizes="(max-width: 720px) 100vw, (max-width: 1080px) 80vw, 720px"
+    loading="lazy"
+  />
   <figcaption>The CoE framework. Four focus areas that gave stakeholders a shared language for what UX was for, how it partnered, and where it invested.</figcaption>
 </figure>
 
@@ -58,7 +68,14 @@ Early on, UX could add a full sprint to delivery timelines. By reshaping the ser
 />
 
 <figure class="case-figure">
-  <img src="/ux-coe-skills.png" alt="Phased UX enablement plan — building shared UX capability across instructional design and adjacent teams." width="1600" height="898" loading="lazy" />
+  <Picture
+    src={uxCoeSkills}
+    formats={['avif', 'webp']}
+    alt="Phased UX enablement plan — building shared UX capability across instructional design and adjacent teams."
+    widths={[640, 960, 1280, 1600]}
+    sizes="(max-width: 720px) 100vw, (max-width: 1080px) 80vw, 720px"
+    loading="lazy"
+  />
   <figcaption>Phased enablement plan for extending UX thinking into instructional design and adjacent teams. Shared methods, frameworks, facilitation paths.</figcaption>
 </figure>
 
