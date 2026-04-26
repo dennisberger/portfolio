@@ -1,0 +1,603 @@
+---
+import Base from '@/layouts/Base.astro';
+import SectionLabel from '@/components/SectionLabel.astro';
+import {
+  SITE_URL,
+  personEntity,
+  websiteEntity,
+  profilePageEntity,
+  breadcrumbEntity,
+  schemaGraph,
+} from '@/lib/schema';
+
+const resumeUrl = `${SITE_URL}/resume/`;
+const jsonLd = schemaGraph([
+  personEntity(),
+  websiteEntity(),
+  profilePageEntity({
+    url: resumeUrl,
+    name: 'Résumé — Dennis Berger',
+    description:
+      'Résumé for Dennis Berger — Design Operations Lead at Taco Bell. Fifteen years scaling design organizations.',
+  }),
+  breadcrumbEntity([
+    { name: 'Home', url: `${SITE_URL}/` },
+    { name: 'Résumé', url: resumeUrl },
+  ]),
+]);
+
+type Role = {
+  title: string;
+  org: string;
+  dates: string;
+  datetime: string;
+  bullets: string[];
+};
+
+const roles: Role[] = [
+  {
+    title: 'Design Operations Lead',
+    org: 'Taco Bell',
+    dates: 'Dec 2023 — Present',
+    datetime: '2023-12',
+    bullets: [
+      "Implemented Taco Bell's first enterprise design system, improving design-to-engineering delivery by one sprint, reducing engineering rework by ~30%, and shipping 60+ governed components.",
+      'Joined as the second design hire after the director and have personally interviewed every FTE and contract designer since. Hire, level, and manage key team members (the internal researcher, content strategist, and design systems lead), with responsibility for performance reviews, coaching, and career growth.',
+      "Lead Taco Bell's AI-assisted DesignOps pilot (the first such pilot within Yum), applying ChatGPT and Figma MCP to design system governance, content strategy, and operational hygiene; secured executive permission to run a parallel A/B evaluation of Claude outside Yum's standardized vendor footprint.",
+      "Drove research, backlog priorities, and feature work for Taco Bell's mobile app redesign, spanning moderated and unmoderated studies, near-final validation, and pain-point discovery across the customer journey.",
+      'Established Jira-based intake, prioritization, and governance mechanisms linking design work to executive OKRs; improved visibility, throughput, and decision-making across the org.',
+      'Partner with Product, Engineering, Data, Marketing, and CX leadership to shape prioritization, planning, and KPI definition; improved cross-functional alignment and execution.',
+    ],
+  },
+  {
+    title: 'Senior Program Manager, Digital Experience',
+    org: 'Comcast',
+    dates: 'Aug 2021 — Dec 2023',
+    datetime: '2021-08/2023-12',
+    bullets: [
+      'Built a 6-person UX Center of Excellence from zero, transforming UX from ad hoc support into a strategic enterprise capability.',
+      'Designed the operating model, governance structure, and engagement tiers; reduced sprint friction by 33%.',
+      'Coached and developed designers across multiple product teams; aligned delivery practices and team development across senior and junior practitioners.',
+      'Partnered with product and engineering leadership to embed UX strategy into digital transformation; influenced roadmaps, sequencing, and resourcing decisions.',
+      "Introduced SUS as the organization's first usability benchmark; lifted touched products from baseline scores in the 40s–50s to 68+ within two to three sprint cycles.",
+      'Reduced UX drag from one sprint to two-to-three days over six months by reshaping team processes, operating rhythms, and enablement paths.',
+    ],
+  },
+  {
+    title: 'Senior Product Designer',
+    org: 'GSK',
+    dates: 'May 2020 — Aug 2021',
+    datetime: '2020-05/2021-08',
+    bullets: [
+      'Delivered a redesign that improved usability from a SUS of 34 to 81, reduced load times from 30+ minutes to seconds, and significantly increased analyst adoption and time-to-insight.',
+      'Diagnosed core platform constraints and successfully advocated for an eight-month rebuild from a failing Power BI implementation to a custom Plotly-based solution.',
+      'Led UX strategy and design for global analytics platforms supporting medical and compliance functions.',
+      'Established a recurring research and usability practice to maintain user alignment and rebuild stakeholder trust.',
+    ],
+  },
+  {
+    title: 'UI/UX Engineer',
+    org: 'Comcast Effectv',
+    dates: 'Jul 2017 — May 2020',
+    datetime: '2017-07/2020-05',
+    bullets: [
+      "Led design and front-end development for the U.S.'s first self-service linear TV advertising platform (Effectv, now Comcast Advertising), built for small and “super-small” businesses.",
+      'Worked across product design, prototyping, UX writing, usability testing, and implementation in a hybrid design-engineering role.',
+      'Treated industry jargon as a UX problem; rewrote workflows in plain language for first-time advertisers, improving clarity and confidence throughout the experience.',
+      'Improved usability from SUS 41 to 72 across five iterative testing rounds; reduced clicks per task by 40%+; cut task completion time by ~50%.',
+      'Introduced NPS measurement during pilot, lifting satisfaction by 20+ points and guiding iterative improvements.',
+      'Certified ScrumMaster.',
+    ],
+  },
+  {
+    title: 'Founder & UX Strategist',
+    org: 'TopClick',
+    dates: 'Feb 2010 — Jul 2017',
+    datetime: '2010-02/2017-07',
+    bullets: [
+      'Founded and led a UX consultancy; owned strategy, delivery, and business operations across multiple client engagements.',
+      'Designed and shipped digital products end-to-end, building deep fluency in balancing user needs, business goals, technical constraints, and timelines.',
+      'Introduced experience measurement frameworks (SUS, NPS) to quantify impact and guide investment decisions for clients.',
+      'Built foundational leadership, client management, and consulting muscles through seven years of hands-on client work.',
+    ],
+  },
+];
+
+const skillClusters: { label: string; items: string[] }[] = [
+  {
+    label: 'Leading',
+    items: [
+      'People Leadership',
+      'Hiring & Team Development',
+      'Stakeholder Alignment',
+      'Design Leadership',
+    ],
+  },
+  {
+    label: 'Building',
+    items: [
+      'Design Operations',
+      'Research Operations',
+      'Design Systems',
+      'Product Design',
+    ],
+  },
+  {
+    label: 'Practicing',
+    items: [
+      'UX Strategy',
+      'UX Metrics (SUS, NPS)',
+      'Agile & Scrum',
+      'AI & Emerging Tech',
+    ],
+  },
+];
+---
+
+<Base
+  title="Résumé — Dennis Berger"
+  description="Résumé for Dennis Berger — Design Operations Lead at Taco Bell. Fifteen years scaling design organizations across Taco Bell, Comcast, GSK, and Effectv."
+  jsonLd={jsonLd}
+>
+  <article class="resume page">
+    <header class="resume__header">
+      <SectionLabel>Résumé</SectionLabel>
+      <h1 class="resume__name">Dennis Berger</h1>
+      <p class="resume__contact">
+        <span>Philadelphia, PA</span>
+        <span aria-hidden="true">·</span>
+        <a href="tel:+12155109765">215-510-9765</a>
+        <span aria-hidden="true">·</span>
+        <a href="mailto:hello@dennisberger.me">hello@dennisberger.me</a>
+        <span class="resume__contact-break" aria-hidden="true"></span>
+        <a href="https://linkedin.com/in/dennisberger" target="_blank" rel="noopener noreferrer">linkedin.com/in/dennisberger</a>
+        <span aria-hidden="true">·</span>
+        <a href="https://dennisberger.me">dennisberger.me</a>
+        <span aria-hidden="true">·</span>
+        <a
+          href="/dennis-berger-resume.pdf"
+          download="Dennis-Berger-DesignOps-Resume.pdf"
+          class="resume__pdf"
+        >Save as PDF<span class="resume__pdf-arrow" aria-hidden="true">→</span></a>
+      </p>
+    </header>
+
+    <section class="resume__section resume__summary">
+      <SectionLabel>Summary</SectionLabel>
+      <p>
+        Design Operations leader with 15 years building and scaling multidisciplinary product design organizations. Currently at Taco Bell, where I built the company's first DesignOps function from zero, with a $2.3M budget, a research practice running 64 studies a year, and a 15-person team. Previously stood up the UX Center of Excellence at Comcast, redesigned GSK's analytics platform (lifting SUS from 34 to 81), and led design and engineering for Effectv's self-service linear TV platform, the first of its kind in the U.S. Spent seven years before that running my own consultancy. I hire, level, and coach the people I work with. <em class="resume__summary-coda">Serious about outcomes; not precious about process.</em>
+      </p>
+    </section>
+
+    <section class="resume__section resume__experience">
+      <SectionLabel>Experience</SectionLabel>
+      <ol class="resume__roles">
+        {roles.map((role) => (
+          <li class="resume__role">
+            <time class="resume__role-dates" datetime={role.datetime}>{role.dates}</time>
+            <div class="resume__role-body">
+              <h2 class="resume__role-title">{role.title}</h2>
+              <p class="resume__role-org">{role.org}</p>
+              <ul class="resume__role-bullets">
+                {role.bullets.map((b) => <li>{b}</li>)}
+              </ul>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="resume__section resume__education">
+      <SectionLabel>Education</SectionLabel>
+      <ul class="resume__edu">
+        <li>
+          <span class="resume__edu-degree">M.B.A., Innovation Management</span>
+          <span class="resume__edu-school">Drexel University</span>
+        </li>
+        <li>
+          <span class="resume__edu-degree">B.B.A., Business Administration</span>
+          <span class="resume__edu-school">Temple University</span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="resume__section resume__skills">
+      <SectionLabel>Skills</SectionLabel>
+      <dl class="resume__skill-clusters">
+        {skillClusters.map((cluster) => (
+          <div class="resume__skill-cluster">
+            <dt class="resume__skill-label">{cluster.label}</dt>
+            <dd class="resume__skill-items">
+              {cluster.items.map((item, i) => (
+                <>
+                  {i > 0 && <span class="resume__skill-sep" aria-hidden="true">·</span>}
+                  <span>{item}</span>
+                </>
+              ))}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <section class="resume__section resume__recognition">
+      <SectionLabel>Recognition</SectionLabel>
+      <p>
+        <strong>GSK Gold Award, 2021</strong> — Highest internal recognition, awarded for the AIM platform redesign.
+      </p>
+    </section>
+  </article>
+</Base>
+
+<style>
+  .resume {
+    padding-block: var(--space-section-hero) var(--space-section);
+    max-width: var(--col-total);
+  }
+
+  /* ─── Header ─── */
+  .resume__header {
+    margin-block-end: var(--space-2xl);
+  }
+  .resume__name {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: var(--type-5xl);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-display);
+    margin-block: var(--space-md) var(--space-md);
+  }
+  .resume__contact {
+    font-family: var(--font-body);
+    font-size: var(--type-base);
+    color: var(--color-ink-muted);
+    line-height: var(--leading-snug);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-sm);
+    margin: 0;
+  }
+  .resume__contact a {
+    color: inherit;
+    text-decoration-color: color-mix(in oklch, var(--color-ink-muted) 35%, transparent);
+  }
+  .resume__contact a:hover { color: var(--color-fuchsia-deep); }
+  .resume__contact-break { flex-basis: 100%; height: 0; }
+
+  /* "Save as PDF" sits in the contact strip as another piece of document
+     metadata — utility, not CTA. Slightly warmer color than the surrounding
+     ink-muted links so it reads as the one actionable item in the line.
+     Selector raised to .resume__contact a.resume__pdf to win specificity over
+     the generic contact-link rule above without needing !important. */
+  .resume__contact a.resume__pdf {
+    color: var(--color-fuchsia-deep);
+    text-decoration-color: color-mix(in oklch, var(--color-fuchsia-deep) 35%, transparent);
+    white-space: nowrap;
+  }
+  .resume__pdf-arrow {
+    display: inline-block;
+    margin-inline-start: 0.25em;
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+  .resume__pdf:hover .resume__pdf-arrow { transform: translateX(3px); }
+
+  /* ─── Sections ─── */
+  .resume__section {
+    padding-block-start: var(--space-xl);
+    margin-block-end: var(--space-2xl);
+    border-block-start: 1px solid var(--color-rule);
+  }
+  .resume__section:first-of-type { border-block-start: 2px solid var(--color-ink); }
+
+  .resume__summary p {
+    font-family: var(--font-body);
+    font-size: var(--type-lg);
+    line-height: var(--leading-relaxed);
+    max-width: var(--measure);
+    margin: 0;
+  }
+  /* Class-scoped, not bare `em`, so future incidental italics in the summary
+     don't inherit display-font/fuchsia treatment by accident. */
+  .resume__summary-coda {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--color-fuchsia-deep);
+  }
+
+  /* ─── Experience ─── */
+  .resume__roles {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0;
+  }
+  .resume__role {
+    display: grid;
+    grid-template-columns: 11rem 1fr;
+    column-gap: var(--space-xl);
+    padding-block: var(--space-lg);
+    border-block-start: 1px solid var(--color-rule);
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .resume__role:first-child { border-block-start: none; padding-block-start: var(--space-md); }
+
+  .resume__role-dates {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    font-size: var(--type-lg);
+    color: var(--color-fuchsia-deep);
+    line-height: var(--leading-snug);
+    font-variant-numeric: tabular-nums;
+    padding-block-start: 0.15em;
+  }
+  .resume__role-body { min-width: 0; max-width: var(--measure); }
+  .resume__role-title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: var(--type-2xl);
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-snug);
+    margin: 0;
+  }
+  .resume__role-org {
+    font-family: var(--font-body);
+    font-size: var(--type-xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-cobalt-deep);
+    margin: var(--space-2xs) 0 var(--space-md);
+  }
+  .resume__role-bullets {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-sm);
+    font-family: var(--font-body);
+    font-size: var(--type-base);
+    line-height: var(--leading-body);
+  }
+  .resume__role-bullets li {
+    position: relative;
+    padding-inline-start: var(--space-md);
+  }
+  .resume__role-bullets li::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 0.65em;
+    width: 0.4rem;
+    height: 1px;
+    background: var(--color-fuchsia);
+  }
+
+  @media (max-width: 720px) {
+    .resume__role { grid-template-columns: 1fr; gap: var(--space-sm); }
+    .resume__role-dates { font-size: var(--type-base); }
+  }
+
+  /* ─── Education ─── */
+  .resume__edu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-md);
+    max-width: var(--measure);
+  }
+  .resume__edu li {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: var(--space-lg);
+    align-items: baseline;
+  }
+  .resume__edu-degree {
+    font-family: var(--font-display);
+    font-size: var(--type-lg);
+    line-height: var(--leading-snug);
+  }
+  .resume__edu-school {
+    font-family: var(--font-body);
+    font-size: var(--type-xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-cobalt-deep);
+  }
+  @media (max-width: 720px) {
+    .resume__edu li { grid-template-columns: 1fr; gap: var(--space-2xs); }
+  }
+
+  /* ─── Skills ─── */
+  /* Triptych pattern: three capability clusters, each labeled with a fuchsia
+     italic Zodiak kicker (matching the role-dates register), items set as a
+     comma-list separated by cobalt mid-dots. No containers. Mirrors the
+     home masthead <dl> rhythm but inline rather than stacked. */
+  .resume__skill-clusters {
+    display: grid;
+    gap: var(--space-md);
+    margin: 0;
+    max-width: var(--measure);
+  }
+  .resume__skill-cluster {
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+    column-gap: var(--space-lg);
+    align-items: baseline;
+    padding-block: var(--space-sm);
+    border-block-start: 1px solid var(--color-rule);
+  }
+  .resume__skill-cluster:first-child { border-block-start: none; padding-block-start: 0; }
+  .resume__skill-label {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    font-size: var(--type-lg);
+    color: var(--color-fuchsia-deep);
+    line-height: var(--leading-snug);
+  }
+  .resume__skill-items {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--type-base);
+    line-height: var(--leading-snug);
+    color: var(--color-ink);
+  }
+  .resume__skill-sep {
+    color: var(--color-cobalt-deep);
+    margin-inline: 0.4em;
+  }
+  @media (max-width: 720px) {
+    .resume__skill-cluster { grid-template-columns: 1fr; gap: var(--space-2xs); }
+    .resume__skill-label { font-size: var(--type-base); }
+  }
+
+  /* ─── Recognition ─── */
+  .resume__recognition p {
+    font-family: var(--font-body);
+    font-size: var(--type-base);
+    line-height: var(--leading-relaxed);
+    max-width: var(--measure);
+    margin: 0;
+    color: var(--color-ink-muted);
+  }
+  .resume__recognition strong {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-style: italic;
+    font-size: var(--type-lg);
+    color: var(--color-fuchsia-deep);
+  }
+
+  /* ─── Print ─── */
+  @media print {
+    @page { size: Letter; margin: 0.55in; }
+
+    /* Accent colors below are pinned to sRGB hexes (#b3006a fuchsia,
+       #2640a8 cobalt). DO NOT refactor to CSS custom properties: Safari's
+       print engine and Puppeteer's headless render resolve `var()` against
+       pre-print cascade state, and inside Astro's scoped @media print
+       block the resolved value comes back transparent — colors collapse
+       to grayscale. The repetition is the whole point. */
+
+
+    :global(html), :global(body) {
+      background: #fff !important;
+      color: #000 !important;
+    }
+    /* Force light-mode tokens regardless of prefers-color-scheme,
+       so accent colors stay readable on paper. */
+    :global(html) { color-scheme: light; }
+
+    /* Browsers strip background colors from print by default to save ink.
+       The fuchsia rules and bullet ticks are *information* (visual rhythm
+       carries the same weight on paper as on screen), so opt them back in.
+       Scoped narrowly — we don't want every chip background printing. */
+    .resume__role-bullets li::before,
+    :global(.section-label__rule) {
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+    :global(nav), :global(footer), :global(.skip-link), :global(#theme-announcer) {
+      display: none !important;
+    }
+    :global(main) { display: block; }
+
+    .resume {
+      padding: 0;
+      max-width: none;
+    }
+    .resume__pdf { display: none !important; }
+
+    /* The artifact IS the résumé; the on-screen "RÉSUMÉ" kicker above the
+       name is redundant on paper. Hide only the header's section label,
+       not the in-section kickers (Summary / Experience / etc.) below. */
+    .resume__header :global(.section-label) { display: none !important; }
+
+    .resume__header { margin-block-end: 0.35in; }
+    .resume__name {
+      font-size: 26pt;
+      margin-block: 0.05in 0.08in;
+    }
+    .resume__contact {
+      font-size: 9pt;
+      gap: 0 0.18em;
+    }
+    .resume__contact a { color: #000 !important; text-decoration: none; }
+
+    .resume__section {
+      padding-block-start: 0.18in;
+      margin-block-end: 0.22in;
+      border-block-start: 0.5pt solid #999;
+      break-inside: auto;
+    }
+    .resume__section:first-of-type { border-block-start: 1pt solid #000; }
+
+    .resume__summary p { font-size: 10pt; line-height: 1.45; max-width: none; }
+    .resume__summary em { color: #b3006a !important; }
+
+    .resume__role {
+      grid-template-columns: 1.7in 1fr;
+      column-gap: 0.25in;
+      padding-block: 0.12in;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    .resume__role-dates {
+      font-size: 10pt;
+      color: #b3006a !important;
+    }
+    .resume__role-title { font-size: 12pt; }
+    .resume__role-org {
+      font-size: 8pt;
+      color: #2640a8 !important;
+      margin: 0.02in 0 0.08in;
+    }
+    .resume__role-bullets { font-size: 9.5pt; line-height: 1.4; gap: 0.06in; }
+    .resume__role-bullets li::before { background: #b3006a !important; }
+
+    .resume__edu-degree { font-size: 10.5pt; }
+    .resume__edu-school { font-size: 8pt; color: #2640a8 !important; }
+
+    .resume__skill-clusters { gap: 0.06in; max-width: none; }
+    .resume__skill-cluster {
+      grid-template-columns: 1in 1fr;
+      column-gap: 0.18in;
+      padding-block: 0.05in;
+      border-block-start: 0.5pt solid #999;
+    }
+    .resume__skill-label { font-size: 9.5pt; color: #b3006a !important; }
+    .resume__skill-items { font-size: 9pt; line-height: 1.35; }
+    .resume__skill-sep { color: #2640a8 !important; }
+
+    .resume__recognition p { font-size: 9.5pt; }
+    .resume__recognition strong { color: #b3006a !important; font-size: 10.5pt; }
+
+    /* Section labels (kicker) — keep accent, drop background animations */
+    :global(.section-label) {
+      color: #2640a8 !important;
+      font-size: 7.5pt !important;
+      margin-block-end: 0.06in !important;
+    }
+    :global(.section-label__rule) { background: #b3006a !important; }
+
+    /* Defeat any reveal animations holding opacity:0 */
+    :global([data-reveal]),
+    :global([data-reveal-wash]),
+    :global([data-reveal-chart]) {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+    /* The rule is animated from width:0 by scroll-reveal; sections that
+       never enter the viewport before print stay at 0. Force the final
+       width so every kicker rule prints. */
+    :global(.section-label__rule) {
+      width: var(--space-xl) !important;
+      animation: none !important;
+    }
+  }
+</style>

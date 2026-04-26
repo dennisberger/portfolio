@@ -28,29 +28,31 @@ import StackedBars from '@/components/StackedBars.astro';
 
 On my first week at Taco Bell, the design team's intake system was a Slack channel. No backlog, no priorities, no one with a clear view of capacity. Two internal designers, one director, me, and an agency model that had spent years running as an order-taker. Work was happening; governance wasn't. That was the starting line.
 
-My role was to build the systems that would let design function as a credible enterprise partner rather than a reactive service layer. That work spanned intake and planning, tooling and documentation, research operations, design system enablement, and team capability building.
+My role was to build the systems that would let design function as a credible enterprise partner rather than a reactive service layer.
 
 ## The challenge
 
-Taco Bell's internal design organization was still small when I joined: one director, two internal designers, and me, supported by an external agency model that had historically operated as an order-taker. The result was a function that could produce work, but struggled to govern it.
-
 <MarginNote>Ok, bigger than advertised. This is gonna be fun.</MarginNote>
 
-There was no consistent intake path, no clear view of capacity, no shared planning model, and no research discipline to help the team move beyond opinion-based design debates. For Taco Bell to truly bring design in-house, it needed more than designers. It needed operational infrastructure.
+There was no consistent intake path, no clear view of capacity, no shared planning model, and no research discipline to move the team beyond opinion-based design debates. For Taco Bell to truly bring design in-house, it needed more than designers. It needed operational infrastructure.
 
-## What I changed
+## Before I changed anything
 
-### Replacing ad hoc requests with governed intake
+The team I joined wasn't broken. The designers were good. The director was new. The agency was on its way out. There was plenty of talent on the team. What they needed was permission to operate differently.
 
-I moved the team away from Slack-based requests and into Jira, creating a structured intake and planning model with estimation, sprint tracking, and clear delivery visibility. That gave design a single source of truth for requested, active, and completed work, while making it easier to align stakeholders around timelines, capacity, and tradeoffs.
+I spent the first stretch interviewing stakeholders rather than building. Taco Bell is a marketing-driven company selling a low-margin product, which made design-as-order-taker a feature for marketing and a bug for everyone else. Designers were tired of being a pixel-output function. PMs were getting "yes" by default. Marketing was getting "by Friday" by default. Nobody had time for craft, evidence, or dissent.
 
 <MarginNote>GOAL: by summer, everyone will remember that Slack is for chat and Jira is for intake.</MarginNote>
 
+The first thing I built was a wall. I closed the Slack intake channel, routed work through a structured Jira flow with estimation and sprint tracking, and started replying with qualified responses: "thank you for the request; we need to assess capacity and the right way to integrate this for our users." That was a shock to people who had previously heard "yes, by Friday." It produced friction with marketing and product. It also bought instant trust with the designers, who had been waiting for someone to say no on their behalf.
+
+I absorbed the conflict deliberately. When pushback came, the answer was "this is an ops decision," which framed the change as structural rather than personal and let the designers stay focused on craft. By the time I needed to move documentation out of Figma boards and into Confluence (which they didn't ask for), I had enough credibility to make the moves stick.
+
+## What I changed
+
 ### Building enterprise-grade infrastructure
 
-I helped modernize the team's operating environment by centralizing work in Jira, moving documentation into Confluence, and leading Taco Bell's migration from Figma Pro to Figma Enterprise. That work enabled capabilities the team needed to scale, including stronger governance, branching and merging, improved developer handoff through Dev Mode, and the retirement of an outdated Zeplin setup.
-
-Taco Bell became the first brand within Yum to make that move, and I later helped support the broader enterprise transition to a converged Figma environment across brands.
+I led Taco Bell's migration from Figma Pro to Figma Enterprise: stronger governance, branching and merging, Dev Mode handoff, retirement of an outdated Zeplin setup. Taco Bell became the first brand within Yum to make that move. I later served as Taco Bell's lead in Yum's broader convergence to a unified Figma environment, briefing the other brand leads on what to negotiate for and what Figma would push back on.
 
 <Footnote n={1}>The operating budget for this infrastructure sits at $2.3M annually. Scoped to tooling, external research, contractors, and accessibility validation; renewed annually against the design org's roadmap.</Footnote>
 
@@ -58,13 +60,13 @@ I own the operating budget for this infrastructure: $2.3M annually across toolin
 
 ### Making research a core product capability
 
-The biggest gap I identified was research. Without it, design decisions were driven by opinion, instinct, and generic best practices rather than direct user evidence.
-
 <MarginNote>How do they know we know what we're talking about here? We need evidence.</MarginNote>
 
-I led the effort to establish research through an external partner, negotiated the statement of work, and built the operational model around intake, triage, capacity, and adoption. Since then, I have remained the internal lead for the relationship and the operational point of continuity for the practice.
+The biggest gap I identified was research. Without it, design decisions were driven by opinion, instinct, and generic best practices rather than direct user evidence.
 
-That shift changed how product decisions were made. Taco Bell went from doing no formal studies to 22 studies in 2024 and 64 in 2025, with research now serving as a core input into major workstreams, including the current full app redesign through industry analysis, unmoderated concept testing, and moderated validation of near-final designs.
+I led the effort to establish research through an external partner, negotiated the statement of work, and built the operational model around intake, triage, capacity, and adoption. Since then, I've remained the internal lead for the relationship and the operational point of continuity for the practice.
+
+That shift changed how product decisions were made. Taco Bell went from doing no formal studies to 22 in 2024 and 64 in 2025. Research now serves as a core input into major workstreams, including the current full app redesign through industry analysis, unmoderated concept testing, and moderated validation of near-final designs.
 
 <LineChart
   points={[
@@ -78,15 +80,80 @@ That shift changed how product decisions were made. Taco Bell went from doing no
   ariaLabel="Research studies grew from 0 in 2023 to 22 in 2024 to 64 in 2025, projected around 80 in 2026."
 />
 
-### Enabling a scalable design system and content workflow
+### Enabling a scalable design system
 
-<MarginNote>Ok, so we need a design system. But also: Figma Enterprise, ZeroHeight, governance, estimation. Surely that's one roadmap.</MarginNote>
+I did not build Taco Bell's component library directly. My role was to create the conditions that would allow the design system to function: dedicated workflow infrastructure, triage and governance rituals, documentation support, tooling upgrades, and visibility into progress and constraints. The system has since grown to more than 60 components.
 
-I did not build Taco Bell's component library directly. My role was to create the conditions that would allow the design system to function: dedicated workflow infrastructure, triage and governance rituals, documentation support, tooling upgrades, and better visibility into progress and constraints. The system has since grown to more than 60 components.
+I co-manage Taco Bell's relationship with Applause, an external accessibility validation partner, with the Director of Engineering. Engineering owns the SOW and the expert-hour budget; I coordinate testing capacity for prototypes and design system components so we don't burn through the budget before code-level testing happens.
 
-I also identified content strategy as another missing capability. Designers were writing product copy themselves, which diluted focus and created quality issues. I advocated for a dedicated Content Strategy Lead. The role now serves as a translation layer across brand, legal, and product language, and has made the design team more efficient. Alongside this work, I also co-manage Taco Bell's relationship with Applause, an external accessibility validation partner, with the Director of Engineering.
+## Building the team
+
+The agency-to-FTE transition was the visible part of the story. The harder part was figuring out what shape the in-house team should take.
+
+I wrote the job descriptions and leveled the existing designers across three IC tracks: Lead, Senior, and on-level Product Designer. Those JDs are still in use today. When the budget math made it clear we couldn't fully replace agency capacity with FTEs alone, I built a vendor relationship with Insight Global for contractor labor against the same JDs, taking the team from 8 FTEs to 12 total.
+
+The ratio was the harder question. The initial argument, which I lost, was that the team needed to be heavily senior to bring agency-equivalent craft and autonomy on day one. We staffed accordingly, and the result was a top-heavy team where individual craft didn't compose into an operating model. Senior hires sold on autonomy were being asked to align with a house playbook. Collaboration suffered. Turnover followed.
+
+<StackedBars
+  mode="proportion"
+  hideTotals
+  years={[
+    { year: 'Initial staffing model', segments: [
+      { label: 'Lead Designers', value: 5 },
+      { label: 'Senior Designers', value: 2 },
+      { label: 'On-level Designers', value: 1 },
+    ]},
+    { year: 'After rebalance', segments: [
+      { label: 'Lead Designers', value: 3 },
+      { label: 'Senior Designers', value: 4 },
+      { label: 'On-level Designers', value: 5 },
+    ]},
+  ]}
+  legendOrder={['Lead Designers', 'Senior Designers', 'On-level Designers']}
+  palette={{
+    'Lead Designers': 'var(--color-fuchsia-deep)',
+    'Senior Designers': 'var(--color-cobalt-deep)',
+    'On-level Designers': 'var(--color-cobalt-pale)',
+  }}
+  caption="Team composition by IC level before and after the JD leveling framework. Lead roles intentionally rarified; senior and on-level scaled proportionally as the team grew."
+  ariaLabel="Two stacked bars comparing IC level proportions before and after the JD leveling framework. Initial: 63% Lead, 25% Senior, 12% on-level. After rebalance: 25% Lead, 33% Senior, 42% on-level."
+/>
+
+We rebalanced to the model I'd originally argued for: one Lead per core workstream (Ecomm, Design Systems, and Omnichannel for kiosk, drive-thru, and in-restaurant), seniors used sparingly for specific implementation roles, and on-level Product Designers and contractors flexing across the rest. Leads carried domain ownership; on-level designers got real work and real coaching; contractors plugged into structure that already knew how to receive them.
+
+The lesson: an in-house team isn't a slightly-smaller agency. The shape of the team is the operating model, and senior craft alone doesn't compose into one.
+
+One staffing decision didn't come from the original headcount plan. I advocated for a dedicated Content Strategy Lead. Designers had been writing product copy themselves, which diluted focus and let voice and terminology drift. The role now serves as a translation layer across brand, legal, and product language, and pulled a category of work off designers' plates.
+
+## Piloting AI as design ops infrastructure
+
+<MarginNote>Yum standardized on ChatGPT enterprise. We got permission to evaluate Claude in parallel. Taco Bell first, again.</MarginNote>
+
+By late 2025 it was clear that AI would either become a leverage point for design ops or a liability we'd have to defend against. I chose to make it infrastructure.
+
+We're now running a multi-vector pilot using ChatGPT plus Figma MCP, applied across three functions:
+
+- **Design system governance.** Automated reviews surface outdated components, deprecated tokens, and drift in files before they ship.
+- **Content strategy.** The same pipeline catches placeholder text, off-brand language, and inconsistencies that are otherwise expensive to find at scale: *cal* vs. *cals*, lorem still in a flow, terminology that doesn't match brand voicing rules.
+- **Ops hygiene.** Surfaces users who aren't in a Taco Bell billing group or workspace. The kind of license-management toil that quietly costs money and attention.
+
+Alongside the ChatGPT pipeline, we're running an A/B evaluation against Claude. Yum holds an enterprise license for ChatGPT but not for Claude, so this required executive permission to evaluate outside the enterprise vendor footprint, another Taco Bell first within Yum. The question we're answering: whether creative-team workload performs better on a different platform than the one Yum has standardized on, and whether that delta justifies a vendor shift.
+
+I'm not interested in AI for its own sake. The questions worth answering are whether design ops can use AI to remove categories of toil that previously needed humans, and whether platform choice meaningfully affects creative-team output. Both are real questions, and the answers will influence how we staff and tool the team going forward.
+
+## What I got wrong
+
+The clearest mistake I made early was building governance for the design system before there was a design system to govern.
+
+I'd seen the team operating like a small skunkworks and assumed structure would unblock them. So I built the rituals, documentation patterns, decision frameworks, and review cadences in advance: comfortable infrastructure for a discomforting amount of net-new creative work. It gave the team too much to think about at exactly the moment they needed to be auditing tokens, drafting components, and standing something up.
+
+Process gives me comfort. That's a bias I had to learn to manage. Structure doesn't always aid creation; sometimes it gives everyone an excuse to talk about how the work should happen instead of doing it. The right move would have been a thinner wrapper at the start: enough to keep the work coordinated, not enough to pre-define how every decision would be made, with governance built up around the work as it stabilized.
+
+That's now how I think about early-stage ops work. Ship the smallest legitimate version of the system, watch where it breaks, and harden it where the breaks are real.
 
 ## Results and impact
+
+The mistakes weren't terminal. The operating model still produced the team it was supposed to. Three years in, the agency layer is gone, internal FTEs have more than tripled, and the contractor flex layer absorbs spikes without distorting the JD framework.
 
 <StackedBars
   years={[
@@ -113,14 +180,10 @@ I also identified content strategy as another missing capability. Designers were
   ariaLabel="Stacked bars by year showing design team composition. Agency shrinks from 6 to 0; internal FTE grows from 3 to 10; contractors grow from 0 to 5."
 />
 
-- Built the operating infrastructure behind Taco Bell's in-house design function as its first and only Design Operations Lead
-- Established Jira as the system of record for intake, planning, delivery tracking, and capacity conversations
-- Established two enterprise-wide firsts: Taco Bell's move to Figma Enterprise and an early pilot of AI-assisted design system governance using ChatGPT and Figma MCP
-- Built research from zero into an embedded capability that now supports product, marketing, and in-restaurant work
-- Brought the design system to operational maturity through tooling, governance, documentation, and team rituals
-
 ## Reflection
 
-This work reinforced my belief that design maturity is not created by talent alone. It depends on the systems around the team: how work enters, how decisions are made, how evidence is gathered, and how infrastructure supports scale.
+A lot of people read design ops as process and enablement: get the workflow right, set up the tooling, and the team will succeed. That's the entry-level read. It's true but incomplete.
 
-At Taco Bell, my contribution was to build those conditions. The result was a design organization with more visibility, more rigor, and a stronger foundation to influence the business with confidence.
+Design ops is also a staffing function and a capability function. Product design is closer to applied science than to art: defensible decisions made on behalf of a specific user in a specific context. That requires a balance of UX and UI craft inside the team, research capacity to source the evidence those decisions stand on, and content strategy to actually speak to the users in question. If you approach ops as process to enable artists, you're protecting the wrong thing. What needs protecting is design's ability to make defensible claims, and that requires an operating model that includes research, content, and the right shape of team. A clean Jira board alone doesn't get you there.
+
+When you set it up that way, critiques get easier, PMs become allies because they want to win on the same things you do, and team culture stabilizes around defending decisions rather than defending taste. That's the version of design ops worth building.

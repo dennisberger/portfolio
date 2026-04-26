@@ -43,7 +43,7 @@ Magazine-rooted. Asymmetric where appropriate. Whitespace as a luxury good. One 
 - **/contact** — opinionated form with margin-note voice in helper/error/success copy.
 - **/colophon** — fonts, stack, tools, homelab nod, license. Stamp is the hero.
 - **/404** — your real thought process, lightly edited. Draft: *"404. But why? I did everything right. Okay — calm down. Did you commit your changes? Are you browsing the local copy? Try [home] or [case studies]. If this is my fault, [tell me] — it'll nag at me until I fix it."*
-- **No /resume, no /writing, no /projects.**
+- **No /writing, no /projects.** `/resume` exists as a rendered artifact reachable from the hero CTA, not as a nav peer of /work and /about. The on-page version replaces what was previously a static PDF download; the PDF is still produced (via the print stylesheet) for recruiters who want a file.
 
 ## Signature Mechanics
 
@@ -66,7 +66,7 @@ One signature mark. CSS-rendered (evolved from the Ignyte rust-belt-industrial i
 
 ## Interaction Model
 
-- Navigation: three items — Work / About / Contact. No page transitions. Scroll-to-top on nav change.
+- Navigation: three items — Work / About / Contact. (`/resume` is a hero-CTA route, not a nav peer.) No page transitions. Scroll-to-top on nav change.
 - Motion: kept but deliberate. Hero load-in stagger (label → headline → strapline → CTAs). Scroll-triggered reveals only on 3-4 key thresholds per page. Microanimations restrained (hover-lift on cards, stamp entrance). `prefers-reduced-motion` always honored.
 - Contact form: name / email / message. Formspree endpoint unchanged. All helper/error/success copy in margin-note voice.
 - Experience timeline: expand/collapse kept. Just well-set type. No timeline viz.

@@ -17,17 +17,16 @@ stats:
 order: 2
 flagship: false
 publishedAt: 2026-04-20
+lede: "Hired during the Great Resignation. Made UX measurable, then made it scale."
 ---
 
-import { Picture } from 'astro:assets';
 import LineChart from '@/components/LineChart.astro';
 import MarginNote from '@/components/MarginNote.astro';
-import uxCoeDefine from '@/assets/case-studies/ux-coe-define.png';
-import uxCoeSkills from '@/assets/case-studies/ux-coe-skills.png';
+import Staircase from '@/components/Staircase.astro';
 
-The content was technically fine: instructional designers had built it carefully, compliance had approved it. But fewer than one in five employees who started a course finished it, and nobody could say why, because nobody was measuring the experience. ULearn was Comcast's bet on replacing a legacy SAP system during the Great Resignation. The new UX function had to prove, quickly, that it was worth keeping.
+The content was technically fine. Instructional designers had built it carefully, compliance had approved it. But fewer than one in five employees who started a course finished it, and nobody could say why, because nobody was measuring the experience. ULearn was Comcast's bet on replacing a legacy SAP system during the Great Resignation. The new UX function had to prove, quickly, that it was worth keeping.
 
-I was brought in to help structure and operationalize that function. Over time, that work evolved into a recognized UX Center of Excellence: a team that could deliver UX work directly, introduce user-centered methods, and teach the broader organization how to apply them.
+I was brought in as Senior Program Manager to structure and operationalize that function. Over time, that work evolved into a recognized UX Center of Excellence: a team that could deliver UX work directly, introduce user-centered methods, and teach the broader organization how to apply them.
 
 ## Using measurement to make UX credible
 
@@ -37,25 +36,7 @@ Completion on started content was below 20%, but completion alone was not enough
 
 ## Structuring the function to scale
 
-The UX team had mixed seniority and limited maturity, with six designers total: two senior and four much more junior practitioners. I helped define the function as a Center of Excellence and introduced a tiered engagement model so teams could get the right level of UX support without every request becoming a full redesign effort.
-
-<figure class="case-figure">
-  <Picture
-    src={uxCoeDefine}
-    formats={['avif', 'webp']}
-    alt="UX Center of Excellence framework — four core focus areas defining how the function partnered with the business."
-    widths={[640, 960, 1280, 2014]}
-    sizes="(max-width: 720px) 100vw, (max-width: 1080px) 80vw, 720px"
-    loading="lazy"
-  />
-  <figcaption>The CoE framework. Four focus areas that gave stakeholders a shared language for what UX was for, how it partnered, and where it invested.</figcaption>
-</figure>
-
-## Reducing UX drag and expanding capability
-
-<MarginNote>Only way through this is 'teach a person to fish.'</MarginNote>
-
-Early on, UX could add a full sprint to delivery timelines. By reshaping the service model, bringing in stronger external talent, and building enablement paths for lower-complexity work, we reduced that burden to roughly two to three days over six months, a 33% reduction from peak. I also helped extend UX capability beyond the core team through coaching, facilitation, and a move from Adobe XD to Figma.
+The UX team had mixed seniority and limited maturity: six designers total, two senior and four much more junior practitioners. I was the only person on staff with enterprise UX leadership experience, and carried coaching across the team without a formal reporting line. I defined the function as a Center of Excellence and introduced a tiered engagement model so teams could get the right level of UX support without every request becoming a full redesign effort.
 
 <LineChart
   points={[
@@ -67,29 +48,32 @@ Early on, UX could add a full sprint to delivery timelines. By reshaping the ser
   ariaLabel="UX drag reduced from 2 weeks at baseline to 1 week at six weeks to 2 to 3 days at six months."
 />
 
-<figure class="case-figure">
-  <Picture
-    src={uxCoeSkills}
-    formats={['avif', 'webp']}
-    alt="Phased UX enablement plan — building shared UX capability across instructional design and adjacent teams."
-    widths={[640, 960, 1280, 1600]}
-    sizes="(max-width: 720px) 100vw, (max-width: 1080px) 80vw, 720px"
-    loading="lazy"
-  />
-  <figcaption>Phased enablement plan for extending UX thinking into instructional design and adjacent teams. Shared methods, frameworks, facilitation paths.</figcaption>
-</figure>
+## Reducing UX drag and expanding capability
 
-## Results and impact
+<MarginNote>Only way through this is 'teach a person to fish.'</MarginNote>
 
-- Helped establish Comcast ULearn's UX function as a recognized Center of Excellence
-- Introduced usability measurement through SUS baselines and iterative testing
-- Improved touched products from typical SUS baselines in the 40s–50s to 68+
-- Reduced UX drag from roughly one sprint to two to three days over six months
-- Reduced UX drag by 33% from peak while the function continued to grow
-- Expanded UX capability beyond the core team through coaching, facilitation, and shared methods
+Early on, UX could add a full sprint to delivery timelines. By reshaping the service model, bringing in stronger external talent, and building enablement paths for lower-complexity work, we reduced that burden to roughly two to three days over six months, a 33% reduction from peak. I extended UX capability beyond the core team through coaching and facilitation, and made enough noise about Adobe XD that we eventually moved to Figma.
+
+<Staircase
+  months={['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul']}
+  rows={[
+    { label: 'UX foundations and methodologies', monthIndex: 1, kind: 'capability' },
+    { label: 'Proto persona development', monthIndex: 2, kind: 'capability' },
+    { label: 'Persona planning, facilitation, and development', monthIndex: 3, kind: 'capability' },
+    { label: 'Figma', monthIndex: 3, kind: 'tool' },
+    { label: 'Journey map planning and development', monthIndex: 4, kind: 'capability' },
+    { label: 'Learner insights planning and facilitation', monthIndex: 5, kind: 'capability' },
+    { label: 'Product testing planning and facilitation', monthIndex: 6, kind: 'capability' },
+    { label: 'Data analysis and interpretation', monthIndex: 7, kind: 'capability' },
+    { label: 'Collaboration session planning and facilitation', monthIndex: 8, kind: 'capability' },
+    { label: 'Microsoft Whiteboard', monthIndex: 8, kind: 'tool' },
+  ]}
+  caption="Phased enablement plan, October 2022 through July 2023. Each capability launched a month after the last; tool unlocks (Figma, Microsoft Whiteboard) shipped alongside the work that depended on them."
+  ariaLabel="Phased rollout from October 2022 through July 2023, with one capability or tool activating per month in a stepped pattern."
+/>
 
 ## Reflection
 
 <MarginNote>If you meet people where they are, they're way more likely to bring you along. End of notebook.</MarginNote>
 
-This work taught me that early-stage UX functions in enterprise environments earn trust by becoming measurable, understandable, and sustainable. At Comcast ULearn, I helped make UX legible to the business: first through evidence, then through service design, and finally through enablement that let the function scale beyond the boundaries of the team itself.
+This work taught me that early-stage UX functions in enterprise environments earn trust by becoming measurable, understandable, and sustainable. At Comcast ULearn, I made UX legible to the business: first through evidence, then through service design, and finally through enablement that let the function scale beyond the boundaries of the team itself.

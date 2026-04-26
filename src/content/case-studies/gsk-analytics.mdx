@@ -17,6 +17,7 @@ stats:
 order: 3
 flagship: false
 publishedAt: 2026-04-19
+lede: "The dashboard took 30 minutes to load. I had eight months to prove it had to be replaced."
 ---
 
 import LineChart from '@/components/LineChart.astro';
@@ -25,37 +26,39 @@ import AlphaVideo from '@/components/AlphaVideo.astro';
 import aimPoster from '@/assets/case-studies/aim-animated-poster.png';
 import aimFallback from '@/assets/case-studies/aim-animated.png';
 
-Medical Insights Analysts were opening AIM, clicking a filter, and going to make coffee while the dashboard loaded. Thirty-plus minutes, on a good day. Most of them had stopped opening it at all. AIM was GSK's global platform for surfacing trends across trial and field data; in practice, the Power BI implementation was so slow and rigid that the tool was being bypassed. I was the lead and only UX voice on the project. The redesign got demoted to the second priority. The platform itself was the UX problem, and the fight to prove it would take eight months before a rebuild could begin.
+Medical Insights Analysts were opening AIM, clicking a filter, and going to make coffee while the dashboard loaded. Thirty-plus minutes, on a good day. Most of them had stopped opening it at all. AIM was GSK's global platform for surfacing trends across trial and field data; in practice, the Power BI implementation was so slow and rigid that the tool was being bypassed. I was the lead and only UX voice on the project. The redesign had been demoted to a second-tier priority. The platform itself was the UX problem, and the fight to prove it would take eight months before a rebuild could begin.
 
-## What I changed
-
-### Diagnosing the real constraint
+## Diagnosing the real constraint
 
 <MarginNote>This thing is holding up their entire day. Their entire job. Do we scrap it? Can we even do that?</MarginNote>
 
 Initial testing produced a SUS score of 34. Iterations within Power BI improved that only to 51, making it clear that this was not a polish problem. The technology itself was limiting performance, flexibility, and the kinds of visualizations analysts needed for real exploratory work.
 
-### Advocating for a full rebuild
+## The eight-month case for a rebuild
 
-Working with the Product Owner, I spent eight to nine months pushing for a rebuild using a custom stack centered on Plotly. The redesign focused on faster performance, workflows grounded in actual analyst behavior, and medical visualizations tailored to insight discovery.
+Replacing an enterprise platform isn't a decision UX gets to make alone, and at GSK it wasn't a decision the organization wanted to make at all. The eight months that followed were a structured exercise in making the case unavoidable.
+
+We started by working directly with the data team in a scrum format to optimize the underlying big-data pipeline, on the theory that Power BI might be salvageable if the data layer was faster. It wasn't. We brought in Microsoft experts to audit the build and recommend optimizations. Their changes brought load times from roughly 32 minutes down to 28: a real improvement, but not one any analyst would feel. Engineering ran a platform evaluation, with Plotly emerging as the strongest candidate. I ran the parallel UX evaluation on each step: was anything we tried changing the user's actual experience, and was it pointing toward a product that could succeed for its target user? The answer remained no, on both.
+
+The case for Plotly with a custom front-end was that it combined performance gains with the visual and interaction control AIM actually needed. I built the before-and-after deck, mapped the opportunity space, and circulated it to anyone who'd read it. The deck had one job: make the alternative undeniable.
 
 <figure class="case-figure">
   <AlphaVideo
     poster={aimPoster}
     fallbackImg={aimFallback}
     videoSrc="aim-animated"
-    alt="AIM dashboard on two laptops — Plotly-based medical analytics visualizations, main view alongside trend exploration."
+    alt="AIM dashboard on two laptops, showing Plotly-based medical analytics visualizations: a main view alongside trend exploration."
     width={1440}
     height={568}
   />
   <figcaption>The rebuilt AIM dashboard. Plotly-based visualizations replaced Power BI; load times dropped from 30+ minutes to seconds; exploratory analysis became possible across years of previously underused field data.</figcaption>
 </figure>
 
-### Rebuilding trust while rebuilding the product
+## Rebuilding trust while rebuilding the product
 
 <MarginNote>The real trust-builder was instant load times. I actually felt excitement from the users for the first time.</MarginNote>
 
-Because analyst confidence had eroded, I also created a weekly "You Said, We Listened" feedback loop and used live demos during focus groups to show how user input was shaping the product in real time.
+Analyst confidence had eroded over the years AIM had been failing them, and the rebuild on its own wouldn't fix that. I created a weekly "You Said, We Listened" feedback loop and used live demos in focus groups to show how user input was shaping the product in real time. What actually closed the trust gap was instant load times. The first time a filter responded immediately, the room shifted.
 
 ## Results and impact
 
@@ -69,17 +72,12 @@ Because analyst confidence had eroded, I also created a weekly "You Said, We Lis
   ariaLabel="SUS scores progressed from 34 initial to 51 after Power BI iteration to 81 after the Plotly rebuild."
 />
 
-- Improved SUS from 34 to 81 across the redesign
-- Reduced load times from 30+ minutes to seconds
-- Increased insight generation speed by roughly 3x
-- Reached 85% adoption after redesign
-- Rebuilt analyst trust through transparent feedback loops
-- Received GSK's Gold Award in May 2021, the company's highest internal recognition
+The redesign improved SUS from 34 to 81, dropped load times from 30+ minutes to seconds, increased insight generation speed by roughly 3x, and reached 85% adoption. The work received GSK's Gold Award in May 2021, the company's highest internal recognition.
 
 ## Reflection
 
 This project was one of the clearest product wins of my career and one of the worst organizational experiences of my life.
 
-The product improved dramatically, but the effort required to get there was unsustainable. I was operating in a low-maturity environment with weak trust, poor collaboration, and constant pressure to prove what should already have been obvious. That experience became a turning point for me: it showed me that strong product outcomes depend not just on design quality, but on whether the organization creates the conditions for design to succeed.
+The product improved dramatically, but the effort required to get there was unsustainable. I was operating in a low-maturity environment with weak trust, poor collaboration, and constant pressure to prove what should already have been obvious. Eight months of structured evaluation to demonstrate that a 30-minute dashboard wasn't going to be saved by edge-case optimization. The pattern I learned to recognize: organizations will sometimes do everything possible *not* to change as a way of proving they must.
 
-GSK is where I started moving toward Design Operations.
+That experience became a turning point. Design quality alone doesn't produce strong product outcomes; the organization has to create the conditions that let design succeed. GSK is where I started moving toward Design Operations.

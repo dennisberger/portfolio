@@ -1,0 +1,227 @@
+---
+/**
+ * Staircase — editorial phased-rollout chart.
+ *
+ * Each row is a capability or tool, activating in a single month. Rows are
+ * listed in activation order so the bars form a descending staircase across
+ * the time axis. Two visual fills: capabilities (primary) and tool unlocks
+ * (accent). Pure CSS grid; labels are HTML text for crisp typography at any
+ * width. Months collapse cleanly on mobile by widening the row stack.
+ */
+interface Row {
+  label: string;
+  /** 0-based index into the `months` array. */
+  monthIndex: number;
+  kind?: 'capability' | 'tool';
+}
+interface Props {
+  months: string[];
+  rows: Row[];
+  caption?: string;
+  ariaLabel: string;
+}
+const { months, rows, caption, ariaLabel } = Astro.props;
+const nMonths = months.length;
+---
+
+<figure class="staircase" data-reveal-chart aria-label={ariaLabel}>
+  <div class="staircase__head" style={`--n:${nMonths}`}>
+    <div class="staircase__rowlabel staircase__rowlabel--head">Capability or tool</div>
+    <ol class="staircase__months">
+      {months.map((m) => <li class="staircase__month">{m}</li>)}
+    </ol>
+  </div>
+  <ol class="staircase__rows" style={`--n:${nMonths}`}>
+    {rows.map((r, i) => (
+      <li class="staircase__row" style={`--i:${i}`}>
+        <div class="staircase__rowlabel">{r.label}</div>
+        <div class="staircase__track">
+          {months.map((_, mi) => <span class="staircase__cell" aria-hidden="true"></span>)}
+          <span
+            class={`staircase__bar staircase__bar--${r.kind ?? 'capability'}`}
+            style={`--col:${r.monthIndex + 1}`}
+          ></span>
+        </div>
+      </li>
+    ))}
+  </ol>
+  <ol class="staircase__legend">
+    <li class="staircase__legend-item">
+      <span class="staircase__swatch staircase__swatch--capability" aria-hidden="true"></span>
+      Capability
+    </li>
+    <li class="staircase__legend-item">
+      <span class="staircase__swatch staircase__swatch--tool" aria-hidden="true"></span>
+      Tool unlock
+    </li>
+  </ol>
+  {caption && <figcaption class="staircase__caption">{caption}</figcaption>}
+</figure>
+
+<style>
+  .staircase {
+    margin: var(--space-2xl) 0;
+    max-width: var(--col-main);
+  }
+
+  /* Header: row-label gutter on the left, then month columns. Flex so both
+     halves share a baseline; the rowlabel takes the same 18rem gutter as the
+     rows below, the months OL fills the remaining track width. */
+  .staircase__head {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-sm);
+    padding-block-end: var(--space-xs);
+    border-block-end: 1px solid var(--color-rule);
+  }
+  .staircase__months {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .staircase__rowlabel--head {
+    flex: 0 0 18rem;
+    max-width: 18rem;
+  }
+  .staircase__month {
+    font-family: var(--font-body);
+    font-size: var(--type-chart-label);
+    font-weight: 600;
+    letter-spacing: var(--tracking-chart-label);
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+    text-align: center;
+    white-space: nowrap;
+  }
+  .staircase__rowlabel--head {
+    font-family: var(--font-body);
+    font-size: var(--type-chart-label);
+    font-weight: 600;
+    letter-spacing: var(--tracking-chart-label);
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+
+  /* Rows */
+  .staircase__rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .staircase__row {
+    display: grid;
+    grid-template-columns: minmax(0, 18rem) minmax(0, 1fr);
+    gap: var(--space-sm);
+    align-items: center;
+    padding-block: 10px;
+    border-block-end: 1px solid color-mix(in oklch, var(--color-rule) 60%, transparent);
+  }
+  .staircase__row:last-child { border-block-end: 0; }
+
+  .staircase__rowlabel {
+    font-family: var(--font-body);
+    font-size: var(--type-sm);
+    line-height: var(--leading-snug);
+    color: var(--color-ink);
+  }
+
+  .staircase__track {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    height: 18px;
+  }
+  .staircase__cell {
+    border-inline-start: 1px solid color-mix(in oklch, var(--color-rule) 50%, transparent);
+  }
+  .staircase__cell:first-child { border-inline-start: 0; }
+
+  .staircase__bar {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    /* Position derived from --col (1-indexed) and --n (number of months). */
+    left: calc(100% * (var(--col) - 1) / var(--n));
+    width: calc(100% / var(--n));
+    border-radius: 2px;
+    transform-origin: left center;
+  }
+  .staircase__bar--capability { background: var(--color-cobalt-deep); }
+  .staircase__bar--tool { background: var(--color-fuchsia-deep); }
+
+  /* Legend */
+  .staircase__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm) var(--space-md);
+    margin: var(--space-md) 0 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--font-body);
+    font-size: var(--type-xs);
+    color: var(--color-ink-muted);
+  }
+  .staircase__legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+  .staircase__swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+  }
+  .staircase__swatch--capability { background: var(--color-cobalt-deep); }
+  .staircase__swatch--tool { background: var(--color-fuchsia-deep); }
+
+  .staircase__caption {
+    margin-top: var(--space-sm);
+    font-family: var(--font-body);
+    font-size: var(--type-xs);
+    color: var(--color-ink-muted);
+    font-style: italic;
+    max-width: 48ch;
+  }
+
+  /* Mobile: collapse to a card-per-row layout. The row keeps its label and a
+     compact track; month labels move into a single line above each track so
+     readers don't have to track 10 narrow columns on a phone. */
+  @media (max-width: 640px) {
+    .staircase__head { display: none; }
+    .staircase__row {
+      grid-template-columns: 1fr;
+      gap: 6px;
+      padding-block: var(--space-xs);
+    }
+    .staircase__track {
+      height: 14px;
+    }
+    .staircase__rowlabel {
+      font-size: var(--type-xs);
+    }
+  }
+
+  /* Scroll-reveal: bars slide in left-to-right, staggered by row position so
+     the staircase visibly forms as you read down. */
+  :global(.js-motion) .staircase[data-reveal-chart] .staircase__bar {
+    transform: scaleX(0);
+    transition: transform 520ms var(--ease-out-quart);
+    transition-delay: calc(var(--i, 0) * 70ms);
+  }
+  :global(.js-motion) .staircase[data-reveal-chart] .staircase__row {
+    --i: 0;
+  }
+  :global(.js-motion) .staircase[data-reveal-chart].is-visible .staircase__bar {
+    transform: scaleX(1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(.js-motion) .staircase[data-reveal-chart] .staircase__bar {
+      transform: none !important;
+      transition: none !important;
+    }
+  }
+</style>
