@@ -22,7 +22,13 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
       <noscript>
         <p class="form__noscript">
           This form needs JavaScript. If yours is off, reach me on
-          <a href="https://linkedin.com/in/dennisberger" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a
+            href="https://linkedin.com/in/dennisberger"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-umami-event="outbound-linkedin"
+            data-umami-event-source="contact-noscript"
+          >LinkedIn</a>
           instead.
         </p>
       </noscript>
@@ -97,7 +103,13 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
         <div class="form__actions">
           <button type="submit" class="btn btn--primary" id="form-submit">Send it</button>
           <p class="form__helper">
-            Or find me on <a href="https://linkedin.com/in/dennisberger" target="_blank" rel="noopener noreferrer">LinkedIn</a>.
+            Or find me on <a
+              href="https://linkedin.com/in/dennisberger"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-umami-event="outbound-linkedin"
+              data-umami-event-source="contact-helper"
+            >LinkedIn</a>.
           </p>
         </div>
 
@@ -223,6 +235,7 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
         if (res.ok && data.ok) {
           form.reset();
           setStatus('success', "Got it. A confirmation email is on its way, and I'll write back soon.");
+          (window as unknown as { umami?: { track: (n: string) => void } }).umami?.track('contact-submit');
         } else {
           const message = data.error ?? 'Something broke. Try LinkedIn, or refresh and retry.';
           setStatus('error', message);

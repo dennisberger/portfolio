@@ -146,9 +146,19 @@ const skillClusters: { label: string; items: string[] }[] = [
       <p class="resume__contact">
         <span>Philadelphia, PA</span>
         <span aria-hidden="true">·</span>
-        <a href="mailto:hello@dennisberger.me">hello@dennisberger.me</a>
+        <a
+          href="mailto:hello@dennisberger.me"
+          data-umami-event="outbound-email"
+          data-umami-event-source="resume-page"
+        >hello@dennisberger.me</a>
         <span class="resume__contact-break" aria-hidden="true"></span>
-        <a href="https://linkedin.com/in/dennisberger" target="_blank" rel="noopener noreferrer">linkedin.com/in/dennisberger</a>
+        <a
+          href="https://linkedin.com/in/dennisberger"
+          target="_blank"
+          rel="noopener noreferrer"
+          data-umami-event="outbound-linkedin"
+          data-umami-event-source="resume-page"
+        >linkedin.com/in/dennisberger</a>
         <span aria-hidden="true">·</span>
         <a href="https://dennisberger.me">dennisberger.me</a>
         <span aria-hidden="true">·</span>
@@ -156,6 +166,8 @@ const skillClusters: { label: string; items: string[] }[] = [
           href="/dennis-berger-resume.pdf"
           download="Dennis-Berger-DesignOps-Resume.pdf"
           class="resume__pdf"
+          data-umami-event="resume-download"
+          data-umami-event-source="resume-page"
         >Save as PDF<span class="resume__pdf-arrow" aria-hidden="true">→</span></a>
       </p>
     </header>

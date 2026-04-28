@@ -125,7 +125,11 @@
         }
       }
       syncAll();
-      if (opts.announce) announce(choice);
+      if (opts.announce) {
+        announce(choice);
+        (window as unknown as { umami?: { track: (n: string, p?: Record<string, string>) => void } })
+          .umami?.track('theme-toggle', { to: choice });
+      }
     };
 
     groups.forEach((group) => {

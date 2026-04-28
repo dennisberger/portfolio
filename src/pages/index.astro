@@ -106,7 +106,13 @@ const ordinals = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight'
 
   {flagship && (
     <section class="flagship page" id="flagship">
-      <a href={`/work/${flagship.data.slug}/`} class="flagship__link">
+      <a
+        href={`/work/${flagship.data.slug}/`}
+        class="flagship__link"
+        data-umami-event="case-study-open"
+        data-umami-event-slug={flagship.data.slug}
+        data-umami-event-source="flagship"
+      >
         <div class="flagship__primary">
           <div class="flagship__meta">
             <SectionLabel>Flagship · {flagship.data.tag}</SectionLabel>
@@ -132,7 +138,13 @@ const ordinals = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight'
     <ol class="toc__list">
       {others.map((s, i) => (
         <li class="toc__item">
-          <a href={`/work/${s.data.slug}/`} class="toc__link">
+          <a
+            href={`/work/${s.data.slug}/`}
+            class="toc__link"
+            data-umami-event="case-study-open"
+            data-umami-event-slug={s.data.slug}
+            data-umami-event-source="toc"
+          >
             <span class="toc__num" aria-hidden="true">
               <span class="toc__num-digit">{String(i + 1).padStart(2, '0')}</span>
               <span class="toc__num-word">{ordinals[i + 1]}</span>

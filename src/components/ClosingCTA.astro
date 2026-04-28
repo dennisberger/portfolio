@@ -16,6 +16,7 @@ const {
   text = "Send a note. I'll write back.",
   variant = 'default',
 } = Astro.props;
+const sourcePath = Astro.url.pathname;
 ---
 
 <section class:list={["closing-cta page", variant === 'continuation' && 'closing-cta--continuation']}>
@@ -25,12 +26,20 @@ const {
       <p class="closing-cta__text">{text}</p>
     </div>
     <div class="closing-cta__actions">
-      <a href="/contact/" class="btn btn--primary">Contact</a>
+      <a
+        href="/contact/"
+        class="btn btn--primary"
+        data-umami-event="cta-contact"
+        data-umami-event-page={sourcePath}
+      >Contact</a>
       <a
         href="https://linkedin.com/in/dennisberger"
         target="_blank"
         rel="noopener noreferrer"
         class="btn btn--ghost"
+        data-umami-event="outbound-linkedin"
+        data-umami-event-source="closing-cta"
+        data-umami-event-page={sourcePath}
       >LinkedIn</a>
     </div>
   </div>
