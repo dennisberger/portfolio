@@ -7,7 +7,8 @@ This site now posts the contact form to `/api/contact` through a Cloudflare Page
 Set these locally in `.env`:
 
 ```bash
-RESEND_API_KEY="re_..."
+PLUNK_API_URL="https://plunk.yourdomain.com/api/v1"
+PLUNK_API_KEY="sk_..."
 CONTACT_TO_EMAIL="hello@dennisberger.me"
 CONTACT_FROM_EMAIL="Dennis Berger <hello@dennisberger.me>"
 TURNSTILE_SITE_KEY="0x..."
@@ -17,7 +18,8 @@ TURNSTILE_SECRET_KEY="0x..."
 Set these locally in `.dev.vars` for `wrangler pages dev`:
 
 ```bash
-RESEND_API_KEY="re_..."
+PLUNK_API_URL="https://plunk.yourdomain.com/api/v1"
+PLUNK_API_KEY="sk_..."
 CONTACT_TO_EMAIL="hello@dennisberger.me"
 CONTACT_FROM_EMAIL="Dennis Berger <hello@dennisberger.me>"
 TURNSTILE_SECRET_KEY="0x..."
@@ -25,7 +27,8 @@ TURNSTILE_SECRET_KEY="0x..."
 
 Set these in Cloudflare Pages under `Workers & Pages -> this project -> Settings -> Variables and Secrets`:
 
-- `RESEND_API_KEY` as a secret
+- `PLUNK_API_URL`
+- `PLUNK_API_KEY` as a secret
 - `CONTACT_TO_EMAIL`
 - `CONTACT_FROM_EMAIL`
 - `TURNSTILE_SITE_KEY`

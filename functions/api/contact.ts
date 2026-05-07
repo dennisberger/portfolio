@@ -1,5 +1,6 @@
-interface Env {
-  RESEND_API_KEY: string;
+import { plunkSendTransactional, type PlunkEnv } from '../_lib/plunk';
+
+interface Env extends PlunkEnv {
   CONTACT_TO_EMAIL: string;
   CONTACT_FROM_EMAIL: string;
   TURNSTILE_SECRET_KEY: string;
@@ -56,48 +57,6 @@ async function verifyTurnstile(token: string, secret: string, ip: string | null)
   }
 }
 
-async function sendResendEmail(
-  apiKey: string,
-  payload: {
-    from: string;
-    to: string;
-    subject: string;
-    html: string;
-    text: string;
-    replyTo?: string;
-  },
-): Promise<{ ok: boolean; error?: string }> {
-  try {
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        authorization: `Bearer ${apiKey}`,
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: payload.from,
-        to: payload.to,
-        subject: payload.subject,
-        html: payload.html,
-        text: payload.text,
-        reply_to: payload.replyTo,
-      }),
-    });
-
-    if (!response.ok) {
-      const body = await response.text();
-      return { ok: false, error: `resend ${response.status}: ${body.slice(0, 240)}` };
-    }
-
-    return { ok: true };
-  } catch (error) {
-    return {
-      ok: false,
-      error: error instanceof Error ? error.message : 'Unknown Resend error',
-    };
-  }
-}
-
 function notificationEmailHtml(name: string, email: string, message: string): string {
   return `
     <div style="background:#fdfcf9;padding:32px;font-family:Switzer,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#1f1913;">
@@ -113,15 +72,6 @@ function notificationEmailHtml(name: string, email: string, message: string): st
       </div>
     </div>
   `;
-}
-
-function notificationEmailText(name: string, email: string, message: string): string {
-  return `New contact form submission
-
-Name: ${name}
-Email: ${email}
-
-${message}`;
 }
 
 function confirmationEmailHtml(name: string, message: string): string {
@@ -141,21 +91,10 @@ function confirmationEmailHtml(name: string, message: string): string {
   `;
 }
 
-function confirmationEmailText(name: string, message: string): string {
-  const firstName = name.split(/\s+/)[0] || name;
-
-  return `Hi ${firstName},
-
-Thanks for reaching out. Your note came through and I'll reply as soon as I can.
-
-For reference, here's the message you sent:
-
-${message}`;
-}
-
 export const onRequestPost: PagesFunction<Env> = async ({ env, request }) => {
   if (
-    !env.RESEND_API_KEY ||
+    !env.PLUNK_API_URL ||
+    !env.PLUNK_API_KEY ||
     !env.CONTACT_TO_EMAIL ||
     !env.CONTACT_FROM_EMAIL ||
     !env.TURNSTILE_SECRET_KEY
@@ -230,13 +169,13 @@ export const onRequestPost: PagesFunction<Env> = async ({ env, request }) => {
   // as a belt-and-braces guard against header injection.
   const safeName = name.replace(/[\r\n]+/g, ' ');
 
-  const notification = await sendResendEmail(env.RESEND_API_KEY, {
+  const notification = await plunkSendTransactional(env, {
     from: env.CONTACT_FROM_EMAIL,
     to: env.CONTACT_TO_EMAIL,
     subject: `New contact form message from ${safeName}`,
-    html: notificationEmailHtml(name, email, message),
-    text: notificationEmailText(name, email, message),
-    replyTo: email,
+    body: notificationEmailHtml(name, email, message),
+    reply: email,
+    subscribed: false,
   });
 
   if (!notification.ok) {
@@ -249,13 +188,13 @@ export const onRequestPost: PagesFunction<Env> = async ({ env, request }) => {
     );
   }
 
-  await sendResendEmail(env.RESEND_API_KEY, {
+  await plunkSendTransactional(env, {
     from: env.CONTACT_FROM_EMAIL,
     to: email,
     subject: 'I received your message',
-    html: confirmationEmailHtml(name, message),
-    text: confirmationEmailText(name, message),
-    replyTo: env.CONTACT_TO_EMAIL,
+    body: confirmationEmailHtml(name, message),
+    reply: env.CONTACT_TO_EMAIL,
+    subscribed: false,
   });
 
   return json({ ok: true });

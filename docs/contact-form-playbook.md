@@ -1,5 +1,7 @@
 # Contact Form Playbook (Cloudflare Pages + Resend + Turnstile)
 
+> **⚠️ Superseded.** This site has migrated from Resend to self-hosted Plunk on AWS SES. See `~/Sites/synoptro.com/docs/resend-to-plunk-migration-playbook.md` for the migration steps and `functions/_lib/plunk.ts` for the current sender. Kept here as historical reference for the Resend + DNS setup that preceded it.
+
 This playbook is a complete, reusable recipe for adding a bot-protected contact form to any static site deployed on **Cloudflare Pages**. It was forged on `ignyte.me`; every gotcha we hit is called out so you don't hit them again.
 
 ## Starter prompt for a new Claude Code session
