@@ -7,7 +7,7 @@ This site now posts the contact form to `/api/contact` through a Cloudflare Page
 Set these locally in `.env`:
 
 ```bash
-PLUNK_API_URL="https://plunk.yourdomain.com/api/v1"
+PLUNK_API_URL="https://plunk-api.synoptro.com/v1"
 PLUNK_API_KEY="sk_..."
 CONTACT_TO_EMAIL="hello@dennisberger.me"
 CONTACT_FROM_EMAIL="Dennis Berger <hello@dennisberger.me>"
@@ -18,7 +18,7 @@ TURNSTILE_SECRET_KEY="0x..."
 Set these locally in `.dev.vars` for `wrangler pages dev`:
 
 ```bash
-PLUNK_API_URL="https://plunk.yourdomain.com/api/v1"
+PLUNK_API_URL="https://plunk-api.synoptro.com/v1"
 PLUNK_API_KEY="sk_..."
 CONTACT_TO_EMAIL="hello@dennisberger.me"
 CONTACT_FROM_EMAIL="Dennis Berger <hello@dennisberger.me>"
