@@ -1,0 +1,342 @@
+---
+/**
+ * Social card source. One 1200x630 board per case study, screenshotted to
+ * public/og/<slug>.png by `npm run og`. See src/lib/og-cards.ts for the copy
+ * and the rules the set is built on.
+ *
+ * These pages ship (noindex, excluded from the sitemap and robots) so a card
+ * can be opened in a browser and inspected without running the build script.
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+import { getCollection } from 'astro:content';
+import '@/styles/fonts.css';
+import SunFigure from '@/components/SunFigure.astro';
+import { ogCards, logoHeight } from '@/lib/og-cards';
+import effectvMobile from '@/assets/case-studies/effectv-mobile.png';
+
+export async function getStaticPaths() {
+  const studies = await getCollection('caseStudies');
+  return studies
+    .filter(s => s.data.slug in ogCards)
+    .map(s => ({ params: { slug: s.data.slug }, props: { slug: s.data.slug } }));
+}
+
+const { slug } = Astro.props;
+const card = ogCards[slug];
+
+// Inlined rather than <img>-ed so the mark inherits currentColor.
+const logoSvg = fs.readFileSync(
+  path.join(process.cwd(), 'src/assets/og/logos', `${card.logo}.svg`),
+  'utf8'
+);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{slug} — social card</title>
+  </head>
+  <body>
+    <div class="board" data-slug={slug}>
+      {slug === 'effectv-ad-platform' && (
+        <img class="art" src={effectvMobile.src} alt="" />
+      )}
+
+      {slug === 'taco-bell-designops' && (
+        <svg class="chart" viewBox="0 0 1200 630" aria-hidden="true">
+          {/* Design staffing 2023-2026. Internal FTE solid, contractor flex
+              half-strength, agency the pale block that evaporates by 2025. */}
+          <g fill="#fff" fill-opacity=".28">
+            <rect x="700" y="382" width="100" height="132" />
+            <rect x="830" y="360" width="100" height="66" />
+          </g>
+          <g fill="oklch(68% 0.29 0)" fill-opacity=".45">
+            <rect x="830" y="426" width="100" height="22" />
+            <rect x="960" y="316" width="100" height="88" />
+            <rect x="1090" y="250" width="100" height="110" />
+          </g>
+          <g fill="oklch(68% 0.29 0)">
+            <rect x="700" y="514" width="100" height="66" />
+            <rect x="830" y="448" width="100" height="132" />
+            <rect x="960" y="404" width="100" height="176" />
+            <rect x="1090" y="360" width="100" height="220" />
+          </g>
+          <g
+            font-family="Switzer"
+            font-weight="600"
+            font-size="30"
+            fill="#fff"
+            fill-opacity=".55"
+            text-anchor="middle"
+          >
+            <text x="750" y="618">2023</text>
+            <text x="880" y="618">2024</text>
+            <text x="1010" y="618">2025</text>
+            <text x="1140" y="618">2026</text>
+          </g>
+        </svg>
+      )}
+
+      {slug === 'gsk-analytics' && (
+        <svg class="chart" viewBox="0 0 1200 630" aria-hidden="true">
+          {/* SUS 34 -> 51 -> 81. Hard steps, not a curve: tuning bought one
+              plateau, replacing the platform bought the other. */}
+          <path
+            d="M560 540 H770 V430 H970 V258 H1240 L1240 630 L560 630Z"
+            fill="oklch(58% 0.25 250)"
+            fill-opacity=".34"
+          />
+          <path
+            d="M560 540 H770 V430 H970 V258 H1240"
+            fill="none"
+            stroke="oklch(58% 0.25 250)"
+            stroke-width="12"
+          />
+          <g font-family="Zodiak" font-size="56" fill="#fff" fill-opacity=".9">
+            <text x="616" y="516">34</text>
+            <text x="826" y="406">51</text>
+            <text x="1046" y="234">81</text>
+          </g>
+          <g
+            font-family="Switzer"
+            font-weight="600"
+            font-size="26"
+            letter-spacing="3"
+            fill="#fff"
+            fill-opacity=".5"
+          >
+            <text x="616" y="590">POWER BI</text>
+            <text x="826" y="590">TUNED</text>
+            <text x="1046" y="590">REBUILT</text>
+          </g>
+        </svg>
+      )}
+
+      {slug === 'comcast-ux-coe' && (
+        <svg class="chart" viewBox="0 0 1200 630" aria-hidden="true">
+          {/* UX drag falling out of the headline: two weeks to two days. */}
+          <path
+            d="M-40 148 C 240 148 420 262 640 334 C 880 412 1020 474 1240 504 L1240 630 L-40 630Z"
+            fill="oklch(58% 0.25 250)"
+            fill-opacity=".38"
+          />
+          <path
+            d="M-40 148 C 240 148 420 262 640 334 C 880 412 1020 474 1240 504"
+            fill="none"
+            stroke="oklch(58% 0.25 250)"
+            stroke-width="12"
+            stroke-linecap="round"
+          />
+          <circle cx="640" cy="334" r="13" fill="oklch(58% 0.25 250)" />
+          <circle cx="1096" cy="483" r="13" fill="oklch(58% 0.25 250)" />
+          <text
+            x="952"
+            y="562"
+            font-family="Switzer"
+            font-weight="600"
+            font-size="32"
+            fill="#fff"
+            fill-opacity=".8">2&ndash;3 days</text>
+        </svg>
+      )}
+
+      <div class="scrim"></div>
+
+      <div class="mast">
+        <div class="brand">
+          <div
+            class="logowrap"
+            style={`height:${logoHeight[card.logo]}px`}
+            set:html={logoSvg}
+          />
+          <div class="disc" set:html={card.discipline} />
+        </div>
+        <div class="mark">
+          <SunFigure animate={false} />
+          <span>dennisberger.me</span>
+        </div>
+      </div>
+
+      <div class="say" set:html={card.say} />
+      <div class="meta" set:html={card.meta} />
+    </div>
+  </body>
+</html>
+
+<style>
+  /*
+   * Palette is pinned here rather than pulled from tokens.css on purpose.
+   * The card is always dark whatever the viewer's system theme, and these
+   * pages get rendered by a headless browser whose prefers-color-scheme can
+   * resolve to dark — inheriting the themed tokens would silently repaint
+   * every card. Values mirror the light-mode tokens.
+   */
+  .board {
+    --ink: oklch(18% 0.01 70);
+    --paper: oklch(99% 0.003 85);
+    --fuchsia: oklch(68% 0.29 0);
+
+    width: 1200px;
+    height: 630px;
+    position: relative;
+    overflow: hidden;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Switzer', sans-serif;
+  }
+
+  :global(body) {
+    margin: 0;
+  }
+
+  .art,
+  .chart {
+    position: absolute;
+    z-index: 1;
+    max-width: none;
+  }
+  .chart {
+    inset: 0;
+  }
+
+  /* Diagonal falloff instead of a hard seam, so the art and the type read as
+     one field rather than two stacked panels. */
+  .scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(
+      100deg,
+      var(--ink) 0 36%,
+      oklch(18% 0.01 70 / 0.8) 52%,
+      oklch(18% 0.01 70 / 0) 74%
+    );
+  }
+
+  .mast {
+    position: absolute;
+    left: 64px;
+    right: 64px;
+    top: 42px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    z-index: 5;
+  }
+  .brand {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .logowrap {
+    display: flex;
+    align-items: center;
+    color: oklch(86% 0.006 70);
+  }
+  .logowrap :global(svg) {
+    height: 100%;
+    width: auto;
+    display: block;
+  }
+  .disc {
+    font-weight: 600;
+    font-size: 24px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: oklch(62% 0.008 70);
+  }
+
+  .mark {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    align-self: flex-start;
+    margin-top: 2px;
+    /* SunFigure renders at 58% of --stamp-size. */
+    --stamp-size: 90px;
+    color: var(--fuchsia);
+  }
+  .mark span {
+    font-weight: 600;
+    font-size: 26px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: oklch(74% 0.008 70);
+  }
+
+  .say {
+    position: absolute;
+    left: 64px;
+    width: 640px;
+    top: 172px;
+    font-family: 'Zodiak', serif;
+    font-weight: 400;
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    z-index: 4;
+  }
+  .meta {
+    position: absolute;
+    left: 64px;
+    width: 620px;
+    top: 432px;
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 1.32;
+    color: oklch(80% 0.006 70);
+    z-index: 4;
+  }
+
+  .say :global(.hot) {
+    color: var(--fuchsia);
+  }
+  .say :global(.cool) {
+    color: oklch(72% 0.19 250);
+  }
+
+  /* Per-card type sizing. Each `say` is set as large as it goes without
+     wrapping into the band or colliding with the art. */
+  [data-slug='taco-bell-designops'] .say {
+    font-size: 104px;
+  }
+  [data-slug='taco-bell-designops'] .meta {
+    width: 560px;
+  }
+
+  [data-slug='gsk-analytics'] .say {
+    font-size: 84px;
+    width: 600px;
+    top: 168px;
+  }
+  [data-slug='gsk-analytics'] .meta {
+    width: 500px;
+    top: 452px;
+  }
+  /* Lighter falloff: the staircase starts further right than the artwork
+     cards do, so it needs less cover. */
+  [data-slug='gsk-analytics'] .scrim {
+    background: linear-gradient(
+      100deg,
+      var(--ink) 0 34%,
+      oklch(18% 0.01 70 / 0.62) 48%,
+      oklch(18% 0.01 70 / 0) 68%
+    );
+  }
+
+  [data-slug='effectv-ad-platform'] .say {
+    font-size: 80px;
+    font-style: italic;
+  }
+  [data-slug='effectv-ad-platform'] .art {
+    width: 1060px;
+    right: -60px;
+    top: 0;
+  }
+
+  [data-slug='comcast-ux-coe'] .say {
+    font-size: 74px;
+  }
+</style>

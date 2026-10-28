@@ -13,5 +13,9 @@ export default defineConfig({
   // Per-page Brotli'd CSS is ~5KB, so the cross-page cache reuse we lose
   // is trivial vs. the FCP/LCP win from removing the critical-path RTT.
   build: { inlineStylesheets: 'always' },
-  integrations: [mdx(), sitemap()],
+  integrations: [
+    mdx(),
+    // /og/* are card sources, not pages — screenshotted by `npm run og`.
+    sitemap({ filter: page => !/\/og\//.test(page) }),
+  ],
 });

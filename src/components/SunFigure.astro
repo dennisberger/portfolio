@@ -6,10 +6,19 @@
  * Eight straight rays + eight curved/flaming rays from a central axis.
  * Fill stripped to currentColor so variants (default / quiet) theme through
  * the surrounding stamp, and dark-mode-ready later with one line.
+ *
+ * `animate={false}` pins the breathe animation off. The OG cards are
+ * screenshotted headlessly, where a mid-cycle frame would make the mark a
+ * different size in every regeneration.
  */
+interface Props {
+  animate?: boolean;
+}
+
+const { animate = true } = Astro.props;
 ---
 
-<svg class="sun" viewBox="0 0 432 432" aria-hidden="true" focusable="false">
+<svg class:list={['sun', { 'sun--static': !animate }]} viewBox="0 0 432 432" aria-hidden="true" focusable="false">
   <g fill="currentColor" fill-rule="evenodd">
     <polygon points="208.29 131.22 223.71 131.22 223.71 0 208.29 0 208.29 131.22 208.29 131.22" />
     <polygon points="150.6 161.51 161.51 150.6 68.72 57.81 57.81 68.72 150.6 161.51 150.6 161.51" />
@@ -42,6 +51,7 @@
     from { transform: scale(1); }
     to   { transform: scale(1.02); }
   }
+  .sun--static { animation: none; }
   @media (prefers-reduced-motion: reduce) {
     .sun { animation: none; }
   }
