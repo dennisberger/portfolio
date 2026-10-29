@@ -102,19 +102,20 @@ const current = Astro.url.pathname;
     </button>
   </div>
 
-  <div
+  {/* Native <dialog> + showModal(). The browser owns the top layer, the
+      focus trap, Escape, focus restoration and inerting everything behind —
+      all of which this component used to hand-roll in about seventy lines. */}
+  <dialog
     id="nav-overlay"
     class="nav__overlay"
-    role="dialog"
-    aria-modal="true"
     aria-label="Site navigation"
-    hidden
     data-nav-overlay
   >
     <button
       type="button"
       class="nav__close"
       aria-label="Close menu"
+      autofocus
       data-nav-close
     >
       <span aria-hidden="true">×</span>
@@ -145,92 +146,35 @@ const current = Astro.url.pathname;
 
       <div class="nav__overlay-theme"><ThemeToggle /></div>
     </div>
-  </div>
+  </dialog>
 </nav>
 
 <script>
   const trigger = document.querySelector('[data-nav-trigger]') as HTMLButtonElement | null;
-  const overlay = document.querySelector('[data-nav-overlay]') as HTMLDivElement | null;
+  const overlay = document.querySelector('[data-nav-overlay]') as HTMLDialogElement | null;
   const close = document.querySelector('[data-nav-close]') as HTMLButtonElement | null;
 
   if (trigger && overlay && close) {
-    let lastFocused: HTMLElement | null = null;
-
-    // Siblings that should be inert while the dialog is open — prevents
-    // VoiceOver/NVDA rotor from reaching background content behind the modal.
-    const inertTargets = (): (HTMLElement | null)[] => [
-      document.getElementById('main'),
-      document.querySelector<HTMLElement>('.footer'),
-      document.querySelector<HTMLElement>('.nav__inner'),
-    ];
-
-    const focusables = () => Array.from(
-      overlay.querySelectorAll<HTMLElement>('a[href], button:not([disabled])'),
-    );
-
-    const open = () => {
-      lastFocused = document.activeElement as HTMLElement;
-      overlay.hidden = false;
-      // Force reflow so the transition applies from the [hidden]-removed state.
-      void overlay.offsetHeight;
-      overlay.classList.add('is-open');
+    trigger.addEventListener('click', () => {
+      overlay.showModal();
       trigger.setAttribute('aria-expanded', 'true');
+      // showModal() inerts the rest of the document but does not reliably
+      // stop the page behind from scrolling, so the lock stays ours.
       document.documentElement.classList.add('nav-overlay-open');
-      // Hide background content from assistive tech.
-      inertTargets().forEach((el) => el?.setAttribute('inert', ''));
-      // Move focus to the close button so ESC / Return work immediately.
-      close.focus();
-    };
+    });
 
-    const shut = () => {
-      overlay.classList.remove('is-open');
-      trigger.setAttribute('aria-expanded', 'false');
-      document.documentElement.classList.remove('nav-overlay-open');
-      // Restore background reachability for AT.
-      inertTargets().forEach((el) => el?.removeAttribute('inert'));
-      // Wait for the fade-out transition, then hide from AT.
-      const finish = () => {
-        overlay.hidden = true;
-        overlay.removeEventListener('transitionend', finish);
-      };
-      // Respect reduced-motion: no transition, hide immediately.
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        overlay.hidden = true;
-      } else {
-        overlay.addEventListener('transitionend', finish);
-      }
-      lastFocused?.focus?.();
-    };
-
-    trigger.addEventListener('click', open);
-    close.addEventListener('click', shut);
+    close.addEventListener('click', () => overlay.close());
 
     // Any link click closes (same-origin nav triggers a full page load anyway).
     overlay.querySelectorAll('a[href]').forEach((link) => {
-      link.addEventListener('click', shut);
+      link.addEventListener('click', () => overlay.close());
     });
 
-    // Escape closes. Tab/Shift-Tab focus trap.
-    document.addEventListener('keydown', (e) => {
-      if (overlay.hidden) return;
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        shut();
-        return;
-      }
-      if (e.key === 'Tab') {
-        const list = focusables();
-        if (!list.length) return;
-        const first = list[0];
-        const last = list[list.length - 1];
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
-      }
+    // One teardown path, whatever closed it: the close button, a link, Escape,
+    // or the form-less `cancel`. Focus returns to the trigger on its own.
+    overlay.addEventListener('close', () => {
+      trigger.setAttribute('aria-expanded', 'false');
+      document.documentElement.classList.remove('nav-overlay-open');
     });
   }
 </script>
@@ -274,8 +218,8 @@ const current = Astro.url.pathname;
   .nav__signature-highlight {
     fill: var(--color-paper);
   }
-  .nav__brand:hover .nav__signature { opacity: 0.7; }
-  .nav__brand:hover { color: var(--color-fuchsia-deep); }
+  .nav__brand:is(:hover, :focus-visible) .nav__signature { opacity: 0.7; }
+  .nav__brand:is(:hover, :focus-visible) { color: var(--color-fuchsia-deep); }
 
   .nav__list {
     list-style: none;
@@ -298,7 +242,7 @@ const current = Astro.url.pathname;
     border-block-end: 1px solid transparent;
     transition: color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out);
   }
-  .nav__link:hover,
+  .nav__link:is(:hover, :focus-visible),
   .nav__link[aria-current='page'] {
     color: var(--color-ink);
     border-block-end-color: var(--color-fuchsia);
@@ -327,11 +271,10 @@ const current = Astro.url.pathname;
     height: auto;
     transform: rotate(0deg);
     transform-origin: center;
-    will-change: transform;
     backface-visibility: hidden;
     transition: transform var(--duration-base) var(--ease-out);
   }
-  .nav__trigger:hover .nav__trigger-icon {
+  .nav__trigger:is(:hover, :focus-visible) .nav__trigger-icon {
     transform: rotate(12deg);
   }
 
@@ -353,20 +296,38 @@ const current = Astro.url.pathname;
   }
 
   /* ─── Overlay dialog ─── */
+  /* Resetting the UA <dialog> box: full-bleed, no border, no auto margins. */
   .nav__overlay {
     position: fixed;
     inset: 0;
-    z-index: 100;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    border: none;
     background: var(--color-paper);
+    color: var(--color-ink);
     padding: var(--page-padding);
     padding-block-start: calc(4.5rem + var(--space-xl));
-    display: flex;
     flex-direction: column;
     opacity: 0;
-    transition: opacity var(--duration-base) var(--ease-out);
+    /* allow-discrete lets display and overlay animate alongside opacity, so
+       the fade-out finishes before the dialog leaves the top layer. This is
+       what the old transitionend bookkeeping was for. */
+    transition:
+      opacity var(--duration-base) var(--ease-out),
+      display var(--duration-base) allow-discrete,
+      overlay var(--duration-base) allow-discrete;
   }
-  .nav__overlay.is-open { opacity: 1; }
-  .nav__overlay[hidden] { display: none; }
+  .nav__overlay[open] {
+    display: flex;
+    opacity: 1;
+  }
+  @starting-style {
+    .nav__overlay[open] { opacity: 0; }
+  }
+  .nav__overlay::backdrop { background: var(--color-paper); }
 
   .nav__close {
     position: absolute;
@@ -389,7 +350,7 @@ const current = Astro.url.pathname;
     outline: 2px solid var(--color-fuchsia);
     outline-offset: 2px;
   }
-  .nav__close:hover { color: var(--color-fuchsia-deep); }
+  .nav__close:is(:hover, :focus-visible) { color: var(--color-fuchsia-deep); }
 
   .nav__overlay-inner {
     flex: 1;
@@ -421,7 +382,7 @@ const current = Astro.url.pathname;
     padding-block: var(--space-2xs);
     transition: color var(--duration-fast) var(--ease-out);
   }
-  .nav__overlay-primary a:hover,
+  .nav__overlay-primary a:is(:hover, :focus-visible),
   .nav__overlay-primary a[aria-current='page'] {
     color: var(--color-fuchsia-deep);
   }
@@ -451,7 +412,7 @@ const current = Astro.url.pathname;
     display: inline-flex;
     align-items: center;
   }
-  .nav__overlay-secondary a:hover { color: var(--color-fuchsia-deep); }
+  .nav__overlay-secondary a:is(:hover, :focus-visible) { color: var(--color-fuchsia-deep); }
   .nav__overlay-secondary a:focus-visible {
     outline: 2px solid var(--color-fuchsia);
     outline-offset: 2px;

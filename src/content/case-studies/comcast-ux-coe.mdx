@@ -23,6 +23,8 @@ lede: "Hired during the Great Resignation. Made UX measurable, then made it scal
 import LineChart from '@/components/LineChart.astro';
 import MarginNote from '@/components/MarginNote.astro';
 import Staircase from '@/components/Staircase.astro';
+import Footnote from '@/components/Footnote.astro';
+import Cite from '@/components/Cite.astro';
 
 The content was technically fine. Instructional designers had built it carefully, compliance had approved it. But fewer than one in five employees who started a course finished it, and nobody could say why, because nobody was measuring the experience. ULearn was Comcast's bet on replacing a legacy SAP system during the Great Resignation. The new UX function had to prove, quickly, that it was worth keeping.
 
@@ -32,7 +34,13 @@ I was brought in as Senior Program Manager to structure and operationalize that 
 
 <MarginNote>Reminder: numbers are credibility. SUS as both a target and a trust-builder.</MarginNote>
 
-Completion on started content was below 20%, but completion alone was not enough to win over skeptics. I introduced SUS as a usability benchmark to make UX more measurable and defensible. Untouched products typically scored in the 40s to 50s, while products we directly iterated on could reach 68+ within two to three sprint cycles.
+<Footnote n={1}>Completion on started content: the denominator is learners who opened a course, not everyone the course was assigned to.</Footnote>
+
+Completion on started content was below 20%,<Cite n={1} /> but completion alone was not enough to win over skeptics. I introduced SUS as a usability benchmark to make UX more measurable and defensible.
+
+<Footnote n={2}>System Usability Scale, the ten-item instrument, introduced here as ULearn's first usability benchmark. "Touched" means products the UX team directly iterated on; 68+ took two to three sprint cycles, not one release.</Footnote>
+
+Untouched products typically scored in the 40s to 50s, while products we directly iterated on could reach 68+ within two to three sprint cycles.<Cite n={2} />
 
 ## Structuring the function to scale
 
@@ -52,7 +60,9 @@ The UX team had mixed seniority and limited maturity: six designers total, two s
 
 <MarginNote>Only way through this is 'teach a person to fish.'</MarginNote>
 
-Early on, UX could add a full sprint to delivery timelines. By reshaping the service model, bringing in stronger external talent, and building enablement paths for lower-complexity work, we reduced that burden to roughly two to three days over six months, a 33% reduction from peak. I extended UX capability beyond the core team through coaching and facilitation, and made enough noise about Adobe XD that we eventually moved to Figma.
+<Footnote n={3}>UX drag is the net delivery time UX added to a sprint — tracked in sprint planning and metrics once the service model changed, which is also what made it reportable.</Footnote>
+
+Early on, UX could add a full sprint to delivery timelines. By reshaping the service model, bringing in stronger external talent, and building enablement paths for lower-complexity work, we reduced that burden to roughly two to three days over six months,<Cite n={3} /> a 33% reduction from peak. I extended UX capability beyond the core team through coaching and facilitation, and made enough noise about Adobe XD that we eventually moved to Figma.
 
 <Staircase
   months={['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul']}

@@ -2,19 +2,34 @@
 /**
  * SectionLabel — kicker text that sits above a headline.
  * Small caps, wide tracking, fuchsia rule.
+ *
+ * `as` picks the element. Default `p` is for kickers that sit above a real
+ * heading ("Flagship · Design Operations" above an <h2>) — those are labels,
+ * not headings, and promoting them would duplicate the outline. Pass a
+ * heading level where the kicker IS the section's heading ("Experience",
+ * "Also in the portfolio") so it lands in the document outline and screen-
+ * reader users can navigate to it. Pair with `id` + aria-labelledby on the
+ * wrapping <section> to give the region an accessible name.
  */
 interface Props {
   reveal?: boolean;
+  as?: 'p' | 'h2' | 'h3';
+  id?: string;
 }
-const { reveal = true } = Astro.props;
+const { reveal = true, as: Tag = 'p', id } = Astro.props;
 ---
 
-<p class="section-label" {...(reveal ? { 'data-reveal': '' } : {})}>
+<Tag class="section-label" id={id} {...(reveal ? { 'data-reveal': '' } : {})}>
   <span class="section-label__rule" aria-hidden="true"></span>
   <slot />
-</p>
+</Tag>
 
 <style>
+  /*
+   * Every property the global h1–h4 rule sets is restated here, so the kicker
+   * looks identical whether it renders as <p> or <h2>. Class beats element on
+   * specificity, but only for properties we actually declare.
+   */
   .section-label {
     display: inline-flex;
     align-items: center;
@@ -22,8 +37,10 @@ const { reveal = true } = Astro.props;
     font-family: var(--font-body);
     font-size: var(--type-xs);
     font-weight: 600;
+    line-height: var(--leading-body);
     letter-spacing: var(--tracking-wider);
     text-transform: uppercase;
+    text-wrap: initial;
     color: var(--color-cobalt-deep);
     margin-block-end: var(--space-md);
   }

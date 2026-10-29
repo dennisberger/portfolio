@@ -7,9 +7,17 @@
  * source / method / caveat annotations on numeric claims — not voice asides
  * (use MarginNote for those).
  *
+ * Pair every one with a <Cite> of the same `n` in the prose — that marker is
+ * what makes the numeral mean something. The note goes *before* the paragraph
+ * it annotates, which is what floats it level with the claim.
+ *
  * Usage in MDX:
  *   import Footnote from '@/components/Footnote.astro';
+ *   import Cite from '@/components/Cite.astro';
+ *
  *   <Footnote n={1}>Covers tooling, research partner, contractors.</Footnote>
+ *
+ *   I own the operating budget: $2.3M annually.<Cite n={1} />
  */
 interface Props {
   n: number;
@@ -17,7 +25,7 @@ interface Props {
 const { n } = Astro.props;
 ---
 
-<aside class="gutter-aside footnote" role="doc-footnote">
+<aside class="gutter-aside footnote" id={`fn-${n}`} role="doc-footnote">
   <span class="footnote__marker" aria-hidden="true">{n}</span>
   <span class="footnote__body"><slot /></span>
 </aside>
@@ -27,6 +35,15 @@ const { n } = Astro.props;
     --gutter-aside-accent: var(--color-cobalt);
     --gutter-aside-rule-top: calc(var(--type-lg) * 1 + var(--space-2xs) + 0.15em);
     color: var(--color-ink-muted);
+  }
+
+  /* Arrived here from its <Cite>: swap the cobalt rule for fuchsia so the
+     jump lands somewhere visibly different instead of silently. */
+  .footnote:target {
+    --gutter-aside-accent: var(--color-fuchsia);
+  }
+  .footnote:target .footnote__marker {
+    color: var(--color-fuchsia-deep);
   }
 
   .footnote__marker {

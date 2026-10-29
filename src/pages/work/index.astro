@@ -44,10 +44,10 @@ const jsonLd = schemaGraph([
   description="A closer look at how I've built, scaled, and operationalized design across enterprise organizations."
   jsonLd={jsonLd}
 >
-  <section class="work page">
+  <section class="work page" aria-labelledby="work-title">
     <header class="work__header">
       <SectionLabel>All work</SectionLabel>
-      <h1>Case studies</h1>
+      <h1 id="work-title">Case studies</h1>
       <p class="work__lede">Four engagements across fifteen years. Flagship first, then reverse-chronological.</p>
     </header>
 
@@ -165,7 +165,7 @@ const jsonLd = schemaGraph([
     letter-spacing: var(--tracking-display);
     max-width: 18ch;
   }
-  .work__link:hover .work__title { color: var(--color-fuchsia-deep); }
+  .work__link:is(:hover, :focus-visible) .work__title { color: var(--color-fuchsia-deep); }
 
   .work__excerpt {
     font-family: var(--font-body);
@@ -226,7 +226,7 @@ const jsonLd = schemaGraph([
   @media (max-width: 720px) {
     .work__arrow { grid-column: 1; justify-self: start; }
   }
-  .work__link:hover .work__arrow {
+  .work__link:is(:hover, :focus-visible) .work__arrow {
     color: var(--color-fuchsia-deep);
     transform: translateX(6px);
   }

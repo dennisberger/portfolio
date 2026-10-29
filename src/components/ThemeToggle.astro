@@ -186,7 +186,7 @@
     cursor: pointer;
     transition: color var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out);
   }
-  .theme-toggle__btn:hover { color: var(--color-ink); }
+  .theme-toggle__btn:is(:hover, :focus-visible) { color: var(--color-ink); }
   .theme-toggle__btn:focus-visible {
     outline: 2px solid var(--color-fuchsia);
     outline-offset: 2px;
@@ -196,4 +196,22 @@
     color: var(--color-paper);
   }
   .theme-toggle__btn svg { display: block; }
+
+  /*
+   * Touch: three adjacent targets that each repaint the whole page, at 28px
+   * with a 2px gap, was the wrong place to be frugal — it clears WCAG 2.5.8's
+   * 24px floor and nothing more. Scoped to coarse pointers so the desktop
+   * pill keeps its proportions, and the gap grows with the targets so the
+   * hit areas don't end up adjacent.
+   */
+  @media (pointer: coarse) {
+    .theme-toggle {
+      gap: 6px;
+      padding: 3px;
+    }
+    .theme-toggle__btn {
+      width: 44px;
+      height: 44px;
+    }
+  }
 </style>

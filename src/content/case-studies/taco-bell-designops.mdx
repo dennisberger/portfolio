@@ -23,6 +23,7 @@ closer: "Institutional knowledge means I'm still answering emails about things f
 
 import MarginNote from '@/components/MarginNote.astro';
 import Footnote from '@/components/Footnote.astro';
+import Cite from '@/components/Cite.astro';
 import LineChart from '@/components/LineChart.astro';
 import StackedBars from '@/components/StackedBars.astro';
 
@@ -54,9 +55,9 @@ I absorbed the conflict deliberately. When pushback came, the answer was "this i
 
 I led Taco Bell's migration from Figma Pro to Figma Enterprise: stronger governance, branching and merging, Dev Mode handoff, retirement of an outdated Zeplin setup. Taco Bell became the first brand within Yum to make that move. I later served as Taco Bell's lead in Yum's broader convergence to a unified Figma environment, briefing the other brand leads on what to negotiate for and what Figma would push back on.
 
-<Footnote n={1}>The operating budget for this infrastructure sits at $2.3M annually. Scoped to tooling, external research, contractors, and accessibility validation; renewed annually against the design org's roadmap.</Footnote>
+<Footnote n={1}>The budget I own, not Taco Bell's total design spend. Re-planned annually against the design org's roadmap. Applause's expert-hour budget sits with Engineering, not here.</Footnote>
 
-I own the operating budget for this infrastructure: $2.3M annually across tooling, external research, contractors, and accessibility validation.
+I own the operating budget for this infrastructure: $2.3M annually across tooling, external research, contractors, and accessibility validation.<Cite n={1} />
 
 ### Making research a core product capability
 
@@ -66,7 +67,9 @@ The biggest gap I identified was research. Without it, design decisions were dri
 
 I led the effort to establish research through an external partner, negotiated the statement of work, and built the operational model around intake, triage, capacity, and adoption. Since then, I've remained the internal lead for the relationship and the operational point of continuity for the practice.
 
-That shift changed how product decisions were made. Taco Bell went from doing no formal studies to 22 in 2024 and 64 in 2025. Research now serves as a core input into major workstreams, including the current full app redesign through industry analysis, unmoderated concept testing, and moderated validation of near-final designs.
+<Footnote n={2}>Counted as formal studies run through the external research partner and the intake model above. The 2026 figure in the chart is current-year pace as of Q1, not a completed count.</Footnote>
+
+That shift changed how product decisions were made. Taco Bell went from doing no formal studies to 22 in 2024 and 64 in 2025.<Cite n={2} /> Research now serves as a core input into major workstreams, including the current full app redesign through industry analysis, unmoderated concept testing, and moderated validation of near-final designs.
 
 <LineChart
   points={[
@@ -90,7 +93,9 @@ I co-manage Taco Bell's relationship with Applause, an external accessibility va
 
 The agency-to-FTE transition was the visible part of the story. The harder part was figuring out what shape the in-house team should take.
 
-I wrote the job descriptions and leveled the existing designers across three IC tracks: Lead, Senior, and on-level Product Designer. Those JDs are still in use today. When the budget math made it clear we couldn't fully replace agency capacity with FTEs alone, I built a vendor relationship with Insight Global for contractor labor against the same JDs, taking the team from 8 FTEs to 12 total.
+<Footnote n={3}>The same twelve as the 2025 column of the staffing chart below: eight internal FTEs plus four contractors, hired against the same job descriptions.</Footnote>
+
+I wrote the job descriptions and leveled the existing designers across three IC tracks: Lead, Senior, and on-level Product Designer. Those JDs are still in use today. When the budget math made it clear we couldn't fully replace agency capacity with FTEs alone, I built a vendor relationship with Insight Global for contractor labor against the same JDs, taking the team from 8 FTEs to 12 total.<Cite n={3} />
 
 The ratio was the harder question. The initial argument, which I lost, was that the team needed to be heavily senior to bring agency-equivalent craft and autonomy on day one. We staffed accordingly, and the result was a top-heavy team where individual craft didn't compose into an operating model. Senior hires sold on autonomy were being asked to align with a house playbook. Collaboration suffered. Turnover followed.
 
@@ -153,7 +158,9 @@ That's now how I think about early-stage ops work. Ship the smallest legitimate 
 
 ## Results and impact
 
-The mistakes weren't terminal. The operating model still produced the team it was supposed to. Three years in, the agency layer is gone, internal FTEs have more than tripled, and the contractor flex layer absorbs spikes without distorting the JD framework.
+<Footnote n={4}>Three internal FTEs in 2023 to ten in 2026. FTE only — the contractor layer is counted separately, which is why the chart stacks the two apart.</Footnote>
+
+The mistakes weren't terminal. The operating model still produced the team it was supposed to. Three years in, the agency layer is gone, internal FTEs have more than tripled,<Cite n={4} /> and the contractor flex layer absorbs spikes without distorting the JD framework.
 
 <StackedBars
   years={[

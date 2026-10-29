@@ -6,27 +6,59 @@
 
 :root {
   /* ─── Color ───────────────────────────────────────────────── */
+  /*
+   * Every color is a light-dark() pair: first value light, second dark. The
+   * active half is picked from the element's used `color-scheme`, which is
+   * declared once at the bottom of this block and overridden by the two
+   * html[data-theme] selectors. One list, one place to edit — the dark palette
+   * used to be written out twice (a prefers-color-scheme block plus an
+   * attribute selector) and drifting between the two was a matter of time.
+   *
+   * Contrast ratios in the comments are measured against --color-paper in the
+   * same theme, sRGB, WCAG 2.x.
+   */
+
   /* Paper: bright near-white, just a whisper of warmth so it doesn't read clinical. */
-  --color-paper: oklch(99% 0.003 85);
-  --color-paper-sunken: oklch(96.5% 0.004 85);
-  --color-paper-raised: oklch(99.5% 0.002 85);  /* never pure white */
+  --color-paper:        light-dark(oklch(99% 0.003 85),   oklch(16% 0.008 70));
+  --color-paper-sunken: light-dark(oklch(96.5% 0.004 85), oklch(12% 0.008 70));
+  --color-paper-raised: light-dark(oklch(99.5% 0.002 85), oklch(20% 0.008 70));  /* never pure white */
 
   /* Ink: near-black, faint warm undertone. Never #000. */
-  --color-ink: oklch(18% 0.01 70);
-  --color-ink-muted: oklch(36% 0.012 70);  /* AAA on paper (≥7:1); used for ledes, metadata, form labels, footer */
-  --color-ink-dim: oklch(58% 0.008 70);
-  --color-rule: oklch(90% 0.004 70);
+  --color-ink:       light-dark(oklch(18% 0.01 70),   oklch(96% 0.003 85));
+  --color-ink-muted: light-dark(oklch(36% 0.012 70),  oklch(75% 0.005 70));  /* AAA on paper (≥7:1); ledes, metadata, form labels, footer */
+  --color-ink-dim:   light-dark(oklch(58% 0.008 70),  oklch(50% 0.008 70));
+  --color-rule:      light-dark(oklch(90% 0.004 70),  oklch(28% 0.005 70));
 
   /* Fuchsia — voice. Hot pink. Used for CTAs, links, margin-note accents, wry moments. */
-  --color-fuchsia: oklch(68% 0.29 0);            /* candy hot pink — decorative / large display only */
-  --color-fuchsia-deep: oklch(42% 0.21 0);       /* text-legible pink, AAA body on bright paper */
-  --color-fuchsia-soft: oklch(94% 0.06 0);       /* tints / flagship-card background */
+  --color-fuchsia:      light-dark(oklch(68% 0.29 0), oklch(72% 0.24 0));   /* 3.62:1 light — large text (≥24px) and non-text only */
+  --color-fuchsia-deep: light-dark(oklch(42% 0.21 0), oklch(86% 0.14 0));   /* 8.23:1 light — the text-legible pink; AAA body */
+  --color-fuchsia-soft: light-dark(oklch(94% 0.06 0), oklch(22% 0.08 0));   /* tints / flagship-card background */
 
   /* Cobalt — substance. Sea-in-sun blue. Evidence, charts, structural emphasis. */
-  --color-cobalt: oklch(58% 0.25 250);           /* bright sea-in-sun cobalt — decorative / large */
-  --color-cobalt-deep: oklch(42% 0.22 255);      /* text-legible cobalt, AAA on bright paper */
-  --color-cobalt-pale: oklch(86% 0.06 250);      /* palest tint, for chart retiring-segment / decorative stacks */
-  --color-cobalt-soft: oklch(94% 0.05 250);      /* tints */
+  --color-cobalt:      light-dark(oklch(58% 0.25 250), oklch(68% 0.2 250));    /* bright sea-in-sun cobalt — decorative / large */
+  --color-cobalt-deep: light-dark(oklch(42% 0.22 255), oklch(84% 0.13 255));   /* text-legible cobalt, AAA on paper */
+  /*
+   * The retiring chart segment. This used to be a pale tint (86% L light,
+   * 35% L dark) that measured 1.48:1 and 1.71:1 against paper — under the
+   * 3:1 that WCAG 1.4.11 requires of a graphic carrying information, and in
+   * dark mode the "agency layer retired" bar read as a smudge, which inverts
+   * the story. It is now a desaturated slate: 3.39:1 light / 3.54:1 dark,
+   * and it separates from the two saturated cobalts by chroma rather than
+   * lightness. Draining of color as it is phased out is the right read.
+   */
+  --color-cobalt-pale: light-dark(oklch(63% 0.045 250), oklch(52% 0.045 250));
+  --color-cobalt-soft: light-dark(oklch(94% 0.05 250),  oklch(22% 0.06 250));   /* tints */
+
+  /*
+   * Alert — the one semantic color, reserved for "something is wrong and you
+   * have to fix it". Deliberately NOT fuchsia: fuchsia means voice (links,
+   * CTAs, ledes, résumé dates), so a form error rendered in it read as more
+   * brand rather than as an error. Hue 30 is far enough from fuchsia's hue 0
+   * to be unmistakable. 7.94:1 light / 10.02:1 dark on paper — AAA, because
+   * error text is set at --type-xs.
+   */
+  --color-alert:      light-dark(oklch(45% 0.18 28),   oklch(80% 0.1 32));
+  --color-alert-soft: light-dark(oklch(95% 0.035 30),  oklch(24% 0.06 30));
 
   /* ─── Type ────────────────────────────────────────────────── */
   --font-display: 'Zodiak', 'Gambarino', Georgia, 'Times New Roman', serif;
@@ -118,17 +150,18 @@
   --col-total: calc(var(--col-main) + var(--col-gutter) + var(--col-gap));
 
   /* Breakpoint system — reference-only; CSS @media can't consume custom
-     properties yet. Keep media queries aligned to these four tiers.
+     properties yet. Keep media queries aligned to these three tiers.
      --bp-sm 640px : single mobile cutoff (nav, footer, form actions, case studies)
      --bp-md 720px : small-tablet collapse (about, work index, colophon layout, TOC)
      --bp-lg 900px : large-tablet / small-desktop (hero, flagship)
-     --bp-xl 1080px: desktop + gutter reflow (prose, margin notes) */
+
+     There is no fourth tier any more. The gutter reflow used to live at a
+     1080px viewport breakpoint; it is now a container query on the reading
+     column itself (57rem — see .gutter-aside in global.css), because what
+     decides it is how much room the column has, not how wide the window is. */
   --bp-sm: 640px;
   --bp-md: 720px;
   --bp-lg: 900px;
-  --bp-xl: 1080px;
-  /* Gutter-reflow breakpoint — historically named, same value as --bp-xl */
-  --col-bp: 1080px;
 
   /* Section rhythm — three-tier variance, not flat */
   --space-section-hero: clamp(5rem, 10vw, 9rem);   /* hero only: maximum breathing */
@@ -143,71 +176,17 @@
   --duration-slow: 420ms;
 
   /* ─── Misc ────────────────────────────────────────────────── */
+  /*
+   * This is the switch for every light-dark() pair above: `light dark` means
+   * "follow the system", so a fresh visit always matches the OS. The two
+   * selectors below are the session override the ThemeToggle writes onto
+   * <html> — one declaration each, no palette to keep in sync.
+   */
   color-scheme: light dark;
 }
 
-/* ─── Dark mode ─────────────────────────────────────────────────
- * Activated by either:
- *   a) system preference (prefers-color-scheme: dark) when no explicit override
- *   b) explicit user toggle setting html[data-theme="dark"]
- *
- * Dark palette inverts the paper/ink relationship while preserving warm
- * undertones and AAA contrast on all principal text combinations. Fuchsia
- * and cobalt deep variants are lightened so they stay ≥7:1 on dark paper.
- *
- * Light is explicit too (html[data-theme="light"]) so a user on a dark-system
- * can force light for this session and we still win the cascade.
- */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    color-scheme: dark;
-
-    --color-paper: oklch(16% 0.008 70);
-    --color-paper-sunken: oklch(12% 0.008 70);
-    --color-paper-raised: oklch(20% 0.008 70);
-
-    --color-ink: oklch(96% 0.003 85);
-    --color-ink-muted: oklch(75% 0.005 70);
-    --color-ink-dim: oklch(50% 0.008 70);
-    --color-rule: oklch(28% 0.005 70);
-
-    --color-fuchsia: oklch(72% 0.24 0);
-    --color-fuchsia-deep: oklch(86% 0.14 0);       /* AAA on paper AND on fuchsia-soft */
-    --color-fuchsia-soft: oklch(22% 0.08 0);       /* darker tint for AAA contrast with -deep */
-
-    --color-cobalt: oklch(68% 0.2 250);
-    --color-cobalt-deep: oklch(84% 0.13 255);      /* AAA on paper AND on cobalt-soft */
-    --color-cobalt-pale: oklch(35% 0.08 250);
-    --color-cobalt-soft: oklch(22% 0.06 250);      /* darker tint for AAA contrast with -deep */
-  }
-}
-
-html[data-theme='dark'] {
-  color-scheme: dark;
-
-  --color-paper: oklch(16% 0.008 70);
-  --color-paper-sunken: oklch(12% 0.008 70);
-  --color-paper-raised: oklch(20% 0.008 70);
-
-  --color-ink: oklch(96% 0.003 85);
-  --color-ink-muted: oklch(75% 0.005 70);
-  --color-ink-dim: oklch(50% 0.008 70);
-  --color-rule: oklch(28% 0.005 70);
-
-  --color-fuchsia: oklch(72% 0.24 0);
-  --color-fuchsia-deep: oklch(86% 0.14 0);
-  --color-fuchsia-soft: oklch(22% 0.08 0);
-
-  --color-cobalt: oklch(68% 0.2 250);
-  --color-cobalt-deep: oklch(84% 0.13 255);
-  --color-cobalt-pale: oklch(35% 0.08 250);
-  --color-cobalt-soft: oklch(22% 0.06 250);
-}
-
-html[data-theme='light'] {
-  color-scheme: light;
-  /* Light values already live at :root — nothing to override. */
-}
+html[data-theme='light'] { color-scheme: light; }
+html[data-theme='dark']  { color-scheme: dark; }
 
 @media (prefers-reduced-motion: reduce) {
   :root {

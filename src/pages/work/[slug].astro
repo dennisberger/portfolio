@@ -118,8 +118,14 @@ const jsonLd = schemaGraph([
   updatedAt={data.updatedAt}
   jsonLd={jsonLd}
 >
-  <div class="read-progress" aria-hidden="true"></div>
   <article class="study">
+    {/* Lives INSIDE .study on purpose. A named view timeline is only
+        resolvable from the declaring element and its descendants — not from
+        a sibling in either direction (verified in the browser, not assumed).
+        Move this out and the bar silently sticks at 100%. It is
+        position: fixed and .study creates no containing block, so nesting it
+        costs nothing. */}
+    <div class="read-progress" aria-hidden="true"></div>
     <header class="study__header page">
       <a href="/work/" class="study__back">← All work</a>
       <SectionLabel>{data.tag} · {readMinutes} min read · {wordCount.toLocaleString()} words</SectionLabel>
@@ -140,7 +146,7 @@ const jsonLd = schemaGraph([
 
       {byTheNumbers && (
         <div class="prose prose--wide">
-          <SectionLabel>Also worth noting</SectionLabel>
+          <SectionLabel as="h2" id="by-the-numbers">Also worth noting</SectionLabel>
           <EditorialNumbers entries={byTheNumbers} />
         </div>
       )}
@@ -152,14 +158,14 @@ const jsonLd = schemaGraph([
     </div>
 
     {others.length > 0 && (
-      <nav class="study__more page" aria-label="Other case studies">
-        <SectionLabel>Other case studies</SectionLabel>
+      <nav class="study__more page" aria-labelledby="other-studies">
+        <SectionLabel as="h2" id="other-studies">Other case studies</SectionLabel>
         <ol class="study__more-list">
           {others.map(s => (
             <li class="study__more-item">
               <a href={`/work/${s.data.slug}/`} class="study__more-link">
                 <span class="study__more-tag">{s.data.tag}</span>
-                <span class="study__more-title">{s.data.title}</span>
+                <h3 class="study__more-title">{s.data.title}</h3>
                 <span aria-hidden="true" class="study__more-arrow">→</span>
               </a>
             </li>
@@ -177,25 +183,6 @@ const jsonLd = schemaGraph([
 </Base>
 
 <script is:inline>
-  // Reading-progress hairline. Fills a 2px fuchsia line at the top of the
-  // viewport as the reader scrolls through the <article>. Passive listeners;
-  // no animation frame dependency — CSS handles the smoothing.
-  (function () {
-    var bar = document.querySelector('.read-progress');
-    var article = document.querySelector('.study');
-    if (!bar || !article) return;
-    var update = function () {
-      var rect = article.getBoundingClientRect();
-      var total = rect.height - window.innerHeight;
-      var scrolled = Math.max(0, -rect.top);
-      var pct = total > 0 ? Math.min(1, scrolled / total) : 0;
-      bar.style.setProperty('--p', pct);
-    };
-    update();
-    window.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update, { passive: true });
-  })();
-
   // Enter animation for paired figures — fade + 10px rise, staggered 120ms.
   // One-shot (unobserve on first intersection) so backscrolling doesn't replay.
   (function () {
@@ -230,7 +217,6 @@ const jsonLd = schemaGraph([
     height: 2px;
     z-index: 100;
     pointer-events: none;
-    --p: 0;
   }
   .read-progress::after {
     content: '';
@@ -239,13 +225,31 @@ const jsonLd = schemaGraph([
     left: 0;
     height: 100%;
     width: 100%;
-    transform: scaleX(var(--p));
+    transform: scaleX(0);
     transform-origin: left;
     background: var(--color-fuchsia);
-    transition: transform 80ms linear;
   }
-  @media (prefers-reduced-motion: reduce) {
-    .read-progress::after { transition: none; }
+
+  /* Scroll-driven, so the bar tracks scroll position on the compositor with
+     no main-thread work and no listener. The range is an exact restatement of
+     the handler this replaced: `contain 0%` is the article's top edge at the
+     viewport top, `contain 100%` is its bottom edge at the viewport bottom.
+     Guarded by @supports — without scroll-driven animations the bar simply
+     never fills, which is why it carries no background rule of its own. */
+  @supports (animation-timeline: view()) {
+    .study {
+      view-timeline-name: --study-progress;
+    }
+    .read-progress::after {
+      animation: read-progress-fill linear both;
+      animation-timeline: --study-progress;
+      animation-range: contain 0% contain 100%;
+    }
+  }
+
+  @keyframes read-progress-fill {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
   }
 
   .study__header {
@@ -263,7 +267,7 @@ const jsonLd = schemaGraph([
     letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
   }
-  .study__back:hover { color: var(--color-fuchsia-deep); }
+  .study__back:is(:hover, :focus-visible) { color: var(--color-fuchsia-deep); }
 
   .study__title {
     font-size: var(--type-4xl);
@@ -287,6 +291,12 @@ const jsonLd = schemaGraph([
     padding-block: var(--space-section);
     max-width: var(--page-max);
     margin-inline: auto;
+    /* The query container for the margin-note gutter. Its inline size is the
+       real constraint — how much room the page has for prose plus gutter —
+       where the viewport width was only a proxy for it. See .gutter-aside in
+       global.css. */
+    container-type: inline-size;
+    container-name: reading-column;
   }
 
   .prose {
@@ -407,7 +417,7 @@ const jsonLd = schemaGraph([
   }
 
   /* Desktop: widen prose container to accommodate floated margin notes in the gutter */
-  @media (min-width: 1080px) {
+  @container reading-column (min-width: 57rem) {
     .prose {
       max-width: var(--col-total);
       padding-right: calc(var(--col-gutter) + var(--col-gap));
@@ -476,17 +486,22 @@ const jsonLd = schemaGraph([
   .study__more-title {
     font-family: var(--font-display);
     font-size: var(--type-2xl);
+    /* Restated so the <h3> renders exactly as the <span> it replaced. */
+    font-weight: 400;
+    line-height: var(--leading-body);
+    letter-spacing: var(--tracking-normal);
+    text-wrap: auto;
     color: var(--color-ink);
     flex: 1;
   }
-  .study__more-link:hover .study__more-title { color: var(--color-fuchsia-deep); }
+  .study__more-link:is(:hover, :focus-visible) .study__more-title { color: var(--color-fuchsia-deep); }
   .study__more-arrow {
     font-family: var(--font-display);
     color: var(--color-fuchsia);
     font-size: var(--type-2xl);
     transition: transform var(--duration-base) var(--ease-out);
   }
-  .study__more-link:hover .study__more-arrow { transform: translateX(4px); }
+  .study__more-link:is(:hover, :focus-visible) .study__more-arrow { transform: translateX(4px); }
 
   @media (max-width: 640px) {
     .study__more-link { flex-direction: column; align-items: flex-start; gap: var(--space-xs); padding-block: var(--space-md); }

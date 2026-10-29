@@ -23,6 +23,8 @@ lede: "Built the U.S.'s first self-service linear TV ad platform. Found out the 
 import LineChart from '@/components/LineChart.astro';
 import MarginNote from '@/components/MarginNote.astro';
 import AlphaVideo from '@/components/AlphaVideo.astro';
+import Footnote from '@/components/Footnote.astro';
+import Cite from '@/components/Cite.astro';
 import effectvMobilePoster from '@/assets/case-studies/effectv-mobile-poster.png';
 import effectvMobileFallback from '@/assets/case-studies/effectv-mobile.png';
 import effectvDesktopPoster from '@/assets/case-studies/effectv-desktop-motion-poster.png';
@@ -78,7 +80,9 @@ I rewrote the experience in plainer, more confidence-building language, added co
 
 <MarginNote>Avoid the obvious joke about the user clicking less and the content clicking more.</MarginNote>
 
-We held the team to a clear UX goal: reduce unnecessary clicks and make core tasks meaningfully faster. Through iterative usability testing, I measured both click reduction and time to completion on near-final prototypes. The results showed the workflow was measurably faster to complete and required fewer clicks to get there.
+<Footnote n={1}>Clicks per task and time to completion, measured by me across the testing rounds on near-final prototypes, each round against the first-round baseline.</Footnote>
+
+We held the team to a clear UX goal: reduce unnecessary clicks and make core tasks meaningfully faster. Through iterative usability testing, I measured both click reduction and time to completion on near-final prototypes.<Cite n={1} /> The results showed the workflow was measurably faster to complete and required fewer clicks to get there.
 
 ## Results and impact
 
@@ -94,7 +98,9 @@ We held the team to a clear UX goal: reduce unnecessary clicks and make core tas
   ariaLabel="SUS scores across five testing rounds: 41, 51, 57, 61, 72."
 />
 
-The redesign improved SUS from 41 to 72 across five iterative rounds of testing, reduced clicks per task by more than 40%, and cut task completion time by roughly 50%. User feedback shifted from confusion and hesitation to clarity and confidence, and Comcast Advertising shipped the country's first self-service linear TV platform for small businesses.
+<Footnote n={2}>System Usability Scale across five rounds on near-final prototypes, not on the shipped product — those five rounds are the chart above.</Footnote>
+
+The redesign improved SUS from 41 to 72 across five iterative rounds of testing,<Cite n={2} /> reduced clicks per task by more than 40%, and cut task completion time by roughly 50%. User feedback shifted from confusion and hesitation to clarity and confidence, and Comcast Advertising shipped the country's first self-service linear TV platform for small businesses.
 
 ## Reflection
 

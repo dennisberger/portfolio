@@ -76,7 +76,7 @@ const year = new Date().getFullYear();
     text-decoration: none;
     border-bottom: 1px solid transparent;
   }
-  .footer__nav a:hover { color: var(--color-fuchsia-deep); border-bottom-color: currentColor; }
+  .footer__nav a:is(:hover, :focus-visible) { color: var(--color-fuchsia-deep); border-bottom-color: currentColor; }
 
   @media (max-width: 640px) {
     .footer__meta { align-items: flex-start; text-align: left; }

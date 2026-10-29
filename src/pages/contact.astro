@@ -10,14 +10,17 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
   title="Contact — Dennis Berger"
   description="Send a note. Opportunities, questions, or DesignOps conversations welcome."
 >
-  <section class="contact page">
+  <section class="contact page" aria-labelledby="contact-title">
+    {/* .contact is the query container for the margin-note gutter, so the
+        gutter reservation has to land on a child — this shell. */}
+    <div class="contact__shell">
     <SectionLabel>Contact</SectionLabel>
-    <h1 class="contact__title">Send a note.</h1>
+    <h1 class="contact__title" id="contact-title">Send a note.</h1>
     <p class="contact__lede">Fastest way to reach me. I write back.</p>
     <MarginNote>DesignOps questions, side-project trades, Philly food recs (actually, any food recs) are all welcome.</MarginNote>
 
     <div class="contact__card">
-      <p class="form__required-note">All fields required.</p>
+      <p class="form__required-note" id="form-required-note">All fields required.</p>
 
       <noscript>
         <p class="form__noscript">
@@ -116,6 +119,24 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
         <p class="form__status" role="status" aria-live="polite" hidden id="form-status"></p>
         <p class="form__status form__status--error" role="alert" aria-live="assertive" hidden id="form-alert"></p>
       </form>
+
+      {/* Success state. The form used to just reset itself, which left an
+          empty form and a one-line status — a weak last moment for the only
+          conversion on the site. This replaces it outright and says what
+          happens next. */}
+      <div class="form__done" id="form-done" hidden>
+        <p class="form__done-kicker">Sent</p>
+        <h2 class="form__done-title" id="form-done-title" tabindex="-1"><em>On its way.</em></h2>
+        <p class="form__done-text">
+          A confirmation email just went out. I read everything that comes
+          through here and write back — usually within a day or two.
+        </p>
+        <div class="form__done-actions">
+          <a href="/work/" class="btn btn--primary">Read the case studies</a>
+          <button type="button" class="btn btn--ghost" id="form-again">Send another note</button>
+        </div>
+      </div>
+    </div>
     </div>
   </section>
 </Base>
@@ -136,6 +157,10 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
   const status = document.getElementById('form-status') as HTMLParagraphElement | null;
   const alertRegion = document.getElementById('form-alert') as HTMLParagraphElement | null;
   const submit = document.getElementById('form-submit') as HTMLButtonElement | null;
+  const requiredNote = document.getElementById('form-required-note');
+  const done = document.getElementById('form-done');
+  const doneTitle = document.getElementById('form-done-title');
+  const again = document.getElementById('form-again') as HTMLButtonElement | null;
 
   const fieldInputIds: Record<FieldName, string> = {
     name: 'field-name',
@@ -147,23 +172,45 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
     email: 'field-email-error',
     message: 'field-message-error',
   };
+  const fieldNames = Object.keys(fieldInputIds) as FieldName[];
 
-  const clearFieldErrors = () => {
-    (Object.keys(fieldInputIds) as FieldName[]).forEach((f) => {
-      const input = document.getElementById(fieldInputIds[f]) as HTMLInputElement | HTMLTextAreaElement | null;
-      const err = document.getElementById(fieldErrorIds[f]) as HTMLSpanElement | null;
-      if (input) input.removeAttribute('aria-invalid');
-      if (err) { err.hidden = true; err.textContent = ''; }
-    });
+  const inputFor = (f: FieldName) =>
+    document.getElementById(fieldInputIds[f]) as HTMLInputElement | HTMLTextAreaElement | null;
+  const errorFor = (f: FieldName) =>
+    document.getElementById(fieldErrorIds[f]) as HTMLSpanElement | null;
+  const valueOf = (f: FieldName) => (inputFor(f)?.value ?? '').trim();
+
+  // One rule per field, returning the message or null. Keeping them separate
+  // is what lets the same logic run on blur for a single field and on submit
+  // for all three.
+  const rules: Record<FieldName, (v: string) => string | null> = {
+    name: (v) =>
+      !v ? 'Please enter your name.'
+      : v.length > 200 ? 'Name is too long — keep it under 200 characters.'
+      : null,
+    email: (v) =>
+      !v ? 'Please enter your email address.'
+      : (v.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v))
+        ? 'Please enter a valid email address.'
+      : null,
+    message: (v) =>
+      !v ? 'A message, please.'
+      : v.length < 10 ? 'A sentence or two, please. At least 10 characters.'
+      : v.length > 5000 ? 'That is a lot to read. Keep it under 5,000 characters.'
+      : null,
   };
 
+  const clearFieldError = (f: FieldName) => {
+    inputFor(f)?.removeAttribute('aria-invalid');
+    const err = errorFor(f);
+    if (err) { err.hidden = true; err.textContent = ''; }
+  };
+
+  const clearFieldErrors = () => fieldNames.forEach(clearFieldError);
+
   const markFieldError = (field: FieldName, message: string) => {
-    const input = document.getElementById(fieldInputIds[field]) as HTMLInputElement | HTMLTextAreaElement | null;
-    const err = document.getElementById(fieldErrorIds[field]) as HTMLSpanElement | null;
-    if (input) {
-      input.setAttribute('aria-invalid', 'true');
-      input.focus();
-    }
+    inputFor(field)?.setAttribute('aria-invalid', 'true');
+    const err = errorFor(field);
     if (err) {
       err.textContent = message;
       err.hidden = false;
@@ -190,31 +237,76 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
       }
     };
 
-    const validateClient = (): { field: FieldName; message: string } | null => {
-      const nameInput = document.getElementById(fieldInputIds.name) as HTMLInputElement | null;
-      const emailInput = document.getElementById(fieldInputIds.email) as HTMLInputElement | null;
-      const messageInput = document.getElementById(fieldInputIds.message) as HTMLTextAreaElement | null;
-      const name = (nameInput?.value ?? '').trim();
-      const email = (emailInput?.value ?? '').trim();
-      const message = (messageInput?.value ?? '').trim();
-
-      if (!name) return { field: 'name', message: 'Please enter your name.' };
-      if (name.length > 200) return { field: 'name', message: 'Name is too long — keep it under 200 characters.' };
-      if (!email) return { field: 'email', message: 'Please enter your email address.' };
-      if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { field: 'email', message: 'Please enter a valid email address.' };
-      if (!message) return { field: 'message', message: 'A message, please.' };
-      if (message.length < 10) return { field: 'message', message: 'A sentence or two, please. At least 10 characters.' };
-      if (message.length > 5000) return { field: 'message', message: 'That is a lot to read. Keep it under 5,000 characters.' };
-      return null;
+    const clearStatus = () => {
+      status.hidden = true;
+      status.textContent = '';
+      alertRegion.hidden = true;
+      alertRegion.textContent = '';
     };
+
+    // Every failing field, not just the first — three bad fields used to cost
+    // three submits.
+    const validateAll = (): { field: FieldName; message: string }[] =>
+      fieldNames
+        .map((field) => ({ field, message: rules[field](valueOf(field)) }))
+        .filter((r): r is { field: FieldName; message: string } => r.message !== null);
+
+    // Blur validation, the Luke W way: only once the field has something in
+    // it, so tabbing through an empty form doesn't light it up red.
+    fieldNames.forEach((field) => {
+      const input = inputFor(field);
+      if (!input) return;
+      input.addEventListener('blur', () => {
+        if (!valueOf(field)) return;
+        const message = rules[field](valueOf(field));
+        if (message) markFieldError(field, message);
+        else clearFieldError(field);
+      });
+      // Clear as soon as it is fixed, but never while they are mid-keystroke
+      // on a field that was already clean.
+      input.addEventListener('input', () => {
+        if (input.getAttribute('aria-invalid') !== 'true') return;
+        if (!rules[field](valueOf(field))) clearFieldError(field);
+      });
+    });
+
+    const showForm = () => {
+      done?.setAttribute('hidden', '');
+      form.hidden = false;
+      if (requiredNote) requiredNote.hidden = false;
+    };
+
+    const showDone = () => {
+      clearStatus();
+      form.hidden = true;
+      if (requiredNote) requiredNote.hidden = true;
+      done?.removeAttribute('hidden');
+      // Moving focus to the heading both announces the outcome and puts the
+      // next actions one Tab away, so no separate live-region echo.
+      doneTitle?.focus();
+    };
+
+    again?.addEventListener('click', () => {
+      form.reset();
+      clearFieldErrors();
+      showForm();
+      inputFor('name')?.focus();
+    });
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       clearFieldErrors();
 
-      const invalid = validateClient();
-      if (invalid) {
-        markFieldError(invalid.field, invalid.message);
+      const invalid = validateAll();
+      if (invalid.length) {
+        invalid.forEach(({ field, message }) => markFieldError(field, message));
+        setStatus(
+          'error',
+          invalid.length === 1
+            ? 'One field needs a look.'
+            : `${invalid.length} fields need a look.`,
+        );
+        inputFor(invalid[0].field)?.focus();
         return;
       }
 
@@ -233,14 +325,15 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
         };
 
         if (res.ok && data.ok) {
+          showDone();
           form.reset();
-          setStatus('success', "Got it. A confirmation email is on its way, and I'll write back soon.");
           (window as unknown as { umami?: { track: (n: string) => void } }).umami?.track('contact-submit');
         } else {
           const message = data.error ?? 'Something broke. Try LinkedIn, or refresh and retry.';
           setStatus('error', message);
           if (data.field && data.field in fieldInputIds) {
             markFieldError(data.field, message);
+            inputFor(data.field)?.focus();
           }
         }
       } catch {
@@ -259,10 +352,14 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
   .contact {
     padding-block: var(--space-section-hero) var(--space-section);
     max-width: var(--col-total);
+    /* Query container for the margin-note gutter — see .gutter-aside in
+       global.css. */
+    container-type: inline-size;
+    container-name: reading-column;
   }
-  /* Reserve a right gutter at desktop so MarginNote floats into it. */
-  @media (min-width: 1080px) {
-    .contact { padding-right: calc(var(--col-gutter) + var(--col-gap)); }
+  /* Reserve the right gutter once the column is wide enough to hold it. */
+  @container reading-column (min-width: 57rem) {
+    .contact__shell { padding-right: calc(var(--col-gutter) + var(--col-gap)); }
   }
 
   .contact__title {
@@ -362,8 +459,8 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
 
   .field input[aria-invalid='true'],
   .field textarea[aria-invalid='true'] {
-    border-color: var(--color-fuchsia-deep);
-    box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-fuchsia-soft) 75%, transparent);
+    border-color: var(--color-alert);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-alert-soft) 75%, transparent);
   }
 
   .field__hint {
@@ -378,7 +475,7 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
     font-family: var(--font-body);
     font-size: var(--type-xs);
     font-weight: 500;
-    color: var(--color-fuchsia-deep);
+    color: var(--color-alert);
     margin-block-start: var(--space-2xs);
   }
 
@@ -424,8 +521,42 @@ const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY ?? '';
     background: var(--color-cobalt-soft);
   }
   .form__status--error {
-    color: var(--color-fuchsia-deep);
-    background: var(--color-fuchsia-soft);
+    color: var(--color-alert);
+    background: var(--color-alert-soft);
+  }
+
+  /* ─── Success state ─── */
+  .form__done[hidden] { display: none; }
+  .form__done-kicker {
+    font-family: var(--font-body);
+    font-size: var(--type-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    color: var(--color-cobalt-deep);
+    margin-block-end: var(--space-sm);
+  }
+  .form__done-title {
+    font-size: var(--type-3xl);
+    margin-block-end: var(--space-md);
+  }
+  .form__done-title em { color: var(--color-fuchsia-deep); }
+  .form__done-title:focus-visible {
+    outline: 2px solid var(--color-cobalt);
+    outline-offset: 4px;
+  }
+  .form__done-text {
+    font-family: var(--font-body);
+    font-size: var(--type-lg);
+    line-height: var(--leading-relaxed);
+    color: var(--color-ink-muted);
+    max-width: 46ch;
+    margin-block-end: var(--space-xl);
+  }
+  .form__done-actions {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
   }
 
   @media (max-width: 640px) {

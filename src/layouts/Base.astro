@@ -118,12 +118,18 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://dennisberge
     </script>
     <script is:inline>
       // Gate all motion on progressive-enhancement class.
-      // Flips before paint to avoid a flash of pre-animated content.
+      // Flips before paint to avoid a flash of pre-animated content, and
+      // re-evaluates if the preference changes while the page is open —
+      // without the listener, turning Reduce Motion on mid-session left the
+      // class (and every animation gated on it) stale.
       (function () {
         try {
-          if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            document.documentElement.classList.add('js-motion');
-          }
+          var mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+          var sync = function () {
+            document.documentElement.classList.toggle('js-motion', !mq.matches);
+          };
+          sync();
+          mq.addEventListener('change', sync);
         } catch (_) { /* no-op */ }
       })();
     </script>

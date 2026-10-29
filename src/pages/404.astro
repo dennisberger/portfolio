@@ -3,9 +3,9 @@ import Base from '@/layouts/Base.astro';
 ---
 
 <Base title="404 — Dennis Berger" description="Page not found." noindex>
-  <section class="lost page">
+  <section class="lost page" aria-labelledby="lost-title">
     <p class="lost__kicker">404</p>
-    <h1 class="lost__title">But why?</h1>
+    <h1 class="lost__title" id="lost-title">But why?</h1>
     <p class="lost__body">
       This is where my notes would've helped. Try <a href="/">home</a> or <a href="/work/">case studies</a>. If it's my fault, <a href="/contact/">tell me</a>.
     </p>
@@ -27,9 +27,10 @@ import Base from '@/layouts/Base.astro';
     font-size: var(--type-outsize);
     font-style: italic;
     font-weight: 300;
-    /* fuchsia-deep, not fuchsia: 5.85:1 vs 2.38:1.
-       The "404" is page-visible content (not aria-hidden), so contrast
-       must clear AA. Bright fuchsia is a decorative-only token. */
+    /* fuchsia-deep (8.23:1), not bright fuchsia (3.62:1). The "404" is
+       page-visible content, not aria-hidden, and at this size bright fuchsia
+       would technically clear large-text AA — but the kicker is the loudest
+       thing on the page and deep holds the weight better. */
     color: var(--color-fuchsia-deep);
     line-height: 0.9;
     letter-spacing: var(--tracking-outsize);
@@ -46,11 +47,5 @@ import Base from '@/layouts/Base.astro';
     color: var(--color-ink-muted);
     margin-block-end: var(--space-xl);
   }
-  .lost__actions { display: flex; gap: var(--space-md); margin-block-end: var(--space-xl); flex-wrap: wrap; }
-  .lost__footnote {
-    font-family: var(--font-body);
-    font-size: var(--type-sm);
-    color: var(--color-ink-muted);
-    font-style: italic;
-  }
+  .lost__actions { display: flex; gap: var(--space-md); flex-wrap: wrap; }
 </style>

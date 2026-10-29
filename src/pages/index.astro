@@ -54,10 +54,10 @@ const ordinals = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight'
   description="DesignOps leader in Philadelphia. Fifteen years building operating models, design systems, and research ops that make design a reliable, strategic function."
   jsonLd={jsonLd}
 >
-  <section class="hero page">
+  <section class="hero page" aria-labelledby="hero-title">
     <div class="hero__primary">
       <SectionLabel reveal={false}>Design Operations Leader</SectionLabel>
-      <h1 class="hero__title">
+      <h1 class="hero__title" id="hero-title">
         {heroWords.map((word, i) => (
           word.bloom ? (
             <><em class="hero__word hero__word--bloom" style={`--i:${i}`}>{word.w}</em>{' '}</>
@@ -71,7 +71,7 @@ const ordinals = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight'
       </p>
       <div class="hero__ctas">
         <a href="/work/" class="btn btn--primary">Read the case studies</a>
-        <a href="/resume" class="btn btn--ghost">
+        <a href="/resume/" class="btn btn--ghost">
           View résumé
         </a>
       </div>
@@ -105,7 +105,7 @@ const ordinals = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight'
   </section>
 
   {flagship && (
-    <section class="flagship page" id="flagship">
+    <section class="flagship page" id="flagship" aria-labelledby="flagship-title">
       <a
         href={`/work/${flagship.data.slug}/`}
         class="flagship__link"
@@ -117,7 +117,7 @@ const ordinals = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight'
           <div class="flagship__meta">
             <SectionLabel>Flagship · {flagship.data.tag}</SectionLabel>
           </div>
-          <h2 class="flagship__title" data-reveal-wash><span>{flagship.data.title}</span></h2>
+          <h2 class="flagship__title" id="flagship-title" data-reveal-wash><span>{flagship.data.title}</span></h2>
           {flagship.data.lede && (
             <p class="flagship__lede"><em>{flagship.data.lede}</em></p>
           )}
@@ -133,8 +133,8 @@ const ordinals = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight'
     </section>
   )}
 
-  <section class="toc page" id="work">
-    <SectionLabel>Also in the portfolio</SectionLabel>
+  <section class="toc page" id="work" aria-labelledby="toc-heading">
+    <SectionLabel as="h2" id="toc-heading">Also in the portfolio</SectionLabel>
     <ol class="toc__list">
       {others.map((s, i) => (
         <li class="toc__item">
@@ -150,7 +150,7 @@ const ordinals = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight'
               <span class="toc__num-word">{ordinals[i + 1]}</span>
             </span>
             <span class="toc__tag">{s.data.tag}</span>
-            <span class="toc__study-title">{s.data.title}</span>
+            <h3 class="toc__study-title">{s.data.title}</h3>
             <span class="toc__arrow" aria-hidden="true">→</span>
           </a>
         </li>
@@ -184,14 +184,24 @@ const ordinals = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight'
     letter-spacing: var(--tracking-display);
     margin-block: var(--space-lg) var(--space-xl);
   }
+  /*
+   * The bloom: the two italic words arrive at fuchsia-deep and lift to bright
+   * fuchsia over 480ms. It has to out-specify .hero__title em below, which is
+   * why it is here rather than beside its keyframes in global.css — see the
+   * note on .js-motion .hero__word--bloom there.
+   */
+  :global(.js-motion) .hero__title em.hero__word--bloom {
+    color: var(--color-fuchsia-deep);
+  }
   .hero__title em {
     font-style: italic;
     font-weight: 300;
-    /* Bright fuchsia is non-negotiable here: it's the brand-voice moment
-       on the hero. Contrast is ~2.38:1 — fails WCAG AA — and that's an
-       accepted trade-off. The bloom animation lands on this same color
-       (see .hero__word--bloom + best-bloom keyframe in global.css).
-       Don't "fix" this without conversation. */
+    /* Bright fuchsia is the brand-voice moment on the hero. Measured 3.62:1
+       against --color-paper; the em renders at ~99px, so WCAG AA for large
+       text (3:1) is met. This token is still display-only — anything under
+       24px / 18.66px-bold needs --color-fuchsia-deep (8.23:1).
+       The bloom animation lands on this same color (see .hero__word--bloom
+       + best-bloom keyframe in global.css). */
     color: var(--color-fuchsia);
   }
   .hero__strap {
@@ -291,7 +301,7 @@ const ordinals = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight'
   @media (max-width: 900px) {
     .flagship__link { flex-direction: column; }
   }
-  .flagship__link:hover .flagship__title { color: var(--color-fuchsia-deep); }
+  .flagship__link:is(:hover, :focus-visible) .flagship__title { color: var(--color-fuchsia-deep); }
   .flagship__title {
     font-family: var(--font-display);
     font-weight: 400;
@@ -357,7 +367,7 @@ const ordinals = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight'
     line-height: 1;
     transition: transform var(--duration-base) var(--ease-out), color var(--duration-base) var(--ease-out);
   }
-  .flagship__link:hover .flagship__arrow {
+  .flagship__link:is(:hover, :focus-visible) .flagship__arrow {
     color: var(--color-fuchsia-deep);
     transform: translateX(6px);
   }
@@ -380,7 +390,8 @@ const ordinals = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight'
   }
   .toc__item:first-child { border-top: 2px solid var(--color-ink); }
   .toc__item:last-child { border-bottom: 1px solid var(--color-rule); }
-  .toc__item:hover { background: var(--color-fuchsia-soft); }
+  .toc__item:hover,
+  .toc__item:has(.toc__link:focus-visible) { background: var(--color-fuchsia-soft); }
 
   .toc__link {
     display: grid;
@@ -398,9 +409,9 @@ const ordinals = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight'
   .toc__study-title {
     transition: transform var(--duration-base) var(--ease-out);
   }
-  .toc__link:hover .toc__num,
-  .toc__link:hover .toc__tag,
-  .toc__link:hover .toc__study-title {
+  .toc__link:is(:hover, :focus-visible) .toc__num,
+  .toc__link:is(:hover, :focus-visible) .toc__tag,
+  .toc__link:is(:hover, :focus-visible) .toc__study-title {
     transform: translateX(var(--space-md));
   }
 
@@ -444,6 +455,14 @@ const ordinals = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight'
       transform: translateY(0);
     }
   }
+  .toc__link:focus-visible .toc__num-digit {
+    opacity: 0;
+    transform: translateY(-0.22em);
+  }
+  .toc__link:focus-visible .toc__num-word {
+    opacity: 1;
+    transform: translateY(0);
+  }
   @media (prefers-reduced-motion: reduce) {
     .toc__num-digit,
     .toc__num-word {
@@ -461,12 +480,13 @@ const ordinals = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight'
   .toc__study-title {
     font-family: var(--font-display);
     font-size: var(--type-xl);
+    font-weight: 400;
     line-height: var(--leading-snug);
     letter-spacing: var(--tracking-snug);
     color: var(--color-ink);
     transition: color var(--duration-fast) var(--ease-out), transform var(--duration-base) var(--ease-out);
   }
-  .toc__link:hover .toc__study-title { color: var(--color-fuchsia-deep); }
+  .toc__link:is(:hover, :focus-visible) .toc__study-title { color: var(--color-fuchsia-deep); }
   .toc__arrow {
     font-family: var(--font-display);
     font-size: var(--type-xl);
@@ -476,7 +496,7 @@ const ordinals = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight'
     transition: opacity var(--duration-fast) var(--ease-out), transform var(--duration-base) var(--ease-out);
     line-height: 1;
   }
-  .toc__link:hover .toc__arrow {
+  .toc__link:is(:hover, :focus-visible) .toc__arrow {
     opacity: 1;
     transform: translateX(0);
   }

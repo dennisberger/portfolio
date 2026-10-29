@@ -19,10 +19,13 @@ const {
 const sourcePath = Astro.url.pathname;
 ---
 
-<section class:list={["closing-cta page", variant === 'continuation' && 'closing-cta--continuation']}>
+<section
+  class:list={["closing-cta page", variant === 'continuation' && 'closing-cta--continuation']}
+  aria-labelledby="closing-cta-title"
+>
   <div class="closing-cta__inner">
     <div>
-      <h2 class="closing-cta__title">{heading}</h2>
+      <h2 class="closing-cta__title" id="closing-cta-title">{heading}</h2>
       <p class="closing-cta__text">{text}</p>
     </div>
     <div class="closing-cta__actions">

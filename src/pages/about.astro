@@ -117,10 +117,18 @@ const jsonLd = schemaGraph([
 </Base>
 
 <style>
-  .about { padding-block: var(--space-section-hero) var(--space-section); max-width: var(--col-total); }
+  .about {
+    padding-block: var(--space-section-hero) var(--space-section);
+    max-width: var(--col-total);
+    /* Query container for the margin-note gutter — see .gutter-aside in
+       global.css. The padding below lands on .about__body, a child, because
+       a container can't query itself. */
+    container-type: inline-size;
+    container-name: reading-column;
+  }
   /* Reserve a right gutter at desktop so MarginNote floats into it rather than
      sitting in the reading flow. Body content stays constrained to --col-main. */
-  @media (min-width: 1080px) {
+  @container reading-column (min-width: 57rem) {
     .about__body { padding-right: calc(var(--col-gutter) + var(--col-gap)); }
     .about__body > p,
     .about__body > h2,

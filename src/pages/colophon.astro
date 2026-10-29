@@ -8,9 +8,9 @@ import Stamp from '@/components/Stamp.astro';
   title="Colophon — Dennis Berger"
   description="The tools, typefaces, and decisions behind dennisberger.me."
 >
-  <section class="colo page">
+  <section class="colo page" aria-labelledby="colo-title">
     <SectionLabel>Colophon</SectionLabel>
-    <h1 class="colo__title"><em>How this was made.</em></h1>
+    <h1 class="colo__title" id="colo-title"><em>How this was made.</em></h1>
 
     <div class="colo__layout">
       <div class="colo__stamp">
@@ -43,16 +43,20 @@ import Stamp from '@/components/Stamp.astro';
           <dd>Cloudflare Pages.</dd>
         </div>
         <div>
+          <dt>Layout</dt>
+          <dd>Container queries, not viewport breakpoints, wherever the question is "how much room does this column have." Scroll-driven CSS animations; no scroll listeners.</dd>
+        </div>
+        <div>
           <dt>Contact form</dt>
           <dd>Cloudflare Pages Functions + self-hosted Plunk (on AWS SES), with Turnstile for the bot check.</dd>
         </div>
         <div>
           <dt>Color</dt>
-          <dd>OKLCH. Paper, ink, fuchsia, cobalt. Tested for WCAG AAA on body text.</dd>
+          <dd>OKLCH, declared once as <code>light-dark()</code> pairs. Paper, ink, fuchsia, cobalt, and one alert red that exists so an error never has to borrow the brand pink. Tested for WCAG AAA on body text.</dd>
         </div>
         <div>
           <dt>Accessibility</dt>
-          <dd>WCAG AA floor, AAA on body text. Real focus states, real skip link, real reduced-motion.</dd>
+          <dd>WCAG AA floor, AAA on body text. Real headings, real focus states for every hover state, real skip link, real reduced-motion.</dd>
         </div>
         <div>
           <dt>Performance</dt>
@@ -117,6 +121,11 @@ import Stamp from '@/components/Stamp.astro';
     letter-spacing: var(--tracking-wider);
     color: var(--color-ink-muted);
     padding-block-start: 0.2em;
+  }
+  .colo__spec dd code {
+    font-family: var(--font-body);
+    font-size: 0.9em;
+    letter-spacing: var(--tracking-snug);
   }
   .colo__spec dd {
     font-family: var(--font-display);

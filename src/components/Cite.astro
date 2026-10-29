@@ -1,0 +1,59 @@
+---
+/**
+ * Cite — the inline marker that ties a claim in the prose to its Footnote.
+ *
+ * The site's brief names two signature mechanics: wry margin annotations and
+ * show-your-receipts citations. The annotations shipped; the citations did
+ * not. There was one <Footnote> on the whole site and no marker anywhere
+ * pointing at it, so the numeral in the gutter was attached to nothing.
+ *
+ * Pair it with a <Footnote> carrying the same `n`:
+ *
+ *   <Footnote n={2}>Counted as formal studies run through the partner.</Footnote>
+ *
+ *   Taco Bell went from no formal studies to 64 in 2025.<Cite n={2} />
+ *
+ * The Footnote goes *before* the paragraph it annotates — that is what puts
+ * the float level with the claim in the gutter layout — so this anchor points
+ * backwards up the document. That is fine: in both layouts the note is
+ * adjacent to the marker, and the href is for keyboard and screen-reader
+ * users who want to jump rather than scan.
+ */
+interface Props {
+  n: number;
+}
+const { n } = Astro.props;
+---
+
+<a
+  class="cite"
+  href={`#fn-${n}`}
+  id={`fnref-${n}`}
+  role="doc-noteref"
+  aria-label={`See note ${n}`}><sup>{n}</sup></a>
+
+<style>
+  .cite {
+    /* Editorial reference mark: display-face numeral, cobalt because a
+       citation is substance, not voice. No underline at rest — an underlined
+       superscript reads as a typo. */
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    color: var(--color-cobalt-deep);
+    text-decoration: none;
+    padding-inline: 0.08em 0.12em;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+  .cite sup {
+    font-size: 0.62em;
+    line-height: 0;
+    vertical-align: super;
+  }
+  .cite:is(:hover, :focus-visible) {
+    color: var(--color-fuchsia-deep);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.15em;
+  }
+</style>

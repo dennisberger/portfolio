@@ -64,12 +64,15 @@ a {
   text-decoration-color: color-mix(in oklch, var(--color-fuchsia-deep) 40%, transparent);
   transition: text-decoration-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
 }
-a:hover {
+a:is(:hover, :focus-visible) {
   text-decoration-color: currentColor;
 }
 
+/* fuchsia-deep, not bright fuchsia: selection lands on 16–18px body copy,
+   which wants 4.5:1. Paper on fuchsia-deep is 8.22:1 light / 10.89:1 dark;
+   bright fuchsia was 3.60:1. */
 ::selection {
-  background: var(--color-fuchsia);
+  background: var(--color-fuchsia-deep);
   color: var(--color-paper);
 }
 
@@ -132,7 +135,7 @@ a:hover {
   letter-spacing: 0.01em;
   transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
 }
-.btn:hover { text-decoration: none; transform: translateY(-1px); }
+.btn:is(:hover, :focus-visible) { text-decoration: none; transform: translateY(-1px); }
 .btn__meta {
   font-weight: 400;
   font-size: var(--type-xs);
@@ -143,7 +146,7 @@ a:hover {
      Stacking opacity dropped contrast under 4.5:1 (Lighthouse a11y fail). */
 }
 .btn--primary { background: var(--color-ink); color: var(--color-paper); }
-.btn--primary:hover {
+.btn--primary:is(:hover, :focus-visible) {
   background: var(--color-fuchsia-deep);
   border-color: var(--color-fuchsia-deep);
   color: var(--color-paper);
@@ -153,7 +156,7 @@ a:hover {
   color: var(--color-ink-muted);
   border-color: color-mix(in oklch, var(--color-ink) 45%, transparent);
 }
-.btn--ghost:hover {
+.btn--ghost:is(:hover, :focus-visible) {
   background: var(--color-ink);
   color: var(--color-paper);
   border-color: var(--color-ink);
@@ -174,12 +177,17 @@ a:hover {
   transition:
     opacity 520ms var(--ease-out-quart),
     transform 520ms var(--ease-out-quart);
+  /* Only hinted while the element is still waiting to reveal. The observer
+     adds .is-visible once and unobserves, and this drops the hint with it —
+     otherwise every revealed element holds a compositor layer for the life
+     of the page, and a long case study has dozens. */
   will-change: opacity, transform;
 }
 .js-motion [data-reveal].is-visible,
 .js-motion [data-reveal]:focus-within {
   opacity: 1;
   transform: none;
+  will-change: auto;
 }
 
 /* Label tracking-in — letter-spacing expands from tight to normal as it reveals. */
@@ -261,14 +269,21 @@ a:hover {
   animation: hero-word-rise 620ms var(--ease-out-quart) forwards;
   animation-delay: calc(140ms + var(--i, 0) * 42ms);
 }
+/*
+ * The bloom's START color is NOT here. It cannot be: this selector is 0-2-0
+ * and index.astro's scoped `.hero__title em` is 0-2-1, so a `color` set here
+ * loses. It sat here losing for a long time, which is why the bloom was a
+ * no-op — the animation's implicit `from` resolved to the same bright
+ * fuchsia it animated to. The start color now lives next to the rule that
+ * was beating it. Only the timing belongs here.
+ */
 .js-motion .hero__word--bloom {
-  color: var(--color-fuchsia-soft);
   animation:
     hero-word-rise 620ms var(--ease-out-quart) forwards,
-    best-bloom 780ms var(--ease-out-quart) forwards;
+    best-bloom 480ms var(--ease-out-quart) forwards;
   animation-delay:
     calc(140ms + var(--i, 0) * 42ms),
-    calc(420ms + var(--i, 0) * 42ms);
+    calc(220ms + var(--i, 0) * 42ms);
 }
 
 @keyframes hero-rise      { to { opacity: 1; transform: none; } }
@@ -287,8 +302,11 @@ a:hover {
     transform: none !important;
     animation: none !important;
     transition: none !important;
+    will-change: auto !important;
+  }
+  /* Only the kicker animates its tracking, so only the kicker gets it back. */
+  .js-motion [data-reveal].section-label {
     letter-spacing: var(--tracking-wider) !important;
-    color: inherit;
   }
   .js-motion .hero__word--bloom { color: var(--color-fuchsia) !important; }
   .js-motion .flagship__title[data-reveal-wash]::before {
@@ -301,6 +319,20 @@ a:hover {
     width: var(--space-xl) !important;
     animation: none !important;
     transition: none !important;
+  }
+}
+
+/* ─── Print ──────────────────────────────────────────────────────
+ * Every color token is a light-dark() pair resolved from `color-scheme`, so
+ * one declaration puts the whole palette into light for paper — including
+ * for a reader who has the session toggle set to dark. The attribute
+ * selectors are listed to out-specify tokens.css's own two overrides.
+ */
+@media print {
+  html,
+  html[data-theme='light'],
+  html[data-theme='dark'] {
+    color-scheme: light;
   }
 }
 
@@ -323,7 +355,17 @@ a:hover {
   line-height: var(--leading-snug);
 }
 
-@media (min-width: 1080px) {
+/*
+ * The reflow is a property of the reading column, not the window: the aside
+ * floats out as soon as the column that holds it is actually wide enough to
+ * hold prose and gutter side by side. Each page with a gutter declares
+ * `container-name: reading-column` on the element whose content box tracks
+ * that space — .study__body, .about, .contact — and reserves the gutter on a
+ * child of it. 57rem is the narrowest of those boxes at the point where the
+ * split stops being cramped; all three reach it together, around a 976px
+ * viewport (the old hard-coded cliff was 1080px, tuned by eye).
+ */
+@container reading-column (min-width: 57rem) {
   .gutter-aside {
     float: right;
     clear: right;

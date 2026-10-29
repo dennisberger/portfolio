@@ -172,21 +172,21 @@ const skillClusters: { label: string; items: string[] }[] = [
       </p>
     </header>
 
-    <section class="resume__section resume__summary">
-      <SectionLabel>Summary</SectionLabel>
+    <section class="resume__section resume__summary" aria-labelledby="resume-summary">
+      <SectionLabel as="h2" id="resume-summary">Summary</SectionLabel>
       <p>
         Design Operations leader with 15 years building and scaling multidisciplinary product design organizations. Currently at Taco Bell, where I built the company's first DesignOps function from zero, with a $2.3M budget, a research practice running 64 studies a year, and a 15-person team. Previously stood up the UX Center of Excellence at Comcast, redesigned GSK's analytics platform (lifting SUS from 34 to 81), and led design and engineering for Effectv's self-service linear TV platform, the first of its kind in the U.S. Spent seven years before that running my own consultancy. I hire, level, and coach the people I work with. <em class="resume__summary-coda">Serious about outcomes; not precious about process.</em>
       </p>
     </section>
 
-    <section class="resume__section resume__experience">
-      <SectionLabel>Experience</SectionLabel>
+    <section class="resume__section resume__experience" aria-labelledby="resume-experience">
+      <SectionLabel as="h2" id="resume-experience">Experience</SectionLabel>
       <ol class="resume__roles">
         {roles.map((role) => (
           <li class="resume__role">
             <time class="resume__role-dates" datetime={role.datetime}>{role.dates}</time>
             <div class="resume__role-body">
-              <h2 class="resume__role-title">{role.title}</h2>
+              <h3 class="resume__role-title">{role.title}</h3>
               <p class="resume__role-org">{role.org}</p>
               <ul class="resume__role-bullets">
                 {role.bullets.map((b) => <li>{b}</li>)}
@@ -197,8 +197,8 @@ const skillClusters: { label: string; items: string[] }[] = [
       </ol>
     </section>
 
-    <section class="resume__section resume__education">
-      <SectionLabel>Education</SectionLabel>
+    <section class="resume__section resume__education" aria-labelledby="resume-education">
+      <SectionLabel as="h2" id="resume-education">Education</SectionLabel>
       <ul class="resume__edu">
         <li>
           <span class="resume__edu-degree">M.B.A., Innovation Management</span>
@@ -211,8 +211,8 @@ const skillClusters: { label: string; items: string[] }[] = [
       </ul>
     </section>
 
-    <section class="resume__section resume__skills">
-      <SectionLabel>Skills</SectionLabel>
+    <section class="resume__section resume__skills" aria-labelledby="resume-skills">
+      <SectionLabel as="h2" id="resume-skills">Skills</SectionLabel>
       <dl class="resume__skill-clusters">
         {skillClusters.map((cluster) => (
           <div class="resume__skill-cluster">
@@ -230,8 +230,8 @@ const skillClusters: { label: string; items: string[] }[] = [
       </dl>
     </section>
 
-    <section class="resume__section resume__recognition">
-      <SectionLabel>Recognition</SectionLabel>
+    <section class="resume__section resume__recognition" aria-labelledby="resume-recognition">
+      <SectionLabel as="h2" id="resume-recognition">Recognition</SectionLabel>
       <p>
         <strong>GSK Gold Award, 2021</strong> — Highest internal recognition, awarded for the AIM platform redesign.
       </p>
@@ -271,7 +271,7 @@ const skillClusters: { label: string; items: string[] }[] = [
     color: inherit;
     text-decoration-color: color-mix(in oklch, var(--color-ink-muted) 35%, transparent);
   }
-  .resume__contact a:hover { color: var(--color-fuchsia-deep); }
+  .resume__contact a:is(:hover, :focus-visible) { color: var(--color-fuchsia-deep); }
   .resume__contact-break { flex-basis: 100%; height: 0; }
 
   /* "Save as PDF" sits in the contact strip as another piece of document
@@ -289,7 +289,7 @@ const skillClusters: { label: string; items: string[] }[] = [
     margin-inline-start: 0.25em;
     transition: transform var(--duration-base) var(--ease-out);
   }
-  .resume__pdf:hover .resume__pdf-arrow { transform: translateX(3px); }
+  .resume__pdf:is(:hover, :focus-visible) .resume__pdf-arrow { transform: translateX(3px); }
 
   /* ─── Sections ─── */
   .resume__section {
